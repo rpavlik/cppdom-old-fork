@@ -29,14 +29,18 @@ LINK		= c++ $(LINK_FLAGS)
 VPATH	= $(srcdir):$(srcdir)/..
 
 nodetest_OBJS	= nodetest.o xmlparser.o xmlpp.o xmltokenizer.o
+parsetest_OBJS	= parsetest.o xmlparser.o xmlpp.o xmltokenizer.o
 
 # -----------------------------------------------------------------------------
 # Application build targets.
 # -----------------------------------------------------------------------------
-all: nodetest
+all: nodetest parsetest
 
 nodetest: $(nodetest_OBJS)
 	$(LINK) -o $@ $(nodetest_OBJS) $(BASIC_LIBS) $(EXTRA_LIBS)
+
+parsetest: $(parsetest_OBJS)
+	$(LINK) -o $@ $(parsetest_OBJS) $(BASIC_LIBS) $(EXTRA_LIBS)
 
 # Suffix rules for building object files.
 .SUFFIXES: .cpp .o
