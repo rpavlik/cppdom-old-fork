@@ -1,6 +1,12 @@
 DATE        AUTHOR    CHANGE
 ----------- --------- ---------------------------------------------------------
+May-06-2002 subatomic Added README and build instructions
+May-05-2002 subatomic Brought the code up to coding standard (API changed!).
+May-05-2002 subatomic Added build system based on Doozer gnumake tools
+                      support irix, linux, solaris, freebsd, win32 under
+                      cygwin, probably other too but untested see README.
 May-05-2002 allenb    Added save_file method for document node.
+May-01-2002 subatomic Added predicate.h, and two predicates
 Apr-05-2002 allenb    Fix EOF and -1 chars on Irix.
 Apr-03-2002 allenb    Added Node::getChild(char*) to avoid matching templated
                       predicate version.
