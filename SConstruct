@@ -3,7 +3,7 @@ try:
    import wing.wingdbstub;       # stuff for debugging
 except:
    pass
-   
+
 import os, string, sys, re
 pj = os.path.join
 
@@ -244,6 +244,10 @@ def AddBoostOptions(opts):
 # Grok the arguments to this build
 #------------------------------------------------------------------------------
 EnsureSConsVersion(0,94)
+SourceSignatures('MD5')
+#SourceSignatures('timestamp')
+
+#SConsignFile()                 # Store all dep info in single file
 
 # Figure out what vesion of CppDom we're using
 CPPDOM_VERSION = GetCppDomVersion()
@@ -275,7 +279,8 @@ else:
 Export('baseEnv')
 
 # Do we have the super cool savable version
-opts = Options('config.cache')
+option_filename = "config.cache." + GetPlatform()
+opts = Options(option_filename)
 opts.Add('WithCppUnit',
          'CppUnit installation directory',
          '/usr/local',
@@ -311,7 +316,7 @@ if not SCons.Script.options.help_msg:
 
    # Try to save the options if possible
    try:
-      opts.Save('config.cache', baseEnv);
+      opts.Save(option_filename, baseEnv);
    except LookupError, le:
       pass
 
