@@ -32,7 +32,7 @@
 */
 
 // needed includes
-#include "xml/xmlparser.h"
+#include <xmlpp/xmlparser.h>
 
 // namespace declaration
 namespace xmlpp {
