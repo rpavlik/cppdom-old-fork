@@ -52,7 +52,7 @@
 # SRCS       - The list of sources to compile.
 # OBJDIR     - The directory where the object files will be generated.  This
 #              defaults to the current directory if it is not defined.
-# OBJ_EXT - The extension for object files (usually obj or o).  This
+# OBJ_EXT    - The extension for object files (usually obj or o).  This
 #              defaults to obj if the compiler being used is cl (the MS
 #              Visual C++ compiler) or to o if any other compiler is being
 #              used.
@@ -61,15 +61,16 @@
 #                          $(srcdir).
 # -----------------------------------------------------------------------------
 
-# If $(OBJ_EXT) is not defined set it to obj if we are using cl as the C
+# If $(OS_OBJ_EXT) is not defined set it to obj if we are using cl as the C
 # compiler (Windows only) or to o for all other compilers.
-ifndef OBJ_EXT
+ifndef OS_OBJ_EXT
   ifeq ($(CC), cl)
-     OBJ_EXT=	.obj
+     OS_OBJ_EXT=	.obj
   else
-     OBJ_EXT=	.o
+     OS_OBJ_EXT=	.o
   endif
 endif
+OBJ_EXT = $(OS_OBJ_EXT)
 
 OBJ_NAME_FLAG?=		-o $@
 OBJ_BUILD_FLAG?=	-c
