@@ -1,7 +1,7 @@
 import os
 pj = os.path.join
 
-Import('baseEnv PREFIX')
+Import('pkg baseEnv PREFIX GetPlatform')
 
 headers = Split("""
    config.h
@@ -23,12 +23,9 @@ sources = Split("""
 env = baseEnv.Copy()
 env.Append(CPPPATH = ['#'])
 
-# Setup the library target
-lib = env.SharedLibrary('cppdom', sources)
+if GetPlatform() == 'irix':
+   env['SHCXXFLAGS'] = '${CXXFLAGS}'
 
-# Install headers
-for h in headers:
-   env.Install(pj(PREFIX, 'include', 'cppdom'), h)
-
-# Install the library
-env.Install(pj(PREFIX, 'lib'), lib)
+lib = pkg.createSharedLibrary('cppdom', env)
+lib.addSources(sources)
+lib.addHeaders(headers, 'cppdom')

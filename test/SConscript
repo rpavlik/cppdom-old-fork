@@ -1,16 +1,18 @@
 
-Import('baseEnv')
+Import('pkg baseEnv')
 
 env = baseEnv.Copy()
-env.Append(CPPPATH = ['#', '#test'])
-env.Append(LIBPATH = ['#cppdom'])
-env.Append(LIBS = ['cppdom'])
+env.Append(CPPPATH = Split('# #test'),
+           LIBPATH = ['#cppdom'],
+           LIBS = ['cppdom'])
 
 tests = Split("""
+   maketree
    nodetest
    parsetest
    predtest
 """)
 
 for t in tests:
-   env.Program(t, t+'.cpp')
+   prog = pkg.createProgram(t, env)
+   prog.addSources([t+'.cpp'])
