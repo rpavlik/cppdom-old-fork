@@ -76,9 +76,9 @@ all: $(APP_NAME1)$(EXE_EXT) $(APP_NAME2)$(EXE_EXT) $(APP_NAME3)$(EXE_EXT)
 
 # Target for the application to be built.
 $(APP_NAME1)$(EXE_EXT): $(OBJS1)
-	$(LINK) -o $@ $(OBJS1) $(EXTRA_LIBS) $(LIBS)
+	$(LINK) $(LINK_OUT)$@ $(OBJS1) $(EXTRA_LIBS) $(LIBS)
 $(APP_NAME2)$(EXE_EXT): $(OBJS2)
-	$(LINK) -o $@ $(OBJS2) $(EXTRA_LIBS) $(LIBS)
+	$(LINK) $(LINK_OUT)$@ $(OBJS2) $(EXTRA_LIBS) $(LIBS)
 $(APP_NAME3)$(EXE_EXT): $(OBJS3)
-	$(LINK) -o $@ $(OBJS3) $(EXTRA_LIBS) $(LIBS)
+	$(LINK) $(LINK_OUT)$@ $(OBJS3) $(EXTRA_LIBS) $(LIBS)
 
