@@ -245,66 +245,43 @@ namespace cppdom
    {
    }
 
-   std::string Context::getEntity(const std::string& entName)
-   {
-      if (!mInit)
-      {
-         initContext();
-      }
-
-      EntityMap::const_iterator iter = mEntities.find(entName);
-      return (iter == mEntities.end() ? entName : iter->second);
-   }
-
    std::string Context::getTagname(TagNameHandle handle)
    {
-      if (!mInit)
-      {
-         initContext();
-      }
-      TagNameMap::const_iterator iter = mTagNames.find(handle);
+      TagNameMap_t::const_iterator iter = mTagToName.find(handle);
 
-      std::string empty("");
-      return (iter == mTagNames.end() ? empty : iter->second);
+      if (iter == mTagToName.end())
+      {  return std::string(""); }
+      else
+      {  return iter->second; }
    }
 
    TagNameHandle Context::insertTagname(const std::string& tagName)
    {
-      if (!mInit)
+      // Check the list of know tags first, then if not known insert into both lists
+      NameToTagMap_t::const_iterator found_name = mNameToTag.find(tagName);
+
+      // If already have it
+      if(found_name != mNameToTag.end())
       {
-         initContext();
+         return found_name->second;
       }
 
-      // bugfix: first search, if the tagname is already in the list
-      // since usually there are not much different tagnames, the search
-      // shouldn't slow down parsing too much
-      TagNameMap::const_iterator iter,stop;
-      iter = mTagNames.begin();
-      stop = mTagNames.end();
+      TagNameHandle new_handle = mNextHandle;
+      mNextHandle += 1;
 
-      for(; iter!=stop; ++iter)
-      {
-         if (iter->second == tagName)
-         {
-            return iter->first;
-         }
-      }
-
+      // Else we need to insert it
       // insert new tagname
-      TagNameMap::value_type keyvaluepair(mNextHandle, tagName);
-      mTagNames.insert(keyvaluepair);
+      TagNameMap_t::value_type tag_to_name_value(new_handle, tagName);
+      mTagToName.insert(tag_to_name_value);
+      NameToTagMap_t::value_type name_to_tag_value(tagName, new_handle);
+      mNameToTag.insert(name_to_tag_value);
 
-      return mNextHandle++;
+      return new_handle;
    }
 
    Location& Context::getLocation()
    {
       return mLocation;
-   }
-
-   void Context::initContext()
-   {
-      mInit = true;
    }
 
    void Context::setEventHandler(EventHandlerPtr ehptr)

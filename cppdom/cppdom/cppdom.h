@@ -60,9 +60,14 @@
 #include <string>
 #include <sstream>
 #include <vector>
+
 #include <map>
+#define CPPDOM_MAP std::map
+
 #include "config.h"
 #include "shared_ptr.h"   // the boost::shared_ptr class
+
+
 
 /** Macro for constructing a CPPDOM error */
 //std::string(__FILE__) + std::string(__LINE__)
@@ -182,12 +187,14 @@ namespace cppdom
 
    /** handle to a tagname string in a tagname map */
    typedef int TagNameHandle;
+
    /** maps the tagname string to a handle */
-   typedef std::map<TagNameHandle,std::string> TagNameMap;
-   /** maps an entity to a string representation */
-   typedef std::map<std::string,std::string> EntityMap;
+   typedef CPPDOM_MAP<TagNameHandle,std::string>   TagNameMap_t;
+   typedef CPPDOM_MAP<std::string, TagNameHandle>  NameToTagMap_t;
+
    /** smart pointer for Context */
    typedef cppdom_boost::shared_ptr<class Context> ContextPtr;
+
    /** smart pointer to the event handler */
    typedef cppdom_boost::shared_ptr<class EventHandler> EventHandlerPtr;
 
@@ -204,9 +211,6 @@ namespace cppdom
       /** dtor */
       virtual ~Context();
 
-      /** returns the entity representation for the named entity */
-      std::string getEntity(const std::string& entname);
-
       /** returns the tagname by the tagname handle */
       std::string getTagname(TagNameHandle handle);
 
@@ -215,11 +219,6 @@ namespace cppdom
 
       /** returns the current location in the xml stream */
       Location& getLocation();
-
-      /** called once when the context instance starts up; overwrite to customize
-      * @note: The base member should always be called, to set init to true
-      */
-      virtual void initContext();
 
       /** @name event handling methods */
       //@{
@@ -234,13 +233,13 @@ namespace cppdom
       //@}
 
    protected:
-      bool           mInit;               /**< indicates if init_context() was already called */
-      int            mNextHandle;         /**< next available tagname handle */
-      TagNameMap     mTagNames;           /**< matches TagNameHandles to the real std::string's */
-      EntityMap      mEntities;           /**< Contains entity codes and their string representations */
-      Location       mLocation;           /**< location of the xml input stream */
-      bool           mHandleEvents;       /**< indicates if the event handler is used */
-      EventHandlerPtr mEventHandler;   /**< current parsing event handler */
+      bool              mInit;            /**< indicates if init_context() was already called */
+      int               mNextHandle;      /**< next available tagname handle */
+      TagNameMap_t      mTagToName;       /**< matches TagNameHandles to the real std::string's */
+      NameToTagMap_t    mNameToTag;       /**< Map name to tag for inserting. */
+      Location          mLocation;        /**< location of the xml input stream */
+      bool              mHandleEvents;    /**< indicates if the event handler is used */
+      EventHandlerPtr   mEventHandler;    /**< current parsing event handler */
    };
 
    // typedefs
@@ -337,10 +336,10 @@ namespace cppdom
    {
       friend class Parser;
    public:
-      typedef std::map<std::string, std::string> attr_map_t;
-      typedef attr_map_t::const_iterator const_iterator;
-      typedef attr_map_t::iterator iterator;
-      typedef attr_map_t::value_type value_type;
+      typedef CPPDOM_MAP<std::string, std::string> attr_map_t;
+      typedef attr_map_t::const_iterator  const_iterator;
+      typedef attr_map_t::iterator        iterator;
+      typedef attr_map_t::value_type      value_type;
 
       /** ctor */
       Attributes();
