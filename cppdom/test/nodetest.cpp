@@ -10,17 +10,17 @@ bool configureInput( const std::string& filename )
    // load a xml document from a file
    try
    {
-      doc.load_file( filename );
+      doc.loadFile( filename );
    }
-   catch (cppdom::xmlerror e)
+   catch (cppdom::XMLError e)
    {
-      std::cerr << "Error: " << e.get_string() << std::endl;
-      if (e.get_info().size())
+      std::cerr << "Error: " << e.getString() << std::endl;
+      if (e.getInfo().size())
       {
-         std::cerr << "File: " << e.get_info() << std::endl;
+         std::cerr << "File: " << e.getInfo() << std::endl;
       }
-      if (e.get_error() != cppdom::xml_filename_invalid &&
-          e.get_error() != cppdom::xml_file_access)
+      if (e.getError() != cppdom::xml_filename_invalid &&
+          e.getError() != cppdom::xml_file_access)
       {
 /*
          e.show_error( ctx );
@@ -40,14 +40,14 @@ bool configureInput( const std::string& filename )
       std::cerr << "in name: " << (*it)->getName() << std::endl;
       try
       {
-         cppdom::XMLAttributes& attr = (*it)->get_attrmap();
+         cppdom::XMLAttributes& attr = (*it)->getAttrMap();
          std::cout << "attr: " << attr.get( "action" ) << "\n" << std::flush;
          std::cout << "attr: " << attr.get( "device" ) << "\n" << std::flush;
          std::cout << "attr: " << attr.get( "input" ) << "\n" << std::flush;
       }
-      catch (cppdom::xmlerror e)
+      catch (cppdom::XMLError e)
       {
-         std::cerr << "Error: " << e.get_string() << std::endl;
+         std::cerr << "Error: " << e.getString() << std::endl;
          it++;
          continue;
       }
