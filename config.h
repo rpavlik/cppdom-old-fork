@@ -41,9 +41,11 @@
 // win32 configuration
 #ifdef WIN32
 
+/*
 // define's for the boost::shared_ptr
 # define BOOST_NO_MEMBER_TEMPLATES
 # define BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+*/
 
 // switch some warnings off
 # pragma warning( disable: 4786 4275 4251 )
@@ -66,8 +68,10 @@
 // linux configuration
 #ifdef LINUX
 
+/*
 // defines for the boost library
 # define BOOST_NO_MEMBER_TEMPLATE_FRIENDS
+*/
 
 #endif
 
