@@ -125,43 +125,43 @@ namespace cppdom
    // XMLContext methods
 
    XMLContext::XMLContext()
-      : eventhandler(new XMLEventHandler)
+      : mEventHandler(new XMLEventHandler)
    {
-      init = false;
-      nexthandle = 0;
-      handleevents = false;
+      mInit = false;
+      mNextHandle = 0;
+      mHandleEvents = false;
    }
 
    XMLContext::~XMLContext()
    {
    }
 
-   std::string XMLContext::getEntity(const std::string& entname)
+   std::string XMLContext::getEntity(const std::string& entName)
    {
-      if (!init)
+      if (!mInit)
       {
          initContext();
       }
 
-      XMLEntityMap::const_iterator iter = entities.find(entname);
-      return (iter == entities.end() ? entname : iter->second);
+      XMLEntityMap::const_iterator iter = mEntities.find(entName);
+      return (iter == mEntities.end() ? entName : iter->second);
    }
 
    std::string XMLContext::getTagname(XMLTagNameHandle handle)
    {
-      if (!init)
+      if (!mInit)
       {
          initContext();
       }
-      XMLTagNameMap::const_iterator iter = tagnames.find(handle);
+      XMLTagNameMap::const_iterator iter = mTagNames.find(handle);
 
       std::string empty("");
-      return (iter == tagnames.end() ? empty : iter->second);
+      return (iter == mTagNames.end() ? empty : iter->second);
    }
 
-   XMLTagNameHandle XMLContext::insertTagname(const std::string& tagname)
+   XMLTagNameHandle XMLContext::insertTagname(const std::string& tagName)
    {
-      if (!init)
+      if (!mInit)
       {
          initContext();
       }
@@ -170,24 +170,50 @@ namespace cppdom
       // since usually there are not much different tagnames, the search
       // shouldn't slow down parsing too much
       XMLTagNameMap::const_iterator iter,stop;
-      iter = tagnames.begin();
-      stop = tagnames.end();
+      iter = mTagNames.begin();
+      stop = mTagNames.end();
 
       for(; iter!=stop; ++iter)
       {
-         if ((*iter).second == tagname)
+         if (iter->second == tagName)
          {
-            return (*iter).first;
+            return iter->first;
          }
       }
 
       // insert new tagname
-      XMLTagNameMap::value_type keyvaluepair(nexthandle,tagname);
-      tagnames.insert(keyvaluepair);
+      XMLTagNameMap::value_type keyvaluepair(mNextHandle, tagName);
+      mTagNames.insert(keyvaluepair);
 
-      return nexthandle++;
+      return mNextHandle++;
    }
 
+   XMLLocation& XMLContext::getLocation()
+   {
+      return mLocation;
+   }
+
+   void XMLContext::initContext()
+   {
+      mInit = true;
+   }
+
+   void XMLContext::setEventHandler(XMLEventHandlerPtr ehptr)
+   {
+      mEventHandler = ehptr;
+      mHandleEvents = true;
+   }
+
+   XMLEventHandler& XMLContext::getEventHandler()
+   {
+      return *mEventHandler.get();
+   }
+
+   bool XMLContext::handleEvents() const
+   {
+      return mHandleEvents;
+   }
+   
 
    // XMLAttributes methods
    bool XMLAttributes::has(const std::string& key) const
