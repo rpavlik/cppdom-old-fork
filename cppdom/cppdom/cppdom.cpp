@@ -51,6 +51,35 @@
 #include <cppdom/predicates.h>
 #include <string>
 
+namespace
+{
+   /** Method to split string base on seperator.
+    *
+    * If separator does not exist in string, then just return that string in the output.
+    *
+    * @example:
+    *    std::string s = "apple, orange, cherry, peach, grapefruit, cantalope,watermelon";
+    *    std::vector<std::string> v;
+    *    split( s, " ,", std::back_inserter(v) );
+    */
+   template<class OutIt>
+   void splitStr(
+      const std::string& s,
+      const std::string& sep,
+      OutIt dest)
+   {
+      std::string::size_type left = s.find_first_not_of( sep );
+      std::string::size_type right = s.find_first_of( sep, left );
+      while( left < right )
+      {
+         *dest = s.substr( left, right-left );
+         ++dest;
+         left = s.find_first_not_of( sep, right );
+         right = s.find_first_of( sep, left );
+      }
+   }
+}
+
 // namespace declaration
 namespace cppdom
 {
@@ -690,11 +719,12 @@ namespace cppdom
 
    bool Node::hasChild(const std::string& name)
    {
-      NodePtr child = getChild(name);
+      NodePtr child = getChildPath(name);
       return (child.get() != NULL);
    }
 
-   /** \note currently no path-like childname can be passed, like in e.g. msxml */
+   //
+   // Get children of the given name
    NodePtr Node::getChild(const std::string& name)
    {
       // possible speedup: first search if a handle to the childname is existing
@@ -712,6 +742,29 @@ namespace cppdom
 
       // no valid child found
       return NodePtr();
+   }
+
+   NodePtr Node::getChildPath(const std::string& path)
+   {
+      std::vector<std::string> node_path;
+      if(path.find('/') == std::string::npos)
+      { return getChild(path); }
+      else
+      { splitStr(path, "/", std::back_inserter(node_path)); }
+
+      Node*    next_node(this);               // The node we are looking at
+      NodePtr  last_found;                    // The last child we found
+
+      for(unsigned i=0;i<node_path.size();++i)
+      {
+         last_found = next_node->getChild(node_path[i]);
+         next_node = last_found.get();
+         if(next_node == NULL)              // If didn't find, then return NULL node
+         {  return NodePtr(); }
+      }
+
+      // Return the last node found in the list
+      return last_found;
    }
 
    NodeList Node::getChildren(const std::string& name)
@@ -939,6 +992,52 @@ namespace cppdom
       in.close();
    }
 
+   void Document::loadFileChecked(const std::string& filename)
+   {
+      try
+      {
+         loadFile( filename );
+      }
+      catch (cppdom::Error& e)
+      {
+         cppdom::Location where( mContext->getLocation() );
+         std::string errmsg = e.getStrError();
+
+         // print out where the error occured
+         std::cerr << filename << ":" << where.getLine() << " "
+                   << "at position " << where.getPos()
+                   << ": error: " << errmsg.c_str()
+                   << std::endl;
+
+         // print out line where the error occured
+         std::ifstream errfile( filename.c_str() );
+         if (!errfile)
+         {
+            std::cerr << "Can't open file [" << filename << "] to output error" << std::endl;
+         }
+
+         int linenr = where.getLine();
+         char linebuffer[1024];
+         for (int i=0; i<linenr && !errfile.eof(); i++)
+            errfile.getline( linebuffer,1024 );
+
+         int pos = where.getPos();
+         if (pos>=80)
+            pos %= 80;
+
+         std::string err_line( linebuffer + (where.getPos()-pos) );
+         if (err_line.length()>=79)
+            err_line.erase(79);
+         std::cerr << err_line << std::flush
+                   << err_line.c_str() << std::endl
+                   << linebuffer << std::endl;
+         for (int j=2;j<pos;j++)
+            std::cerr << " ";
+         std::cerr << '^' << std::endl;
+      }
+
+   }
+
    void Document::saveFile(std::string filename)
    {
       std::fstream out;
@@ -946,4 +1045,5 @@ namespace cppdom
       this->save(out);
       out.close();
    }
+
 }
