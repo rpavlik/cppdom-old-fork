@@ -249,8 +249,13 @@ if not SCons.Script.options.help_msg:
 
    if baseEnv['MakeDist'] != 'no':
       cppdom_pkg.setDistDir( distDir )
-      cppdom_pkg.addPackager( SConsAddons.AutoDist.TarGzPackager() )
-      cppdom_pkg.addPackager( SConsAddons.AutoDist.RpmPackager('cppdom.spec'))
+      if GetPlatform() == 'linux':
+         cppdom_pkg.addPackager( SConsAddons.AutoDist.TarGzPackager() )
+         cppdom_pkg.addPackager( SConsAddons.AutoDist.RpmPackager('cppdom.spec'))
+      elif GetPlatform() == 'win32':
+         pass
+      else:
+         cppdom_pkg.addPackager( SConsAddons.AutoDist.TarGzPackager() )
    cppdom_pkg.build()
 
    # Setup tar of source files
