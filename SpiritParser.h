@@ -51,6 +51,7 @@
 #include <boost/spirit/core.hpp>
 #include <boost/spirit/actor/push_back_actor.hpp>
 #include <boost/spirit/utility.hpp>
+#include <boost/bind.hpp>
 
 namespace bs = boost::spirit;
 using namespace boost::spirit;
@@ -61,18 +62,6 @@ namespace cppdom
 namespace spirit
 {
 
-void printElt(char const* first, char const* last)
-{
-   std::string str(first,last);
-   std::cout << "Elt: [" << str << "]" << std::endl;
-}
-
-void printEltExit(char const* first, char const* last)
-{
-   std::cout << "elt exit: " << std::string(first,last) << std::endl;
-}
-
-
 /** Class for building an xml node tree from a spirit parser.
  */
 class XmlBuilder
@@ -80,6 +69,9 @@ class XmlBuilder
 public:
    void startElement(char const* first, char const* last);
    void endElement(char const* first, char const* last);
+   void startAttribute(char const* first, char const* last);
+   void attribValue(char const* first, char const* last);
+   void elementText(char const* first, char const* last);
 };
 
 /**
@@ -88,13 +80,11 @@ public:
 */
 struct XmlGrammar : public grammar<XmlGrammar>
 {
-   /*
    XmlGrammar(XmlBuilder* builder)
       : mBuilder(builder)
    {;}
 
    XmlBuilder* mBuilder;
-   */
 
    /** Grammar definition. */
    template <typename ScannerT>
@@ -132,15 +122,19 @@ struct XmlGrammar : public grammar<XmlGrammar>
                            >> !('[' >> *(anychar_p - ']') >> ']')
                            >> *space_p >> '>';
 
-         element = ch_p('<') >> name[&printElt] >> *(ws >> attribute) >> *space_p
-                   >> ( (ch_p('>') >> elem_content >> str_p("</") >> name[&printEltExit] >> *space_p >> ch_p('>')) |
-                        (str_p("/>"))[&printEltExit] );
+         // element = (start element) >> ( (more elts >> end) | (quick end))
+         element = ch_p('<') >> name[boost::bind(&XmlBuilder::startElement,self.mBuilder,_1,_2)] >> *(ws >> attribute) >> *space_p
+                   >> ( (ch_p('>') >> elem_content >> str_p("</")
+                                   >> name[boost::bind(&XmlBuilder::endElement,self.mBuilder,_1,_2)] >> *space_p >> ch_p('>')) |
+                        (str_p("/>"))[boost::bind(&XmlBuilder::endElement,self.mBuilder,_1,_2)] );
 
-         elem_content = !char_data >> *( (element | comment | pi | cdata_sect) >> !char_data);
+         // elementText: eliminate extra space by consuming initial whitespace & only call when char_data matches
+         elem_content = *space_p >> !(char_data[boost::bind(&XmlBuilder::elementText,self.mBuilder,_1,_2)])
+                          >> *( (element | comment | pi | cdata_sect) >> *space_p >> !(char_data[boost::bind(&XmlBuilder::elementText,self.mBuilder,_1,_2)]) );
 
-         attribute = name >> *space_p >> '=' >> *space_p >> attrib_value;
-         attrib_value = ('"' >> *(anychar_p-'"') >> '"') |
-                        ("'" >> *(anychar_p-"'") >> "'");
+         attribute = name[boost::bind(&XmlBuilder::startAttribute,self.mBuilder,_1,_2)] >> *space_p >> '=' >> *space_p >> attrib_value;
+         attrib_value = ('"' >> (*(anychar_p-'"'))[boost::bind(&XmlBuilder::attribValue,self.mBuilder,_1,_2)] >> '"') |
+                        ("'" >> (*(anychar_p-"'"))[boost::bind(&XmlBuilder::attribValue,self.mBuilder,_1,_2)] >> "'");
 
          BOOST_SPIRIT_DEBUG_RULE(attribute);
          BOOST_SPIRIT_DEBUG_RULE(attrib_value);
