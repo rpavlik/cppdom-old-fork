@@ -9,7 +9,6 @@
 DZR_BASE_DIR=	..
 OBJDIR=objs
 DEPDIR=deps
-OBJ_EXT=.o
 
 # Nothing but comments should come before this line.
 default: all
