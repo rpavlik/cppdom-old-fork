@@ -318,7 +318,7 @@ namespace cppdom
       return *mEventHandler.get();
    }
 
-   bool Context::handleEvents() const
+   bool Context::hasEventHandler() const
    {
       return mHandleEvents;
    }
@@ -858,12 +858,12 @@ namespace cppdom
       return mContext;
    }
 
-
    // Document methods
 
    Document::Document()
    {
       mNodeType = Node::xml_nt_document;
+      mContext = cppdom::ContextPtr(new cppdom::Context);
    }
 
    Document::Document(ContextPtr context)

@@ -230,15 +230,15 @@ namespace cppdom
       EventHandler& getEventHandler();
 
       /** returns if a valid event handler is set */
-      bool handleEvents() const;
+      bool hasEventHandler() const;
       //@}
 
    protected:
       bool           mInit;               /**< indicates if init_context() was already called */
       int            mNextHandle;         /**< next available tagname handle */
-      TagNameMap  mTagNames;           /**< matches TagNameHandles to the real std::string's */
-      EntityMap   mEntities;           /**< Contains entity codes and their string representations */
-      Location    mLocation;           /**< location of the xml input stream */
+      TagNameMap     mTagNames;           /**< matches TagNameHandles to the real std::string's */
+      EntityMap      mEntities;           /**< Contains entity codes and their string representations */
+      Location       mLocation;           /**< location of the xml input stream */
       bool           mHandleEvents;       /**< indicates if the event handler is used */
       EventHandlerPtr mEventHandler;   /**< current parsing event handler */
    };
