@@ -44,7 +44,7 @@ void dump_node( XMLNode &node, int level = 0 )
    else
       cout << c << name.c_str() << endl;
 
-   XMLAttributes attr = node.getAttrmap();
+   XMLAttributes attr = node.getAttrMap();
 
    // guru: added output of attributes
    for (XMLAttributes::iterator j = attr.begin(); j!=attr.end(); j++)
@@ -104,9 +104,9 @@ void process_xml( std::string filename )
       ostr.close();
 
    }
-   catch (xmlerror e)
+   catch (XMLError e)
    {
-      XMLLocation where( context->get_location() );
+      XMLLocation where( context->getLocation() );
       XMLString errmsg;
       e.getStrError(errmsg);
 
@@ -123,16 +123,16 @@ void process_xml( std::string filename )
          std::cerr << "Can't open file [" << filename << "] to output error" << std::endl;
       }
 
-      int linenr = where.get_line();
+      int linenr = where.getLine();
       char linebuffer[1024];
       for(int i=0; i<linenr && !errfile.eof(); i++)
-         errfile.getline(linebuffer,1024);
+         errfile.getline( linebuffer,1024 );
 
-      int pos = where.get_pos();
+      int pos = where.getPos();
       if (pos>=80)
          pos %= 80;
 
-      std::string err_line( linebuffer + (where.get_pos()-pos) );
+      std::string err_line( linebuffer + (where.getPos()-pos) );
       if (err_line.length()>=79)
          err_line.erase(79);
       cout << err_line << std::flush;
