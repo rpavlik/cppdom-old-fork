@@ -254,6 +254,10 @@ namespace cppdom
             }
             mTokenizer.putBack();
 
+            // Clean up the cdata escaping
+            if(textContainsXmlEscaping(node.mCdata))
+            {  node.mCdata = removeXmlEscaping(node.mCdata, true); }
+
             if (handle)
             {
                context->getEventHandler().gotCdata( node.mCdata );
@@ -437,6 +441,10 @@ namespace cppdom
          std::string value(token2.getGeneric());
          value.erase(0, 1);
          value.erase(value.length()-1, 1);
+
+         // Clean up any escaping in value
+         if(textContainsXmlEscaping(value))
+         {  value = removeXmlEscaping(value, false); }
 
          // insert attribute into the map
          // guru: we got the name already
