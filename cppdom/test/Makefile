@@ -1,64 +1,84 @@
+# =============================================================================
+# Basic template makefile for applications.
+# $Id$
+#
+# *** IMPORTANT NOTES -- READ THESE FIRST ***
+#     1) This file _requires_ the use of GNU make (gmake).
+# =============================================================================
+
+DZR_BASE_DIR=	..
+
+# Nothing but comments should come before this line.
 default: all
 
-# Basic options.
-srcdir		= .
-CFLAGS		=  $(EXTRA_CFLAGS) $(INCLUDES) $(DEFS)
-CXXFLAGS	= -Wall -Werror-implicit-function-declaration -Wall -Werror-implicit-function-declaration $(EXTRA_CFLAGS) $(INCLUDES) $(DEFS)
-DEFS		= 
-EXTRA_CFLAGS	=  $(DEBUG_CFLAGS)
-DEBUG_CFLAGS	= -g -D_DEBUG
-OPTIM_CFLAGS	= -O2 -fno-strict-aliasing -D_OPT
-INCLUDES	= -I$(srcdir) -I$(srcdir)/../..
+# -----------------------------------------------------------------------------
+# Application-specific variable settings.  It is safe to modify these.
+# -----------------------------------------------------------------------------
 
-EXTRA_LFLAGS	=  $(DEBUG_LFLAGS)
-DEBUG_LFLAGS	= 
-OPTIM_LFLAGS	= 
-LINK_FLAGS	=   $(EXTRA_LFLAGS)
-LINKALL_ON	= -Wl,--whole-archive
-LINKALL_OFF	= -Wl,--no-whole-archive
+# The application name that is built.  A value must be set for this!
+APP_NAME1=	nodetest
+APP_NAME2=	parsetest
+APP_NAME3=	predtest
 
-# Libraries needed for linking.
-BASIC_LIBS	= -Wl,-Bstatic $(LINKALL_ON)  $(LINKALL_OFF) -Wl,-Bdynamic
-EXTRA_LIBS	= -Wl,-Bdynamic -lm  
+# The directory where the source files for this application are located.
+srcdir=  	.
 
-# Commands to execute.
-C_COMPILE	= gcc $(CFLAGS)
-CXX_COMPILE	= c++ $(CXXFLAGS)
-LINK		= c++ $(LINK_FLAGS)
+# Set a langauge for compiling.  This is optional and will default to C++ if
+# nothing is specified.  Currently supported langauges are C and C++.
+#LANGUAGE=	
 
-VPATH	= $(srcdir):$(srcdir)/..
+# Compiler flags needed for this application.  They are used as follows:
+#
+#    DEBUG_APP         - If set to TRUE, this application will be compiled with
+#                        debugging symbols and no optimized symbols
+#    OPTIM_APP         - If set to TRUE, this application will be compiled with
+DEBUG_APP=		TRUE
+OPTIM_APP=		FALSE
 
-nodetest_OBJS	= nodetest.o xmlparser.o cppdom.o xmltokenizer.o
-parsetest_OBJS	= parsetest.o xmlparser.o cppdom.o xmltokenizer.o
-predtest_OBJS	= predtest.o xmlparser.o cppdom.o xmltokenizer.o
+# The list of all source files (needed for dep generation)
+SRCS=	cppdom.cpp xmlparser.cpp xmltokenizer.cpp \
+         nodetest.cpp parsetest.cpp predtest.cpp
+
+# source files for each application
+SRCS1=   cppdom.cpp xmlparser.cpp xmltokenizer.cpp nodetest.cpp
+SRCS2=   cppdom.cpp xmlparser.cpp xmltokenizer.cpp parsetest.cpp
+SRCS3=   cppdom.cpp xmlparser.cpp xmltokenizer.cpp predtest.cpp
+
+# This is for extra libraries needed specfically for your application.  The
+# general libraries needed for applications are in $(LIBS).
+EXTRA_INCLUDES= -I..
+EXTRA_LIBS=		
+
+# Extend this as necessary to find source files that are not in the current
+# directory.  Set EXTRA_PATH_FOR_SOURCES to all the directories that you
+# have sources in. (current dir is already included by default)
+EXTRA_PATH_FOR_SOURCES=	../cppdom
+
+# Additional files and directories besides the standard ones that need to be
+# removed by the 'clean' target.
+CLEAN_FILES=		
+CLEAN_DIRS=		
+CLOBBER_FILES= $(APP_NAME1)$(EXE_EXT) $(APP_NAME2)$(EXE_EXT) $(APP_NAME3)$(EXE_EXT)
+
+# The following include line MUST COME BEFORE the targets and objs for 
+# compiling the application.
+include $(DZR_BASE_DIR)/mk/dzr.basicapp.mk
+
+# Construct $(OBJS) from $(SRCS) using the makeobjs function.
+OBJS1=		$(addprefix $(OBJDIR)/, $(call makeobjs, $(SRCS1)))
+OBJS2=		$(addprefix $(OBJDIR)/, $(call makeobjs, $(SRCS2)))
+OBJS3=		$(addprefix $(OBJDIR)/, $(call makeobjs, $(SRCS3)))
 
 # -----------------------------------------------------------------------------
-# Application build targets.
+# Targets.
 # -----------------------------------------------------------------------------
-all: nodetest parsetest predtest
+all: $(APP_NAME1)$(EXE_EXT) $(APP_NAME2)$(EXE_EXT) $(APP_NAME3)$(EXE_EXT)
 
-nodetest: $(nodetest_OBJS)
-	$(LINK) -o $@ $(nodetest_OBJS) $(BASIC_LIBS) $(EXTRA_LIBS)
+# Target for the application to be built.
+$(APP_NAME1)$(EXE_EXT): $(OBJS1)
+	$(LINK) -o $@ $(OBJS1) $(EXTRA_LIBS) $(LIBS)
+$(APP_NAME2)$(EXE_EXT): $(OBJS2)
+	$(LINK) -o $@ $(OBJS2) $(EXTRA_LIBS) $(LIBS)
+$(APP_NAME3)$(EXE_EXT): $(OBJS3)
+	$(LINK) -o $@ $(OBJS3) $(EXTRA_LIBS) $(LIBS)
 
-parsetest: $(parsetest_OBJS)
-	$(LINK) -o $@ $(parsetest_OBJS) $(BASIC_LIBS) $(EXTRA_LIBS)
-
-predtest: $(predtest_OBJS)
-	$(LINK) -o $@ $(predtest_OBJS) $(BASIC_LIBS) $(EXTRA_LIBS)
-
-# Suffix rules for building object files.
-.SUFFIXES: .cpp .o
-
-.cpp.o:
-	$(CXX_COMPILE) -o $@ -c $<
-
-# -----------------------------------------------------------------------------
-# Clean-up targets.
-# -----------------------------------------------------------------------------
-clean:
-	rm -f Makedepend *.o OpenSGNav.ilk  so_locations *.?db core*
-	rm -rf ii_files
-
-clobber:
-	@$(MAKE) clean
-	rm -f nodetest
