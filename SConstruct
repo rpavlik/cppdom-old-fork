@@ -146,7 +146,9 @@ EnsureSConsVersion(0,94)
 SourceSignatures('MD5')
 #SourceSignatures('timestamp')
 
-#SConsignFile()                 # Store all dep info in single file
+# Use single sconsign file.  (unfortunately irix crashes with this option)
+if GetPlatform() != 'irix':
+   SConsignFile('.sconsign.%s.dbm'%GetPlatform())                 # Store all dep info in single file
 
 # Figure out what vesion of CppDom we're using
 CPPDOM_VERSION = GetCppDomVersion()
@@ -248,6 +250,7 @@ if not SCons.Script.options.help_msg:
    if baseEnv['MakeDist'] != 'no':
       cppdom_pkg.setDistDir( distDir )
       cppdom_pkg.addPackager( SConsAddons.AutoDist.TarGzPackager() )
+      cppdom_pkg.addPackager( SConsAddons.AutoDist.RpmPackager('cppdom.spec'))
    cppdom_pkg.build()
 
    # Setup tar of source files
