@@ -10,6 +10,8 @@ namespace cppdomtest
        
    const std::string rime_xml_filename("data/rime10.xml");
    const std::string hamlet_xml_filename("data/hamlet.xml");
+   
+   const std::string xml_spec_filename("data//REC-xml-20040204.xml");
 }
       
 #endif

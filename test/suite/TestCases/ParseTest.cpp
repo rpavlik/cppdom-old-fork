@@ -59,6 +59,7 @@ void ParseTest::loadTestDocs()
    doc = loadDocNoCatch(cppdomtest::simple_nodes_xml_filename);
    doc = loadDocNoCatch(cppdomtest::rime_xml_filename);
    doc = loadDocNoCatch(cppdomtest::hamlet_xml_filename);
+//   doc = loadDocNoCatch(cppdomtest::xml_spec_filename);
 }
 
 
@@ -80,6 +81,7 @@ void ParseMetricTest::timeLoadTestDocs()
    //filenames.push_back(cppdomtest::nodetest_xml_filename);
    filenames.push_back(cppdomtest::rime_xml_filename);
    filenames.push_back(cppdomtest::hamlet_xml_filename);
+//   filenames.push_back(cppdomtest::xml_spec_filename);
 
    const unsigned iters(10);
 
