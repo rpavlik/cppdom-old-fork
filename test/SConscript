@@ -1,13 +1,13 @@
 #!python
-Import('baseEnv opts GetPlatform buildDir PREFIX cppunit_options')
+Import('baseEnv cppunit_options cppdom_pkg buildDir')
 
 import os
 pj = os.path.join
 
-env = baseEnv.Copy()
-env.Append(CPPPATH = Split('# #test'),
-           LIBPATH = [pj('#', buildDir, 'cppdom')],
-           LIBS = ['cppdom'])
+test_env = cppdom_pkg.getEnv().Copy()
+test_env.Append(CPPPATH = ['#', '#test'],
+                LIBPATH = [pj('#', buildDir, 'cppdom')],
+                LIBS = ['cppdom'])
 
 tests = Split("""
    maketree
@@ -16,11 +16,11 @@ tests = Split("""
 """)
 
 for t in tests:
-   env.Program(target = t, source = t+'.cpp')
+   test_prog = cppdom_pkg.createProgram(t, test_env, 'test/cppdom')
+   test_prog.addSources([t+'.cpp'])
+   test_prog.build()
 
 subdirs = []
 if cppunit_options.isAvailable():
    subdirs.append('suite')
 SConscript(dirs = subdirs)
-#for d in subdirs:
-#	SConscript(pj('#', d, 'SConscript'), src_dir = d, build_dir = 'build.' + GetPlatform(), duplicate = 0)
