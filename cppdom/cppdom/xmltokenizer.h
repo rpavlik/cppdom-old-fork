@@ -62,7 +62,7 @@ public:
    //! returns if token is a literal
    bool is_literal(){ return isliteral; }
    //! returns if it is and end of xml stream token
-   bool is_endofstream(){ return isliteral && literal==EOF/*xmlstring::traits_type::eof()*/; }
+   bool is_endofstream(){ return isliteral && literal==char(EOF)/*xmlstring::traits_type::eof()*/; }
    //! returns literal char
    xml_char_type get_literal(){ return literal; }
    //! returns generic string
