@@ -1,6 +1,7 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
-
+2004-02-14 allenb       Restructure the test suite.  Added StaticOnly option
+                        to build.  Added Metric Registry to test suite.                        
 [Version 0.3.0 released - 1.28.2004]===========================================
 2004-01-28 patrickh     Restored the ability to compile shared libraries.
 2003-10-07 allenb       Added support for "stringification" of attrib text and

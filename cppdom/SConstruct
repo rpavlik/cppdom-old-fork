@@ -239,6 +239,7 @@ opts.Add('WithCppUnit',
 opts.Add('prefix',
          'Installation prefix',
          '/usr/local')
+opts.Add('StaticOnly', 'If not "no" then build only static library', 'no')
 opts.Update(baseEnv)
 
 # Try to save the options if possible
@@ -285,6 +286,8 @@ baseEnv.Tar('cppdom-' + '%i.%i.%i' % CPPDOM_VERSION + '.tar.gz', tar_sources)
 
 # Build in a build directory
 buildDir = "build." + GetPlatform()
+Export('buildDir')
+
 BuildDir(pj(buildDir, 'test'), 'test', duplicate=0)
 BuildDir(pj(buildDir, 'cppdom'), 'cppdom', duplicate = 0)
 # Process subdirectories
