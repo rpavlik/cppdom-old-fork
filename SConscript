@@ -26,6 +26,10 @@ env.Append(CPPPATH = ['#'])
 if GetPlatform() == 'irix':
    env['SHCXXFLAGS'] = '${CXXFLAGS}'
 
-lib = pkg.createSharedLibrary('cppdom', env)
+shlib = pkg.createSharedLibrary('cppdom', env)
+shlib.addSources(sources)
+shlib.addHeaders(headers, 'cppdom')
+
+lib = pkg.createStaticLibrary('cppdom', env)
 lib.addSources(sources)
 lib.addHeaders(headers, 'cppdom')
