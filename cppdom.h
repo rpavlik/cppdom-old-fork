@@ -456,9 +456,9 @@ public:
    /** Returns the first child of the given local name */
    xmlnodeptr getChild( const xmlstring& name );
 
-   /** Return a list of children that have the pass the given STL predicate */
+   /** Return a list of children that pass the given STL predicate */
    template<class Predicate>
-   xmlnodelist getChildren(Predicate pred)
+   xmlnodelist getChildrenPredicate(Predicate pred)
    {
       xmlnodelist ret_nlist(0);
       xmlnodelist::const_iterator iter;
