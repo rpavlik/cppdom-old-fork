@@ -81,9 +81,8 @@ endif
 #
 CFLAGS=		$(OS_ABI_FLAGS) $(OS_CFLAGS) $(INCLUDES) $(EXTRA_CFLAGS)
 CXXFLAGS=	$(OS_ABI_FLAGS) $(OS_CXXFLAGS) $(INCLUDES) $(EXTRA_CXXFLAGS)
-ARFLAGS=	$(OS_ABI_FLAGS) $(OS_LIB_FLAGS) $(OS_ARFLAGS) $(EXTRA_ARFLAGS)
-LDFLAGS=	$(OS_ABI_FLAGS) $(OS_SHLIB_FLAGS) $(OS_LDFLAGS)		\
-		$(EXTRA_LDFLAGS)
+ARFLAGS=	$(OS_LIB_FLAGS) $(OS_ARFLAGS) $(EXTRA_ARFLAGS)
+LDFLAGS=	$(OS_SHLIB_FLAGS) $(OS_LDFLAGS) $(EXTRA_LDFLAGS)
 
 # The default include path.  We assume that the users will have .h files in
 # their source directory.  It should not hurt to assume that unless the user
