@@ -298,7 +298,7 @@ namespace cppdom
        * first word of the attribute string is returned.
        */
       template<>
-      std::string getValue<std::string>() const
+      const std::string& getValue<std::string>() const
       {
          return mData;
       }
@@ -315,7 +315,7 @@ namespace cppdom
 #ifndef CPPDOM_NO_MEMBER_TEMPLATES
 #ifndef _MSC_VER
    template<>
-   inline std::string Attribute::getValue<std::string>() const
+   inline const std::string& Attribute::getValue<std::string>() const
    {
       return mData;
    }
