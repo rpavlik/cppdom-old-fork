@@ -265,9 +265,8 @@ buildDir = "build." + GetPlatform() + "/";
 #BuildDir(pj(build_dir, 'test'), 'test', duplicate=0);
 
 # Process subdirectories
-subdirs = Split('cppdom')
-if HasCppUnit(baseEnv):
-   subdirs.append('test')
+subdirs = Split('cppdom test')
+
 for d in subdirs:
    #SConscript(pj(d, 'SConscript'), build_dir = buildDir, duplicate=0 )
    SConscript(pj(d,'SConscript'))
