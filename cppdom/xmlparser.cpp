@@ -85,39 +85,39 @@ bool XMLParser::parseHeader( XMLDocument &doc, XMLContextPtr &ctxptr )
    while(1==1)
    {
       tokenizer++;
-      xmltoken token1 = *tokenizer;
+      XMLToken token1 = *tokenizer;
       if (token1 != '<')
          throw XMLError( xml_opentag_expected );
 
       // token after opening < is a literal?
       tokenizer++;
-      xmltoken token2 = *tokenizer;
-      if (!token2.is_literal())
+      XMLToken token2 = *tokenizer;
+      if (!token2.isLiteral())
       {
          // generic string encountered: assume no pi and doctype tags
-         tokenizer.put_back();
-         tokenizer.put_back(token1);
+         tokenizer.putBack();
+         tokenizer.putBack(token1);
          return false;
       }
 
       // now check for the literal
-      switch(token2.get_literal())
+      switch(token2.getLiteral())
       {
          // comment or doctype tag
       case '!':
          {
             tokenizer++;
-            xmltoken token3 = *tokenizer;
+            XMLToken token3 = *tokenizer;
 
-            if (!token3.is_literal())
+            if (!token3.isLiteral())
             {
                // now a doctype tag or a comment may follow
-               if (token3.get_generic().at(0) == '-' &&
-                   token3.get_generic().at(1) == '-')
+               if (token3.getGeneric().at(0) == '-' &&
+                   token3.getGeneric().at(1) == '-')
                    parseComment( ctxptr );
                else
                {
-                  XMLString doctypestr(token3.get_generic());
+                  XMLString doctypestr(token3.getGeneric());
 
                   std::transform(doctypestr.begin(),doctypestr.end(),doctypestr.begin(),toupper);
 
@@ -140,15 +140,15 @@ bool XMLParser::parseHeader( XMLDocument &doc, XMLContextPtr &ctxptr )
       case '?':
          {
             tokenizer++;
-            xmltoken token3 = *tokenizer;
+            XMLToken token3 = *tokenizer;
 
-            if (token3.is_literal())
+            if (token3.isLiteral())
                throw XMLError( xml_pi_doctype_expected );
 
             // parse processing instruction
             XMLNode pinode( ctxptr );
 
-            XMLString tagname( token3.get_generic() );
+            XMLString tagname( token3.getGeneric() );
             pinode.nodenamehandle = ctxptr->insertTagname( tagname );
 
             parseAttributes( pinode.attributes );
@@ -183,12 +183,12 @@ bool XMLParser::parseNode( XMLNode &node, XMLContextPtr &ctxptr )
    bool handle = ctxptr->handleEvents();
 
    tokenizer++;
-   xmltoken token1 = *tokenizer;
+   XMLToken token1 = *tokenizer;
 
-   if (token1.is_endofstream())
+   if (token1.isEndOfStream())
       return false;
 
-   xmltoken token2;
+   XMLToken token2;
 
    // loop when we encounter a comment
    bool again;
@@ -197,7 +197,7 @@ bool XMLParser::parseNode( XMLNode &node, XMLContextPtr &ctxptr )
       again = false;
 
       // check if we have cdata
-      if (!token1.is_literal())
+      if (!token1.isLiteral())
       {
          XMLString cdataname("cdata");
          node.nodenamehandle = ctxptr->insertTagname( cdataname );
@@ -206,13 +206,13 @@ bool XMLParser::parseNode( XMLNode &node, XMLContextPtr &ctxptr )
          node.nodetype = xml_nt_cdata;
          node.mCdata.empty();
 
-         while(!token1.is_literal())
+         while(!token1.isLiteral())
          {
-            node.mCdata += token1.get_generic();
+            node.mCdata += token1.getGeneric();
             tokenizer++;
             token1 = *tokenizer;
          }
-         tokenizer.put_back();
+         tokenizer.putBack();
 
          if (handle)
             ctxptr->getEventHandler().gotCdata( node.mCdata );
@@ -228,16 +228,16 @@ bool XMLParser::parseNode( XMLNode &node, XMLContextPtr &ctxptr )
       // get node name
       tokenizer++;
       token2 = *tokenizer;
-      if (token2.is_literal())
+      if (token2.isLiteral())
       {
          // check the following literal
-         switch(token2.get_literal())
+         switch(token2.getLiteral())
          {
             // closing '</...>' follows
          case '/':
             // return, we have a closing node with no more content
-            tokenizer.put_back();
-            tokenizer.put_back( token1 );
+            tokenizer.putBack();
+            tokenizer.putBack( token1 );
             return false;
 
             // comment follows
@@ -259,7 +259,7 @@ bool XMLParser::parseNode( XMLNode &node, XMLContextPtr &ctxptr )
    } while (again);
 
    // insert tag name and set handle for it
-   XMLString tagname( token2.get_generic() );
+   XMLString tagname( token2.getGeneric() );
    node.nodenamehandle = ctxptr->insertTagname( tagname );
 
    // notify event handler
@@ -274,12 +274,12 @@ bool XMLParser::parseNode( XMLNode &node, XMLContextPtr &ctxptr )
 
    // check for leaf
    tokenizer++;
-   xmltoken token3 = *tokenizer;
+   XMLToken token3 = *tokenizer;
    if (token3 == '/' )
    {
       // node has finished
       tokenizer++;
-      xmltoken token4 = *tokenizer;
+      XMLToken token4 = *tokenizer;
       if (token4 != '>' )
          throw XMLError(xml_closetag_expected);
 
@@ -311,18 +311,18 @@ bool XMLParser::parseNode( XMLNode &node, XMLContextPtr &ctxptr )
    }
 
    // parse end tag
-   xmltoken token5 = *tokenizer++;
+   XMLToken token5 = *tokenizer++;
    tokenizer++;
    if (token5 != '<' && *tokenizer != '/')
       throw XMLError(xml_opentag_expected);
 
    tokenizer++;
    token1 = *tokenizer;
-   if (token1.is_literal())
+   if (token1.isLiteral())
       throw XMLError(xml_tagname_expected);
 
    // check if open and close tag names are identical
-   if (token1.get_generic() != token2.get_generic() )
+   if (token1.getGeneric() != token2.getGeneric() )
       throw XMLError(xml_tagname_close_mismatch);
 
    tokenizer++;
@@ -340,29 +340,29 @@ bool XMLParser::parseAttributes( XMLAttributes &attr )
    while(1==1)
    {
       tokenizer++;
-      xmltoken token1 = *tokenizer;
+      XMLToken token1 = *tokenizer;
 
-      if (token1.is_literal())
+      if (token1.isLiteral())
       {
-         tokenizer.put_back();
+         tokenizer.putBack();
          return false;
       }
 
       // guru: get value name here
-      XMLString name = token1.get_generic();
+      XMLString name = token1.getGeneric();
 
       tokenizer++;
       if (*tokenizer != '=')
          throw XMLError(xml_attr_equal_expected);
 
       tokenizer++;
-      xmltoken token2 = *tokenizer;
+      XMLToken token2 = *tokenizer;
 
-      if (token2.is_literal())
+      if (token2.isLiteral())
          throw XMLError(xml_attr_value_expected);
 
       // remove "" from attribute value
-      XMLString value( token2.get_generic() );
+      XMLString value( token2.getGeneric() );
       value.erase(0,1);
       value.erase(value.length()-1,1);
 

@@ -25,7 +25,7 @@
    Boston, MA  02111-1307  USA.
 
 */
-/*! \file xmltokenizer.cpp
+/*! \file XMLTokenizer.cpp
 
   contains the xml stream tokenizer
 
@@ -33,7 +33,7 @@
 
 // needed includes
 #include <cppdom/cppdom.h>
-#include <cppdom/xmltokenizer.h>
+#include <cppdom/XMLTokenizer.h>
 
 
 // namespace declaration
@@ -43,20 +43,20 @@ namespace cppdom {
 // xmlstream_iterator methods
 
 xmlstream_iterator::xmlstream_iterator(std::istream &is,XMLLocation &loc)
-:xmltokenizer(is,loc)
+:XMLTokenizer(is,loc)
 {
-   putback_char = char(-1);
-   cdata_mode = false;
+   putbackChar = char(-1);
+   cdataMode = false;
 }
 
 //! \todo check for instr.eof()
-void xmlstream_iterator::get_next()
+void xmlstream_iterator::getNext()
 {
    // first use the token stack if filled
    if (tokenstack.size() != 0)
    {
       // get the token from the stack and return it
-      xmltoken tok;
+      XMLToken tok;
       curtoken = tokenstack.top();
       tokenstack.pop();
 
@@ -72,15 +72,15 @@ void xmlstream_iterator::get_next()
 
    do
    {
-      if (putback_char == char(-1) )
+      if (putbackChar == char(-1) )
       {
          c = instr.get();
          location.step();
       }
       else
       {
-         c = putback_char;
-         putback_char = char(-1);
+         c = putbackChar;
+         putbackChar = char(-1);
          location.step();
       }
 
@@ -98,26 +98,26 @@ void xmlstream_iterator::get_next()
       }
 
       // is it a literal?
-      if (is_literal(c))
+      if (isLiteral(c))
       {
-         cdata_mode = false;
+         cdataMode = false;
          if (generic.length()==0)
          {
             curtoken = c;
 
-            // quick fix for removing set_cdata_mode() functionality
+            // quick fix for removing set_cdataMode() functionality
             if (c=='>')
-               cdata_mode = true;
+               cdataMode = true;
 
             return;
          }
-         putback_char = c;
+         putbackChar = c;
          location.step(-1);
          break;
       }
 
       // a string delimiter and not in cdata mode?
-      if (is_stringdelimiter(c) && !cdata_mode)
+      if (isStringDelimiter(c) && !cdataMode)
       {
          generic = c;
          xml_char_type delim = c;
@@ -133,19 +133,19 @@ void xmlstream_iterator::get_next()
       }
 
       // a whitespace?
-      if (is_whitespace(c))
+      if (isWhiteSpace(c))
       {
          if (generic.length()==0)
             continue;
          else
-            if (!cdata_mode)
+            if (!cdataMode)
                break;
       }
 
       // a newline char?
-      if (is_newline(c) )
+      if (isNewLine(c) )
       {
-         if (cdata_mode && generic.length()!=0)
+         if (cdataMode && generic.length()!=0)
             c = ' ';
          else
             continue;
@@ -161,7 +161,7 @@ void xmlstream_iterator::get_next()
 }
 
 // returns if we have a literal char
-bool xmlstream_iterator::is_literal( xml_char_type c )
+bool xmlstream_iterator::isLiteral( xml_char_type c )
 {
    switch(c)
    {
@@ -169,7 +169,7 @@ bool xmlstream_iterator::is_literal( xml_char_type c )
    case '=':
    case '!':
    case '/':
-      if (cdata_mode)
+      if (cdataMode)
          return false;
    case '<':
    case '>':
@@ -179,7 +179,7 @@ bool xmlstream_iterator::is_literal( xml_char_type c )
 }
 
 // returns if we have a white space char
-bool xmlstream_iterator::is_whitespace( xml_char_type c )
+bool xmlstream_iterator::isWhiteSpace( xml_char_type c )
 {
    switch(c)
    {
@@ -191,7 +191,7 @@ bool xmlstream_iterator::is_whitespace( xml_char_type c )
 }
 
 // returns if we have a newline
-bool xmlstream_iterator::is_newline( xml_char_type c )
+bool xmlstream_iterator::isNewLine( xml_char_type c )
 {
    switch(c)
    {
@@ -204,7 +204,7 @@ bool xmlstream_iterator::is_newline( xml_char_type c )
 }
 
 // returns if we have a string delimiter (separating " and ')
-bool xmlstream_iterator::is_stringdelimiter( xml_char_type c )
+bool xmlstream_iterator::isStringDelimiter( xml_char_type c )
 {
    switch(c)
    {
