@@ -2,9 +2,9 @@
 #define XMLPP_PREDICATES
 
 #include <string>
-#include <xmlpp/xmlpp.h>
+#include <cppdom/cppdom.h>
 
-namespace xmlpp
+namespace cppdom
 {
    class HasAttributeNamePredicate
    {
@@ -54,6 +54,6 @@ namespace xmlpp
       std::string mName, mValue;
    };
 
-} // end xmlpp namespace
+} // end cppdom namespace
 
 #endif

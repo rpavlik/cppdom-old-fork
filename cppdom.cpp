@@ -1,4 +1,4 @@
-// this xmlpp was branched from the original LGPL'd xmlpp version 0.6
+// cppdom was branched from the original LGPL'd xmlpp version 0.6
 // this new branched xmlpp is under the same LGPL (of course) and
 // is being maintained by:
 //    kevin meinert <subatomic@users.sf.net>
@@ -25,18 +25,18 @@
    Boston, MA  02111-1307  USA.
 
 */
-/*! \file xmlpp.cpp
+/*! \file cppdom.cpp
 
   contains the methods of the xmlpp classes
 
 */
 
 // needed includes
-#include <xmlpp/xmlpp.h>
-#include <xmlpp/xmlparser.h>
+#include <cppdom/cppdom.h>
+#include <cppdom/xmlparser.h>
 
 // namespace declaration
-namespace xmlpp {
+namespace cppdom {
 
 
 // macro for keeping the errorcode switch short and easy
@@ -217,14 +217,14 @@ xmlnodeptr xmlnode::getChild(const xmlstring &name)
    return xmlnodeptr(NULL);
 }
 
-/*! \exception throws xmlpp::xmlerror when a streaming or parsing error occur */
+/*! \exception throws cppdom::xmlerror when a streaming or parsing error occur */
 void xmlnode::load( std::istream &instream, xmlcontextptr &ctxptr )
 {
    xmlparser parser(instream,ctxptr->get_location());
    parser.parse_node( *this, ctxptr );
 }
 
-/*! \exception throws xmlpp::xmlerror when a streaming or parsing error occur */
+/*! \exception throws cppdom::xmlerror when a streaming or parsing error occur */
 void xmlnode::save( std::ostream &outstream, int indent )
 {
    // output indendation spaces
@@ -290,7 +290,7 @@ void xmlnode::save( std::ostream &outstream, int indent )
 
 // xmldocument methods
 
-/** \exception throws xmlpp::xmlerror when a streaming or parsing error occur */
+/** \exception throws cppdom::xmlerror when a streaming or parsing error occur */
 void xmldocument::load( std::istream &instream, xmlcontextptr &ctxptr )
 {
    xmlparser parser(instream, ctxptr->get_location());
@@ -298,7 +298,7 @@ void xmldocument::load( std::istream &instream, xmlcontextptr &ctxptr )
 }
 
 /** \todo implement: print <!doctype> tag;
-* \exception throws xmlpp::xmlerror when a streaming or parsing error occur
+* \exception throws cppdom::xmlerror when a streaming or parsing error occur
 */
 void xmldocument::save( std::ostream &outstream )
 {
