@@ -1,5 +1,9 @@
+#!python
+import wing.wingdbstub;       # stuff for debugging
 import os, string, sys
 pj = os.path.join
+
+print "------------------ HELLO -----------------"
 
 # Bring in the AutoDist build helper
 sys.path.append('tools/build')
@@ -120,10 +124,10 @@ def BuildWin32Environment():
 def HasCppUnit(env):
    "Tests if the user has CppUnit available"
    sys.stdout.write('checking for cppunit... ')
-   if env['with-cppunit'] == None:
+   if env['WithCppUnit'] == None:
       found = 0
    else:
-      cfg = os.path.join(env['with-cppunit'], 'bin', 'cppunit-config')
+      cfg = os.path.join(env['WithCppUnit'], 'bin', 'cppunit-config')
       found = os.path.isfile(cfg)
 
    if found:
@@ -138,7 +142,7 @@ def SetupCppUnit(env):
    if not HasCppUnit(env):
       print 'ERROR: Could not find CppUnit installation.'
       sys.exit(1)
-   cfg = pj(env['with-cppunit'], 'bin', 'cppunit-config')
+   cfg = pj(env['WithCppUnit'], 'bin', 'cppunit-config')
    ParseConfig(env, cfg + ' --cflags --libs')
 Export('SetupCppUnit')
 
@@ -147,7 +151,7 @@ Export('SetupCppUnit')
 #------------------------------------------------------------------------------
 # Grok the arguments to this build
 #------------------------------------------------------------------------------
-EnsureSConsVersion(0,10)
+EnsureSConsVersion(0,11)
 
 # Figure out what vesion of CppDom we're using
 CPPDOM_VERSION = GetCppDomVersion()
@@ -178,13 +182,18 @@ else:
    sys.exit(-1)
 Export('baseEnv')
 
+# Do we have the super cool savable version
+have_cool_options = 'Save' in dir(Options)
+
 opts = Options('config.cache')
-opts.Add('with-cppunit',
+opts.Add('WithCppUnit',
          'CppUnit installation directory',
          '/usr/local',
-         lambda k,v: WhereIs(pj(v, 'bin', 'cppunit-config')) != None
+         lambda k,v,env=None: WhereIs(pj(v, 'bin', 'cppunit-config')) != None
         )
 opts.Update(baseEnv)
+if have_cool_options:
+   opts.Save('config.cache', baseEnv);
 Help(opts.GenerateHelpText(baseEnv))
 
 
@@ -208,12 +217,17 @@ pkg.addExtraDist(Split("""
 """))
 Export('pkg')
 
+# Build in a build directory
+buildDir = "build." + GetPlatform() + "/";
+#BuildDir(pj(build_dir, 'test'), 'test', duplicate=0);
+
 # Process subdirectories
 subdirs = Split('cppdom')
 if HasCppUnit(baseEnv):
    subdirs.append('test')
-SConscript(dirs = subdirs)
-
+for d in subdirs:
+   #SConscript(pj(d, 'SConscript'), build_dir = buildDir, duplicate=0 )
+   SConscript(pj(d,'SConscript'))
 
 # Setup the builder for cppdom-config
 env = baseEnv.Copy(BUILDERS = builders)
