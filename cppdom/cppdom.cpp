@@ -216,7 +216,7 @@ XMLNodePtr XMLNode::getChild(const XMLString &name)
    }
 
    // no valid child found
-   return XMLNodePtr(NULL);
+   return XMLNodePtr();
 }
 
 /*! \exception throws cppdom::XMLError when a streaming or parsing error occur */
