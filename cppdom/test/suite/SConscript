@@ -11,6 +11,7 @@ sources = Split("""
    TestCases/ErrorTest.cpp
    TestCases/ParseTest.cpp
    TestCases/PredTest.cpp
+   TestCases/SpiritTest.cpp
 """)
 
 env = baseEnv.Copy()
