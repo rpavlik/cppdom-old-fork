@@ -235,7 +235,7 @@ protected:
 };
 
 /** node type enumeration */
-enum XMLNodetype
+enum XMLNodeType
 {
    xml_nt_node,      /**< normal node, can contain subnodes */
    xml_nt_leaf,      /**< a leaf node, which contains no further nodes, eg. <img/> */
@@ -351,7 +351,7 @@ public:
 /** xml node
 * A node has the following properties
 * name - The element name of the node
-* type - The type of the node. see XMLNodetype
+* type - The type of the node. see XMLNodeType
 * children - Child elements of the node
 * cdata - the cdata content if of type cdata
 *
@@ -386,7 +386,7 @@ public:
    /** @name access to node info */
    //@{
    /** returns type of node */
-   XMLNodetype getType() const
+   XMLNodeType getType() const
    { 
       return nodetype; 
    }
@@ -428,7 +428,7 @@ public:
    /** @name node data manipulation */
    //@{
    /** sets new nodetype */
-   void setType( XMLNodetype ntype )
+   void setType( XMLNodeType ntype )
    { 
       nodetype = ntype; 
    }
@@ -554,7 +554,7 @@ public:
 protected:
    XMLTagNameHandle  nodenamehandle;   /**< handle to the real tag name */
    XMLContextPtr     contextptr;       /**< smart pointer to the context class */
-   XMLNodetype       nodetype;         /**< The type of the node */
+   XMLNodeType       nodetype;         /**< The type of the node */
    XMLAttributes     attributes;       /**< Attributes of the element */
    XMLString         mCdata;           /**< Character data (if there is any) */
    XMLNodeList       mNodelist;        /**< stl list with subnodes */
