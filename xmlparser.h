@@ -51,24 +51,25 @@ public:
    XMLParser( std::istream &inputstream, XMLLocation &loc );
 
    //! parses the node as the document root
-   bool parse_document( XMLDocument &doc, XMLContextPtr &ctxptr );
+   bool parseDocument( XMLDocument &doc, XMLContextPtr &ctxptr );
    
    //! parses a node, without processing instructions
-   bool parse_node( XMLNode &node, XMLContextPtr &ctxptr );
+   bool parseNode( XMLNode &node, XMLContextPtr &ctxptr );
 
 protected:
    //! parses xml header, such as processing instructions, doctype etc.
-   bool parse_header( XMLDocument &doc, XMLContextPtr &ctxptr );
+   bool parseHeader( XMLDocument &doc, XMLContextPtr &ctxptr );
 
    //! parses an xml tag attribute list
-   bool parse_attributes( XMLAttributes &attr );
+   bool parseAttributes( XMLAttributes &attr );
 
    //! parses a <!-- --> comment 
-   void parse_comment( XMLContextPtr &ctxptr );
+   void parseComment( XMLContextPtr &ctxptr );
 
 protected:
    //! input stream
    std::istream &instream;
+
    //! stream iterator
    xmlstream_iterator tokenizer;
 };
