@@ -72,11 +72,11 @@ tests:
 
 # Target for the shared library to be built.
 $(SHARED_LIB_FILENAME): $(OBJS)
-	$(SHARED_LINK) -o $@ $(OBJS)
+	$(SHARED_LINK) $(SHARED_OUT)$@ $(OBJS)
 
 # Target for the static library to be built.
 $(STATIC_LIB_FILENAME): $(OBJS)
-	$(STATIC_LINK) $@ $(OBJS)
+	$(STATIC_LINK) $(STATIC_OUT)$@ $(OBJS)
 
 # TODO: edit this to install your files... 
 #        - determine if you need all the dirs (bin, share, lib, include)
