@@ -120,44 +120,26 @@ namespace cppdom
    {
    public:
       /** Constructor */
-      XMLLocation()
-      {
-         reset();
-      }
+      XMLLocation();
 
       /** returns current line */
-      int getLine() const
-      {
-         return line;
-      }
+      int getLine() const;
 
       /** returns current position in a line */
-      int getPos() const
-      {
-         return pos;
-      }
+      int getPos() const;
 
       /** advances a char */
-      void step(int chars = 1)
-      {
-         pos += chars;
-      }
+      void step(int chars = 1);
 
       /** indicates entering a new line */
-      void newline()
-      {
-         ++line;
-         pos = 1;
-      }
+      void newline();
 
       /** reset location */
-      void reset()
-      {
-         line = pos = 1;
-      }
+      void reset();
 
    protected:
-      int line, pos;
+      int mLine;
+      int mPos;
    };
 
 
