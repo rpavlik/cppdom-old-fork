@@ -688,6 +688,12 @@ namespace cppdom
       return mNodeList;
    }
 
+   bool Node::hasChild(const std::string& name)
+   {
+      NodePtr child = getChild(name);
+      return (child.get() != NULL);
+   }
+
    /** \note currently no path-like childname can be passed, like in e.g. msxml */
    NodePtr Node::getChild(const std::string& name)
    {
@@ -716,7 +722,8 @@ namespace cppdom
       // search for all occurances of nodename and insert them into the new list
       for(iter = mNodeList.begin(); iter != mNodeList.end(); ++iter)
       {
-         if ((*iter)->getName() == name)
+         const std::string node_name = (*iter)->getName();
+         if (node_name == name)
          {
             result.push_back(*iter);
          }
