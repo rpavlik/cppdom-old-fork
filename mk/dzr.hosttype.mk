@@ -58,6 +58,10 @@ ifeq ($(DZR_HOSTTYPE), FreeBSD)
    include $(DZR_BASE_DIR)/mk/dzr.freebsd.mk
    HOSTTYPE=	FreeBSD
 endif
+ifeq ($(DZR_HOSTTYPE), SunOS)
+   include $(DZR_BASE_DIR)/mk/dzr.solaris.mk
+   HOSTTYPE=	Solaris
+endif
 ifeq ($(findstring WIN, $(DZR_HOSTTYPE)), WIN)
    include $(DZR_BASE_DIR)/mk/dzr.win32.mk
    HOSTTYPE=	Win32

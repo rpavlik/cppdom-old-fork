@@ -81,27 +81,29 @@ else
 endif
 
 # Basic compiler flags.
-OS_CFLAGS=	
-OS_CXXFLAGS=	
-OS_ARFLAGS= 	-ruv
-OS_LDFLAGS=	
-OS_INCLUDES=	
-OS_DEBUG_FLAGS=	-g
-OS_OPTIM_FLAGS=	-O
-OS_DEBUG_LINK_FLAGS=-g
-OS_OPTIM_LINK_FLAGS=-O
-OS_SHLIB_FLAGS=	-shared
-OS_LD_NAME_FLAG=     -o 
-OS_AR_NAME_FLAG=
+OS_CFLAGS=		
+OS_CXXFLAGS=		
+OS_ARFLAGS=		-ruv
+OS_LDFLAGS=		
+OS_INCLUDES=		
+OS_DEBUG_FLAGS=		-g
+OS_OPTIM_FLAGS=		-O
+OS_DEBUG_LINK_FLAGS=	-g
+OS_OPTIM_LINK_FLAGS=	-O
+OS_SHLIB_FLAGS=		-shared
+OS_LD_NAME_FLAG=	-o 
+OS_AR_NAME_FLAG=	
 
 # File extensions.
-OS_LIB_EXT=	.a
-OS_SHLIB_EXT=	.so
-OS_LIB_PREFIX= 	lib
+OS_LIB_EXT=		.a
+OS_SHLIB_EXT=		.so
+OS_LIB_PREFIX=		lib
 OS_SHLIB_PREFIX=	lib
-OS_EXE_EXT=	
-OS_OBJ_EXT=	.o
+OS_EXE_EXT=		
+OS_OBJ_EXT=		.o
 
 # Wrapper options for doing static linking of libraries.
-OS_STATIC_BEGIN= 	-Wl,-Bstatic
+OS_STATIC_BEGIN=	-Wl,-Bstatic
 OS_STATIC_END=		-Wl,-Bdynamic
+OS_LINKALL_BEGIN=	-Wl,--whole-archive
+OS_LINKALL_END=		-Wl,--no-whole-archive

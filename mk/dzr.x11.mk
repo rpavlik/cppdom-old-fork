@@ -42,13 +42,13 @@ include $(DZR_BASE_DIR)/mk/dzr.hosttype.mk
 
 ifeq ($(HOSTTYPE), IRIX)
 X11_LDFLAGS?=	
-X11_LIBS?= 	-lX11 -lXext
+X11_LIBS?=	-lX11 -lXext
 endif
 ifeq ($(HOSTTYPE), Linux)
 X11_LDFLAGS?=	-L/usr/X11R6/lib
-X11_LIBS?= 	-lX11 -lXext
+X11_LIBS?=	-lX11 -lXext
 endif
 ifeq ($(HOSTTYPE), FreeBSD)
 X11_LDFLAGS?=	-L/usr/X11R6/lib
-X11_LIBS?= 	-lX11 -lXext
+X11_LIBS?=	-lX11 -lXext
 endif

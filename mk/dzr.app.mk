@@ -84,7 +84,7 @@ endif
 #
 CFLAGS=		$(OS_ABI_FLAGS) $(OS_CFLAGS) $(INCLUDES) $(EXTRA_CFLAGS)
 CXXFLAGS=	$(OS_ABI_FLAGS) $(OS_CXXFLAGS) $(INCLUDES) $(EXTRA_CXXFLAGS)
-LDFLAGS= 	$(OS_ABI_FLAGS) $(OS_LDFLAGS) $(EXTRA_LDFLAGS)
+LDFLAGS=	$(OS_ABI_FLAGS) $(OS_LDFLAGS) $(EXTRA_LDFLAGS)
 
 # The default include path.  We assume that the users will have .h files in
 # their source directory.  It should not hurt to assume that unless the user
@@ -95,14 +95,14 @@ INCLUDES=	-I$(srcdir) $(OS_INCLUDES) $(EXTRA_INCLUDES)
 # Wrapper options around the list of libraries needed at link time.  These
 # are to be put at the start and end of $(LIBS) respectively when it is set.
 LIBS_BEGIN=	$(OS_LIBS_BEGIN)
-LIBS_END= 	$(OS_LIBS_END)
+LIBS_END=	$(OS_LIBS_END)
 
 # Basic libraries needed by various types of applications.  They are as
 # follows:
 #
 #    SYS_LIBS - The system libraries needed by all applications
 #
-SYS_LIBS= 	$(OS_SYS_LIBS) $(EXTRA_SYS_LIBS)
+SYS_LIBS=	$(OS_SYS_LIBS) $(EXTRA_SYS_LIBS)
 
 # Command to set the umask used for compiled files.
 ifneq ($(UMASK), )
@@ -113,5 +113,7 @@ endif
 C_COMPILE=	$(SET_UMASK) $(CC) $(CFLAGS)
 CXX_COMPILE=	$(SET_UMASK) $(CXX) $(CXXFLAGS) 
 LINK=		$(SET_UMASK) $(LD) $(LDFLAGS)
-LINK_OUT = 	$(OS_LD_NAME_FLAG)
-EXE_EXT =	$(OS_EXE_EXT)
+LINK_OUT=	$(OS_LD_NAME_FLAG)
+EXE_EXT=		$(OS_EXE_EXT)
+LINKALL_BEGIN = 	$(OS_LINKALL_BEGIN)
+LINKALL_END = 	$(OS_LINKALL_END)

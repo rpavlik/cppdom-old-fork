@@ -98,29 +98,29 @@ UMASK=		umask
 UMASK_VAL=	002
 
 # Basic compiler flags.
-OS_ABI?=	n32
-OS_ISA?=	mips3
-OS_ABI_FLAGS=	-$(OS_ABI) -$(OS_ISA)
-OS_CFLAGS=	
-OS_CXXFLAGS= 	-LANG:std
-OS_DEBUG_FLAGS=	-w2 -g -gslim
-OS_OPTIM_FLAGS=	-O
-OS_DEBUG_LINK_FLAGS=-w2 -g -gslim
-OS_OPTIM_LINK_FLAGS=-O
-OS_ARFLAGS= 	-LANG:std -J6 -ar -WR,-v -o
-OS_LDFLAGS= 	-LANG:std -J6 -all
-OS_INCLUDES=	
-OS_SHLIB_FLAGS=	-shared
-OS_LD_NAME_FLAG=     -o 
-OS_AR_NAME_FLAG=
+OS_ABI?=		n32
+OS_ISA?=		mips3
+OS_ABI_FLAGS=		-$(OS_ABI) -$(OS_ISA)
+OS_CFLAGS=		
+OS_CXXFLAGS=		-LANG:std
+OS_DEBUG_FLAGS=		-w2 -g -gslim
+OS_OPTIM_FLAGS=		-O
+OS_DEBUG_LINK_FLAGS=	-w2 -g -gslim
+OS_OPTIM_LINK_FLAGS=	-O
+OS_ARFLAGS=		-LANG:std -J6 -ar -WR,-v -o
+OS_LDFLAGS=		-LANG:std -J6 -all
+OS_INCLUDES=		
+OS_SHLIB_FLAGS=		-shared
+OS_LD_NAME_FLAG=	-o
+OS_AR_NAME_FLAG=	
 
 # File extensions.
-OS_LIB_EXT= 	.a
-OS_SHLIB_EXT=	.so
-OS_LIB_PREFIX= 	lib
+OS_LIB_EXT=		.a
+OS_SHLIB_EXT=		.so
+OS_LIB_PREFIX=		lib
 OS_SHLIB_PREFIX=	lib
-OS_EXE_EXT=	
-OS_OBJ_EXT=	.o
+OS_EXE_EXT=		
+OS_OBJ_EXT=		.o
 
 # Wrapper options around the list of libraries needed at link time.  These
 # are to be put at the start and end of $(LIBS) respectively when it is set.
@@ -136,3 +136,5 @@ OS_SYS_LIBS=
 
 # Extra library options.
 OS_LIBBITSUF?=	32
+OS_LINKALL_BEGIN=	-all
+OS_LINKALL_END=	

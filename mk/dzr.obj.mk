@@ -61,9 +61,8 @@
 #                          $(srcdir).
 # -----------------------------------------------------------------------------
 
-OBJ_EXT?=${OS_OBJ_EXT}
-
-OBJ_NAME_FLAG?=	-o $@
+OBJ_EXT?=		$(OS_OBJ_EXT)
+OBJ_NAME_FLAG?=		-o $@
 OBJ_BUILD_FLAG?=	-c
 
 # If no object directory is being used, set it to the current directory.
