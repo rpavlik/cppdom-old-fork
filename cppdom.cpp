@@ -186,12 +186,12 @@ xmlnode &xmlnode::operator =( const xmlnode &node )
    return *this;
 };
 
-xmlstring xmlnode::name()
+xmlstring xmlnode::getName()
 {
    return contextptr->get_tagname( nodenamehandle );
 }
 
-void xmlnode::set_name( const xmlstring &nname )
+void xmlnode::setName( const xmlstring &nname )
 {
    nodenamehandle = contextptr->insert_tagname(nname);
 }
@@ -202,12 +202,12 @@ xmlnodeptr xmlnode::getChild(const xmlstring &name)
    // possible speedup: first search if a handle to the childname is existing
 
    xmlnodelist::const_iterator iter;
-      
+
    // search for first occurance of node
    for(iter = mNodelist.begin(); iter != mNodelist.end(); ++iter)
    {
       xmlnodeptr np = (*iter);
-      if (np->name() == name)
+      if (np->getName() == name)
       {
          return np;
       }
@@ -223,12 +223,12 @@ xmlnodelist xmlnode::getChildren(const xmlstring& name)
    xmlnodelist nlist;
 
    xmlnodelist::const_iterator iter;
-      
+
    // search for all occurances of nodename and insert them into the new list
    for(iter = mNodelist.begin(); iter != mNodelist.end(); ++iter)
    {
       xmlnodeptr np = *(iter);
-      if (np->name() == name)
+      if (np->getName() == name)
       {
          nlist.push_back(np);
       }
@@ -332,7 +332,7 @@ void xmldocument::save( std::ostream &outstream )
       xmlnodeptr np = *iter;
 
       // output pi tag
-      outstream << "<?" << np->name().c_str();
+      outstream << "<?" << np->getName().c_str();
 
       // output all attributes
       xmlattributes::const_iterator aiter, astop;
