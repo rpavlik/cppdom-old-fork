@@ -1,10 +1,13 @@
-
-Import('pkg baseEnv')
+Import('baseEnv')
 Import('HasCppUnit')
+Import('GetPlatform')
+
+import os
+pj = os.path.join
 
 env = baseEnv.Copy()
 env.Append(CPPPATH = Split('# #test'),
-           LIBPATH = ['#cppdom'],
+           LIBPATH = [pj('#', 'build.' + GetPlatform(), 'cppdom')],
            LIBS = ['cppdom'])
 
 tests = Split("""
@@ -16,10 +19,11 @@ tests = Split("""
 """)
 
 for t in tests:
-   prog = pkg.createProgram(t, env)
-   prog.addSources([t+'.cpp'])
+   env.Program(target = t, source = t+'.cpp')
 
 subdirs = []
 if HasCppUnit(baseEnv):
    subdirs.append('suite')
 SConscript(dirs = subdirs)
+#for d in subdirs:
+#	SConscript(pj('#', d, 'SConscript'), src_dir = d, build_dir = 'build.' + GetPlatform(), duplicate = 0)

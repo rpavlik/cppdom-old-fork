@@ -1,20 +1,21 @@
 #!python
-#import wing.wingdbstub;       # stuff for debugging
+try:
+   import wing.wingdbstub;       # stuff for debugging
+except:
+   print '[WRN] Unable to load wing debugging extensions'
 import os, string, sys
 pj = os.path.join
 
+Default('.')
+
+"""
+The following is used if you have the SConsAddons Package
+"""
 # Bring in the AutoDist build helper
 sys.path.append('tools/build')
 
 import SCons.Environment
 import SCons
-import SConsAddons.Options;   # Get the modular options stuff
-import SConsAddons.Options.VRJuggler.Vapor
-import SConsAddons.Options.CppDom
-import SConsAddons.Options.CppUnit
-import SConsAddons.Util       # Get the utils
-
-import SConsAddons.AutoDist as AutoDist
 
 #------------------------------------------------------------------------------
 # Define some generally useful functions
@@ -118,7 +119,21 @@ def BuildIRIXEnvironment():
       CXXFLAGS.extend(['-DNDEBUG', '-O2'])
    else:
       CXXFLAGS.extend(['-D_DEBUG', '-g', '-gslim'])
-
+   # IRIX sucks; no environment variable to specify additional header paths
+   CPPPATH = ''
+   if os.environ.has_key('CPLUS_INCLUDE_PATH'):
+      path = os.environ['CPLUS_INCLUDE_PATH']
+      CPPPATH = string.split(path, ':')
+      vjbasedir = os.environ['VJ_BASE_DIR']
+      CPPPATH.append(pj(vjbasedir, 'include', 'boost', 'compatibility', 'cpp_c_headers'))
+      return Environment( 
+         ENV = os.environ,
+         CXX = CXX,
+         CXXFLAGS = CXXFLAGS,
+         CPPPATH = CPPPATH,
+         LINK = LINK,
+         LINKFLAGS = LINKFLAGS
+       )
    return Environment(
       ENV         = os.environ,
       CXX         = CXX,
@@ -179,7 +194,7 @@ def SetupCppUnit(env):
       print 'ERROR: Could not find CppUnit installation.'
       sys.exit(1)
    cfg = pj(env['WithCppUnit'], 'bin', 'cppunit-config')
-   ParseConfig(env, cfg + ' --cflags --libs')
+   env.ParseConfig(cfg + ' --cflags --libs')
 Export('SetupCppUnit')
 
 
@@ -240,49 +255,47 @@ Targets:
    Type 'scons' to just build it
 """
 
-help_text += "Options:\n" + opts.GenerateHelpText(baseEnv)
+help_text = help_text + "Options:\n" + opts.GenerateHelpText(baseEnv)
+#help_text += "Options:\n" + opts.GenerateHelpText(baseEnv)
 Help(help_text)
 
 # Handle options
 PREFIX = baseEnv['prefix']
 PREFIX = os.path.abspath(PREFIX)
-AutoDist.Prefix(PREFIX)
 Export('PREFIX')
 
-# Create the CppDom package
-pkg = AutoDist.Package('cppdom', '%i.%i.%i' % CPPDOM_VERSION)
-pkg.addExtraDist(Split("""
-   AUTHORS
-   ChangeLog
-   COPYING
-   README
-   cppdom-config.in
-   SConstruct
-   cppdom/SConstruct
-   doc/cppdom.doxy
-   doc/dox/examples_index.dox
-   doc/dox/mainpage.dox
-   test/SConstruct
-   tools/build/AutoDist.py
-   vc7/cppdom.sln
-   vc7/cppdom.vcproj
-"""))
-Export('pkg')
+tar_sources = Split("""
+		AUTHORS
+		ChangeLog
+		COPYING
+		README
+		cppdom-config.in
+		SConstruct
+		doc/cppdom.doxy
+		doc/dox/examples_index.dox
+		doc/dox/mainpage.dox
+		tools/build/AutoDist.py
+		vc7/cppdom.sln
+		vc7/cppdom.vcproj
+		cppdom/
+		test/
+""")
+baseEnv.Append(TARFLAGS = '-z',)
+baseEnv.Tar('cppdom-' + '%i.%i.%i' % CPPDOM_VERSION + '.tar.gz', tar_sources)
 
 # Build in a build directory
-buildDir = "build." + GetPlatform() + "/";
-#BuildDir(pj(build_dir, 'test'), 'test', duplicate=0);
-
+buildDir = "build." + GetPlatform()
+BuildDir(pj(buildDir, 'test'), 'test', duplicate=0)
+BuildDir(pj(buildDir, 'cppdom'), 'cppdom', duplicate = 0)
 # Process subdirectories
 subdirs = Split('cppdom test')
 
 for d in subdirs:
-   #SConscript(pj(d, 'SConscript'), build_dir = buildDir, duplicate=0 )
-   SConscript(pj(d,'SConscript'))
+   SConscript(pj(buildDir, d,'SConscript'))
 
 # Setup the builder for cppdom-config
 env = baseEnv.Copy(BUILDERS = builders)
-env.ConfigBuilder('cppdom-config', 'cppdom-config.in',
+cppdom_config  = env.ConfigBuilder('cppdom-config', 'cppdom-config.in',
    submap = {
       '@prefix@'                    : PREFIX,
       '@exec_prefix@'               : '${prefix}',
@@ -299,9 +312,4 @@ env.ConfigBuilder('cppdom-config', 'cppdom-config.in',
 )
 
 env.Depends('cppdom-config', 'cppdom/version.h')
-env.Install(pj(PREFIX, 'bin'), 'cppdom-config')
-
-pkg.build()
-
-# Build everything by default
-Default('.')
+env.Install(pj(PREFIX, 'bin'), cppdom_config)
