@@ -221,7 +221,7 @@ bool xmlparser::parse_node( xmlnode &node, xmlcontextptr &ctxptr )
       }
 
       // no cdata, try to continue parsing node content
-
+      // Must be a start of a node (ie. < literal)
       if (token1 != '<')
          throw xmlerror(xml_opentag_cdata_expected);
 
