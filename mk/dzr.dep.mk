@@ -86,10 +86,10 @@ ifdef USE_MAKEDEPEND
    DEPENDFLAGS=	${INCLUDES} ${EXTRA_DEPENDFLAGS}
    DEPEND_EXTRAS=	${DEFS}
    _C_DEPGEN=	$(SHELL) -ec 'makedepend -f- -o$(OBJ_EXT)		\
-		   $(DEPENDFLAGS) -- $(DEPEND_EXTRAS) -- $< |		\
+		   $(DEPENDFLAGS) -- $(DEPEND_EXTRAS) ${CFLAGS} -- $< |		\
 		   sed $(_MKDEP_SED_EXP) > $@ ; [ -s $@ ] || rm -f $@'
    _CXX_DEPGEN=	$(SHELL) -ec 'makedepend -f- -o$(OBJ_EXT)		\
-		   $(DEPENDFLAGS) -- $(DEPEND_EXTRAS) -- $< |		\
+		   $(DEPENDFLAGS) -- $(DEPEND_EXTRAS) ${CXXFLAGS} -- $< |		\
 		   sed $(_MKDEP_SED_EXP) > $@ ; [ -s $@ ] || rm -f $@'
 else
    _C_DEPGEN=	$(SHELL) -ec '$(C_COMPILE) $(DEP_GEN_FLAG) $< |		\
