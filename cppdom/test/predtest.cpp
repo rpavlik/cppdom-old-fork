@@ -1,3 +1,4 @@
+#include <iostream>
 #include <assert.h>
 #include <cppdom/predicates.h>
 
