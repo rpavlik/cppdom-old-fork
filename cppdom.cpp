@@ -82,6 +82,9 @@ namespace cppdom
          XMLERRORCODE(xml_save_invalid_nodetype,"invalid nodetype encountered while saving");
          XMLERRORCODE(xml_filename_invalid,"invalid file name");
          XMLERRORCODE(xml_file_access,"could not access file");
+         
+         XMLERRORCODE(xml_invalid_operation, "attempted to execute command that would cause invalid structure");
+         
          XMLERRORCODE(xml_dummy,"dummy error code (this error should never been seen)");
       }
       error.assign(err);
@@ -389,6 +392,13 @@ namespace cppdom
 
    void Node::addChild(NodePtr& node)
    {
+      // Check for invalid call
+      if(xml_nt_document == getType())
+      { 
+         if(!mNodeList.empty())
+         {  throw Error(xml_invalid_operation); }
+      }
+
       node->mParent = this;      // Tell the child who their daddy is
       mNodeList.push_back(node);
    }
