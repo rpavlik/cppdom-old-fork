@@ -6,9 +6,14 @@
 
 namespace xmlpp
 {
-   class AttributeExists
+   class AttributeType
    {
    public:
+      /** set the attribute name to match. */
+      AttributeType( std::string attrName ) : mName( attrName ) 
+      {
+      }
+   
       /** set the attribute name to match. */
       void setName( std::string attrName ) { mName = attrName; }
 
@@ -20,9 +25,17 @@ namespace xmlpp
       std::string mName;
    };
 
-   class AttributeEqualToValue
+   class AttributeValue
    {
    public:
+      /** set the attribute name to match.
+       *  set the attribute value to match. 
+       */
+      AttributeValue( std::string attrName, std::string val ) : 
+         mName( attrName ), mValue( val ) 
+      {
+      }
+
       /** set the attribute name to match. */
       void setName( std::string attrName ) { mName = attrName; }
 
