@@ -1,10 +1,9 @@
 simba/Debug/Main/MetricTest                                        1221.75
-simba/Debug/ParseMetricTest/timeLoadSaveRandomDocs/huge            8.2856e+06
-simba/Debug/ParseMetricTest/timeLoadSaveRandomDocs/large           642695
-simba/Debug/ParseMetricTest/timeLoadSaveRandomDocs/medium          49483.1
-simba/Debug/ParseMetricTest/timeLoadSaveRandomDocs/small           7188.45
-simba/Debug/ParseMetricTest/timeLoadTestDocs/data/hamlet.xml       248755
-simba/Debug/ParseMetricTest/timeLoadTestDocs/data/rime10.xml       33080.5
+simba/Debug/ParseMetricTest/timeLoadSaveRandomDocs/large           652703
+simba/Debug/ParseMetricTest/timeLoadSaveRandomDocs/medium          49193.4
+simba/Debug/ParseMetricTest/timeLoadSaveRandomDocs/small           7431.4
+simba/Debug/ParseMetricTest/timeLoadTestDocs/data/hamlet.xml       246066
+simba/Debug/ParseMetricTest/timeLoadTestDocs/data/rime10.xml       33954
 simba/Main/MetricTest                                              1221.75
 simba/ParseMetricTest/timeLoadSaveRandomDocs/large                 471427
 simba/ParseMetricTest/timeLoadSaveRandomDocs/medium                35260.8
