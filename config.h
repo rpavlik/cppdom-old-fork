@@ -51,16 +51,16 @@
 # pragma warning( disable: 4786 4275 4251 )
 
 // export/import #define's for building a win32 dll
-# ifdef XMLPP_EXPORTS
+# ifdef CPPDOM_EXPORTS
 #  define CPPDOM_API __declspec(dllexport)
 # endif
 
-# ifdef XMLPP_IMPORTS
+# ifdef CPPDOM_IMPORTS
 #  define CPPDOM_API __declspec(dllimport)
 # endif
 
 // includes building of the httpinstream class
-#define XMLPP_WITH_CUSTOM_IOSTREAM
+#define CPPDOM_WITH_CUSTOM_IOSTREAM
 
 #endif
 
