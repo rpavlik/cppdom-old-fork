@@ -234,6 +234,12 @@ template<class _K, class _Pr, class _A> inline
    {return (!(_X == _Y)); }
 */
 
+template<typename T> inline bool operator<(shared_ptr<T> const& a,
+                                           shared_ptr<T> const& b)
+{
+   return std::less<T*>()(a.get(), b.get());
+}
+
 template<typename T, typename U> shared_ptr<T> shared_dynamic_cast(shared_ptr<U> const & r)
 {
 	return shared_ptr<T>(r, detail::dynamic_cast_tag());
@@ -255,21 +261,6 @@ namespace std {
 template<typename T>
   inline void swap(cppdom_boost::shared_ptr<T>& a, cppdom_boost::shared_ptr<T>& b)
     { a.swap(b); }
-
-// Specialize std::less so we can use shared pointers and arrays as keys in
-// associative collections.
-
-// It's still a controversial question whether this is better than supplying
-// a full range of comparison operators (<, >, <=, >=).
-
-template<typename T>
-  struct less< cppdom_boost::shared_ptr<T> >
-    : binary_function<cppdom_boost::shared_ptr<T>, cppdom_boost::shared_ptr<T>, bool>
-  {
-    bool operator()(const cppdom_boost::shared_ptr<T>& a,
-        const cppdom_boost::shared_ptr<T>& b) const
-      { return less<T*>()(a.get(),b.get()); }
-  };
 
 } // namespace std
 
