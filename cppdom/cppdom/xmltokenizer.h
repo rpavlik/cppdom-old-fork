@@ -25,15 +25,15 @@
    Boston, MA  02111-1307  USA.
 
 */
-/*! \file xmltokenizer.hpp
+/*! \file XMLTokenizer.hpp
 
   the stream tokenizer class
 
 */
 
 // prevent multiple includes
-#ifndef __xmltokenizer_hpp_
-#define __xmltokenizer_hpp_
+#ifndef __XMLTokenizer_hpp_
+#define __XMLTokenizer_hpp_
 
 // needed includes
 #include <string>
@@ -45,137 +45,227 @@
 namespace cppdom {
 
 
-//! xml token
-/*! an xmltoken is a representation for a literal character or a 
+/// xml token
+/** an XMLToken is a representation for a literal character or a 
     generic string (not recognized as a literal) */
-class xmltoken
+class XMLToken
 {
    friend class xmlstream_iterator;
 public:
-   //! ctor
-   xmltoken(){ isliteral=true; literal=0; generic.empty(); }
-   //! ctor with init
-   xmltoken( xml_char_type ch ){ isliteral=true; literal=ch; generic.empty(); }
-   //! ctor with init
-   xmltoken( XMLString &str ):generic(str){ isliteral=false; literal=0; }
+   /// ctor
+   XMLToken()
+   { 
+      isliteral = true; 
+      literal = 0; 
+      generic.empty(); 
+   }
+   
+   /// ctor with init
+   XMLToken( xml_char_type ch )
+   { 
+      isliteral = true; 
+      literal = ch; 
+      generic.empty(); 
+   }
+   
+   /// ctor with init
+   XMLToken( XMLString &str ) : generic( str )
+   { 
+      isliteral = false; 
+      literal = 0; 
+   }
 
-   //! returns if token is a literal
-   bool is_literal(){ return isliteral; }
-   //! returns if it is and end of xml stream token
-   bool is_endofstream(){ return isliteral && literal==char(EOF)/*XMLString::traits_type::eof()*/; }
-   //! returns literal char
-   xml_char_type get_literal(){ return literal; }
-   //! returns generic string
-   XMLString &get_generic(){ return generic; }
+   /// returns if token is a literal
+   bool isLiteral()
+   { 
+      return isliteral; 
+   }
+   
+   /// returns if it is and end of xml stream token
+   bool isEndOfStream()
+   { 
+      return isliteral && literal==char(EOF)/*XMLString::traits_type::eof()*/; 
+   }
+   
+   /// returns literal char
+   xml_char_type getLiteral()
+   {
+      return literal; 
+   }
+   
+   /// returns generic string
+   XMLString &getGeneric()
+   { 
+      return generic; 
+   }
 
    // operators
 
-   //! compare operator for literals
-   bool operator ==(xml_char_type ch){ return !isliteral?false:ch==literal; }
-   //! compare operator for literals
-   bool operator !=(xml_char_type ch){ return !isliteral?true:ch!=literal; }
+   /// compare operator for literals
+   bool operator==( xml_char_type ch )
+   {
+     return !isliteral ? false : ch == literal; 
+   }
 
-   //! compare operator for a generic string
-   bool operator ==(XMLString str){ return !isliteral?str==generic:false; }
-   //! compare operator for a generic string
-   bool operator !=(XMLString str){ return !isliteral?str!=generic:true; }
+   /// compare operator for literals
+   bool operator!=( xml_char_type ch )
+   {
+      return ! isliteral ? true : ch != literal; 
+   }
 
-   //! set generic string
-   xmltoken &operator =(XMLString &str){ generic.assign(str); isliteral=false; return *this; }
-   //! set literal char
-   xmltoken &operator =(xml_char_type ch){ literal=ch; isliteral=true; return *this; }
+   /// compare operator for a generic string
+   bool operator==( XMLString str )
+   {
+      return !isliteral?str==generic:false;
+   }
+
+   /// compare operator for a generic string
+   bool operator!=( XMLString str )
+   {
+      return !isliteral?str!=generic:true; 
+   }
+
+   /// set generic string
+   XMLToken &operator=( XMLString &str )
+   {
+      generic.assign( str ); 
+      isliteral=false;  
+      return *this; 
+   }
+
+   /// set literal char
+   XMLToken &operator=( xml_char_type ch )
+   {
+      literal = ch; 
+      isliteral = true; 
+      return *this; 
+   }
 
 protected:
-   //! indicates if token is a literal char
+   /// indicates if token is a literal char
    bool isliteral;
-   //! literal
+
+   /// literal
    xml_char_type literal;
-   //! pointer to string
+
+   /// pointer to string
    XMLString generic;
 };
 
 
-//! base tokenizer class
-/*! base class for iterating through xmltoken */
-class xmltokenizer
+/// base tokenizer class
+/** base class for iterating through XMLToken */
+class XMLTokenizer
 {
 public:
-   //! ctor
-   xmltokenizer(std::istream &is,XMLLocation &loc):instr(is),location(loc){}
-   virtual ~xmltokenizer(){}
+   /** constructor */
+   XMLTokenizer( std::istream &is, XMLLocation &loc ) : instr( is ),
+                                                        location( loc )
+   {
+   }
+   
+   virtual ~XMLTokenizer()
+   {
+   }
 
-   //! dereference operator
-   xmltoken& operator*(){ return curtoken; }
-   //! pointer access operator
-   const xmltoken* operator->(){ return &curtoken; }
-   //! advances in the xml stream
-   xmltokenizer &operator++(){ get_next(); return *this; }
-   //! advances in the xml stream
-   xmltokenizer &operator++(int){ get_next(); return *this; }
+   /// dereference operator
+   XMLToken& operator*()
+   {
+      return curtoken; 
+   }
+   
+   /// pointer access operator
+   const XMLToken* operator->()
+   {
+      return &curtoken; 
+   }
+   
+   /// advances in the xml stream
+   XMLTokenizer& operator++()
+   {
+      this->getNext(); 
+      return *this; 
+   }
+   
+   /// advances in the xml stream
+   XMLTokenizer& operator++(int)
+   { 
+      this->getNext(); 
+      return *this; 
+   }
 
-   //! returns current token
-   xmltoken& get(){ return curtoken; }
+   /// returns current token
+   XMLToken& get()
+   {
+      return curtoken;
+   }
 
-   //! puts the token back into the stream
-   void put_back( xmltoken &token ){ tokenstack.push(token); }
+   /// puts the token back into the stream
+   void putBack( XMLToken& token )
+   {
+      tokenstack.push( token ); 
+   }
 
-   //! puts the last token back into the stream
-   void put_back(){ tokenstack.push(curtoken); }
+   /// puts the last token back into the stream
+   void putBack()
+   {
+      tokenstack.push( curtoken ); 
+   }
 
 protected:
 
-   //! internal: parses the next token
-   virtual void get_next() = 0;
+   /// internal: parses the next token
+   virtual void getNext() = 0;
 
    // data members
 
    //! input stream
-   std::istream &instr;
+   std::istream& instr;
 
    //! location in the stream
-   XMLLocation &location;
+   XMLLocation& location;
 
    //! current token
-   xmltoken curtoken;
+   XMLToken curtoken;
 
    //! stack for put_back()'ed tokens
-   std::stack<xmltoken> tokenstack;
+   std::stack<XMLToken> tokenstack;
 };
 
 //! xml input stream iterator
-/*! an iterator through all xmltoken contained in the xml input stream */
-class xmlstream_iterator:public xmltokenizer
+/*! an iterator through all XMLToken contained in the xml input stream */
+class xmlstream_iterator : public XMLTokenizer
 {
 public:
    //! ctor
-   xmlstream_iterator(std::istream &is,XMLLocation &loc);
+   xmlstream_iterator( std::istream &is, XMLLocation &loc );
 
 protected:
-   void get_next();
+   void getNext();
 
    // internally used to recognize chars in the stream
-   bool is_literal( xml_char_type c );
-   bool is_whitespace( xml_char_type c );
-   bool is_newline( xml_char_type c );
-   bool is_stringdelimiter( xml_char_type c ); // start-/endchar of a string
+   bool isLiteral( xml_char_type c );
+   bool isWhiteSpace( xml_char_type c );
+   bool isNewLine( xml_char_type c );
+   bool isStringDelimiter( xml_char_type c ); // start-/endchar of a string
 
    //! cdata-mode doesn't care for whitespaces in generic strings
-   bool cdata_mode;
+   bool cdataMode;
 
    //! char which was put back internally
-   xml_char_type putback_char;
+   xml_char_type putbackChar;
 };
 
 //! dtd input stream iterator
 /*! an iterator through a dtd input stream */
-class xmldtd_iterator:public xmltokenizer
+class xmldtd_iterator:public XMLTokenizer
 {
 public:
    //! ctor
    xmldtd_iterator(std::istream &is,XMLLocation &loc);
 
 protected:
-   void get_next(){}
+   void getNext(){}
 };
 
 
