@@ -350,7 +350,14 @@ typedef xmlattributes XMLAttributes;
 
 
 
-/** xml node */
+/** xml node
+* A node has the following properties
+* name - The element name of the node
+* type - The type of the node. see xmlnodetype
+* children - Child elements of the node
+* cdata - the cdata content if of type cdata
+*
+*/
 class XMLPP_API xmlnode
 {
    friend class xmlparser;
