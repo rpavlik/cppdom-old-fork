@@ -50,6 +50,7 @@ SRCS4=   cppdom.cpp xmlparser.cpp xmltokenizer.cpp maketree.cpp
 
 # This is for extra libraries needed specfically for your application.  The
 # general libraries needed for applications are in $(LIBS).
+EXTRA_CXXFLAGS= -DCPPDOM_EXPORTS
 EXTRA_INCLUDES= -I..
 EXTRA_LIBS=		
 
