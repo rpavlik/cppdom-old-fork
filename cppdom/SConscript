@@ -30,8 +30,8 @@ if boost_options.isAvailable():
 cppdom_lib_env = cppdom_pkg.getEnv().Copy()
 cppdom_lib_env.Append(CPPPATH = ['#'])
 
-if GetPlatform() == 'irix':
-   env['SHCXXFLAGS'] = '${CXXFLAGS}'
+#if GetPlatform() == 'irix':
+#   env['SHCXXFLAGS'] = '${CXXFLAGS}'
 
 
 # If should not do static only, then create static and shared libraries
