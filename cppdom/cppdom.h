@@ -179,49 +179,33 @@ namespace cppdom
       XMLTagNameHandle insertTagname(const std::string& tagname);
 
       /** returns the current location in the xml stream */
-      XMLLocation& getLocation()
-      {
-         return location;
-      }
+      XMLLocation& getLocation();
 
       /** called once when the context instance starts up; overwrite to customize
       * @note: The base member should always be called, to set init to true
       */
-      virtual void initContext()
-      {
-         init = true;
-      }
+      virtual void initContext();
 
       /** @name event handling methods */
       //@{
       /** sets the event handler; enables handling events */
-      void setEventHandler(XMLEventHandlerPtr ehptr)
-      {
-         eventhandler = ehptr;
-         handleevents = true;
-      }
+      void setEventHandler(XMLEventHandlerPtr ehptr);
 
       /** returns the currently used eventhandler (per reference) */
-      XMLEventHandler& getEventHandler()
-      {
-         return *eventhandler.get();
-      }
+      XMLEventHandler& getEventHandler();
 
       /** returns if a valid event handler is set */
-      bool handleEvents() const
-      {
-         return handleevents;
-      }
+      bool handleEvents() const;
       //@}
 
    protected:
-      bool           init;                /**< indicates if init_context() was already called */
-      int            nexthandle;          /**< next available tagname handle */
-      XMLTagNameMap  tagnames;            /**< matches XMLTagNameHandles to the real std::string's */
-      XMLEntityMap   entities;            /**< Contains entity codes and their string representations */
-      XMLLocation    location;            /**< location of the xml input stream */
-      bool           handleevents;        /**< indicates if the event handler is used */
-      XMLEventHandlerPtr eventhandler;    /**< current parsing event handler */
+      bool           mInit;               /**< indicates if init_context() was already called */
+      int            mNextHandle;         /**< next available tagname handle */
+      XMLTagNameMap  mTagNames;           /**< matches XMLTagNameHandles to the real std::string's */
+      XMLEntityMap   mEntities;           /**< Contains entity codes and their string representations */
+      XMLLocation    mLocation;           /**< location of the xml input stream */
+      bool           mHandleEvents;       /**< indicates if the event handler is used */
+      XMLEventHandlerPtr mEventHandler;   /**< current parsing event handler */
    };
 
    /** node type enumeration */
