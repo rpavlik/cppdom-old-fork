@@ -1,7 +1,7 @@
 /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil c-basic-offset: 3 -*- */
 // vim:cindent:ts=3:sw=3:et:tw=80:sta:
 /*************************************************************** cppdom-cpr beg
- * 
+ *
  * cppdom was forked from the original xmlpp version 0.6 under the LGPL. This
  * new, branched xmlpp is under the same LGPL (of course) and is being
  * maintained by:
@@ -350,9 +350,7 @@ namespace cppdom
    };
 
 
-
-
-   /** xml node
+   /** xml node.
    * A node has the following properties
    * name - The element name of the node
    * type - The type of the node. see NodeType
@@ -403,10 +401,18 @@ namespace cppdom
 
       /**
        * returns cdata string
-       * @note: This only returns data for nodes that are leaf nodes of type "cdata".
-       *        Calling this on a node that has cdata as a child does nothing
+       * @note: For node type "cdata", this returns the local cdata.
+       *        For other nodes, this attempts to find the first child cdata
+       *        node and returns its data.
        */
-      const std::string& getCdata();
+      std::string getCdata();
+
+      /**
+       * Returns the full cdata of the node or immediate children.
+      * @note: For node type "cdata", this returns the local cdata.
+      *        For other nodes, combines the cdata of all cdata children.
+      */
+      std::string getFullCdata();
       //@}
 
       /** @name node data manipulation */
@@ -417,7 +423,11 @@ namespace cppdom
       /** set the node name */
       void setName(const std::string& name);
 
-      /** sets new cdata */
+      /** Sets the node cdata.
+      * @post For cdata type nodes, this sets the contained cdata
+      *       For other types, this sets the cdata of the first cdata node.
+      *       If none exists, then one is created called "cdata".
+      */
       void setCdata(const std::string& cdata);
 
       /**
@@ -533,7 +543,10 @@ namespace cppdom
        */
       void loadFile(const std::string& filename) throw(Error);
 
-      void saveFile(const std::string& filename);
+      /** Save the document to the given filename.
+      * @todo Fix this method.  It doesn't work
+      */
+      void saveFile(std::string filename);
 
 
    protected:

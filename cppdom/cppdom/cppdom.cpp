@@ -1,7 +1,7 @@
 /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil c-basic-offset: 3 -*- */
 // vim:cindent:ts=3:sw=3:et:tw=80:sta:
 /*************************************************************** cppdom-cpr beg
- * 
+ *
  * cppdom was forked from the original xmlpp version 0.6 under the LGPL. This
  * new, branched xmlpp is under the same LGPL (of course) and is being
  * maintained by:
@@ -43,8 +43,9 @@
 */
 
 // needed includes
-#include "cppdom.h"
-#include "xmlparser.h"
+#include <cppdom/cppdom.h>
+#include <cppdom/xmlparser.h>
+#include <cppdom/predicates.h>
 
 // namespace declaration
 namespace cppdom
@@ -82,9 +83,9 @@ namespace cppdom
          XMLERRORCODE(xml_save_invalid_nodetype,"invalid nodetype encountered while saving");
          XMLERRORCODE(xml_filename_invalid,"invalid file name");
          XMLERRORCODE(xml_file_access,"could not access file");
-         
+
          XMLERRORCODE(xml_invalid_operation, "attempted to execute command that would cause invalid structure");
-         
+
          XMLERRORCODE(xml_dummy,"dummy error code (this error should never been seen)");
       }
       error.assign(err);
@@ -227,7 +228,7 @@ namespace cppdom
    {
       return mHandleEvents;
    }
-   
+
 
    // Attributes methods
 
@@ -365,10 +366,50 @@ namespace cppdom
       return mAttributes.has(name);
    }
 
-   const std::string& Node::getCdata()
+   /** Return cdata for node.
+   * If node is cdata type, then return local data
+   * else, return contents of first cdata child
+   */
+   std::string Node::getCdata()
    {
-      return mCdata;
+      std::string ret_val;
+
+      if(getType() == cppdom::xml_nt_cdata)
+      {
+         ret_val = mCdata;
+      }
+      else
+      {
+         cppdom::NodeList nl = getChildrenPred( cppdom::IsNodeTypePredicate( cppdom::xml_nt_cdata ));
+         if(!nl.empty())
+         {
+            ret_val = (*(nl.begin()))->getCdata();
+         }
+      }
+      return ret_val;
    }
+
+   /** Return a copy of all the cdata
+   */
+   std::string Node::getFullCdata()
+   {
+      std::string ret_val;
+
+      if(getType() == cppdom::xml_nt_cdata)
+      {
+         ret_val = mCdata;
+      }
+      else
+      {
+         cppdom::NodeList nl = getChildrenPred( cppdom::IsNodeTypePredicate( cppdom::xml_nt_cdata ));
+         for(cppdom::NodeList::iterator n=nl.begin(); n!=nl.end(); ++n)
+         {
+            ret_val += (*n)->getCdata();
+         }
+      }
+      return ret_val;
+   }
+
 
    void Node::setType(NodeType type)
    {
@@ -380,9 +421,31 @@ namespace cppdom
       mNodeNameHandle = mContext->insertTagname(name);
    }
 
+   /** Set the element cdata.
+   * If not cdata type, then try to find first cdata.
+   * If we don't have a cdata child, then add one and set it
+   */
    void Node::setCdata(const std::string& cdata)
    {
-      mCdata = cdata;
+      if(getType() == cppdom::xml_nt_cdata)
+      {
+         mCdata = cdata;
+      }
+      else
+      {
+         cppdom::NodeList nl = getChildrenPred( cppdom::IsNodeTypePredicate( cppdom::xml_nt_cdata ));
+         if(!nl.empty())
+         {
+            (*(nl.begin()))->setCdata(cdata);
+         }
+         else  // Create a child
+         {
+            cppdom::NodePtr new_cdata(new cppdom::Node("cdata", getContext()));
+            new_cdata->setType(cppdom::xml_nt_cdata);
+            new_cdata->setCdata(cdata);
+            addChild(new_cdata);
+         }
+      }
    }
 
    void Node::setAttribute(const std::string& attr, const Attribute& value)
@@ -394,7 +457,7 @@ namespace cppdom
    {
       // Check for invalid call
       if(xml_nt_document == getType())
-      { 
+      {
          if(!mNodeList.empty())
          {  throw Error(xml_invalid_operation); }
       }
@@ -645,10 +708,10 @@ namespace cppdom
       in.close();
    }
 
-   void Document::saveFile(const std::string& filename)
+   void Document::saveFile(std::string filename)
    {
-      std::ofstream out;
-      out.open(filename.c_str(), std::ios::in | std::ios::out);
+      std::fstream out;
+      out.open(filename.c_str(), std::fstream::in | std::fstream::out);
       this->save(out);
       out.close();
    }
