@@ -200,5 +200,63 @@
 		 <sub attrib="BC"/>
 	  </node>
    </test> 
+   
+<!-- IGNORE ELEMENT tests -->
+   <test id="Basic equal ignoring element" equal="1" ignore_elem="node">
+   Test basic equality. where we are ignoring the differing elements.
+      <node data="X"/>
+      <node data="Y"/>   
+   </test>
+
+   <test id="Nested equality ignoring element" equal="1" ignore_elem="sub">
+   Test nested equality. where we are ignoring the differing elements.
+      <node data="X">
+	     <sub data="1">
+		 </sub>
+	  </node>   
+      <node data="X">
+	     <sub data="2">
+		 </sub>
+	  </node>   
+   </test>
+
+   <test id="Nested equality ignoring element cdata" equal="1" ignore_elem="sub">
+   Test nested equality. where we are ignoring the differing elements cdata.
+      <node data="X">
+	     <sub data="2">
+		 This
+		 </sub>
+	  </node>   
+      <node data="X">
+	     <sub data="2">
+		 That
+		 </sub>
+	  </node>   
+   </test>
+   
+   <test id="Basic not equal ignoring element" equal="0" ignore_elem="sub">
+      <node data="X"/>
+      <node data="Y"/>   
+   </test>
+   
+   <test id="Nested unequal ignoring element" equal="0" ignore_elem="subsub">
+   Test basic equality. where we are ignoring the differing attribute.
+      <node data="X">
+	     <sub data="Y">
+		    <subsub attrib="1" data="X">
+			</subsub>
+			<supersub attrib="P"/>
+		 </sub>
+		 <sub attrib="AB"/>
+	  </node>
+      <node data="X">
+	     <sub data="Y">
+		    <subsub attrib="2" data="Y">
+			</subsub>
+			<supersub attrib="Q"/>
+		 </sub>
+		 <sub attrib="AB"/>
+	  </node>
+   </test> 
 
 </root>
