@@ -25,55 +25,56 @@
    Boston, MA  02111-1307  USA.
 
 */
-/*! \file xmlparser.hpp
+/*! \file xmlconfig.hpp
 
-  definitions for the parsing classes
+  system dependent stuff
 
 */
 
 // prevent multiple includes
-#ifndef __xmlparser_hpp_
-#define __xmlparser_hpp_
+#ifndef __xmlconfig_hpp_
+#define __xmlconfig_hpp_
 
 // needed includes
-#include "xml/xmlpp.h"
-#include "xml/xmltokenizer.h"
 
-// namespace declaration
-namespace xmlpp {
+// -----------------------------------
+// win32 configuration
+#ifdef WIN32
 
+// define's for the boost::shared_ptr
+# define BOOST_NO_MEMBER_TEMPLATES
+# define BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 
-//! xml parser implementation class
-class xmlparser
-{
-public:
-   //! ctor
-   xmlparser( std::istream &inputstream, xmllocation &loc );
+// switch some warnings off
+# pragma warning( disable: 4786 4275 4251 )
 
-   //! parses the node as the document root
-   bool parse_document( xmldocument &doc, xmlcontextptr &ctxptr );
-   
-   //! parses a node, without processing instructions
-   bool parse_node( xmlnode &node, xmlcontextptr &ctxptr );
+// export/import #define's for building a win32 dll
+# ifdef XMLPP_EXPORTS
+#  define XMLPP_API __declspec(dllexport)
+# endif
 
-protected:
-   //! parses xml header, such as processing instructions, doctype etc.
-   bool parse_header( xmldocument &doc, xmlcontextptr &ctxptr );
+# ifdef XMLPP_IMPORTS
+#  define XMLPP_API __declspec(dllimport)
+# endif
 
-   //! parses an xml tag attribute list
-   bool parse_attributes( xmlattributes &attr );
+// includes building of the httpinstream class
+#define XMLPP_WITH_CUSTOM_IOSTREAM
 
-   //! parses a <!-- --> comment 
-   void parse_comment( xmlcontextptr &ctxptr );
+#endif
 
-protected:
-   //! input stream
-   std::istream &instream;
-   //! stream iterator
-   xmlstream_iterator tokenizer;
-};
+// -----------------------------------
+// linux configuration
+#ifdef LINUX
 
-// namespace end
-};
+// defines for the boost library
+# define BOOST_NO_MEMBER_TEMPLATE_FRIENDS
 
+#endif
+
+// if not under windows, then this will need to be defined.
+#ifndef XMLPP_API
+# define XMLPP_API
+#endif
+
+// -----------------------------------
 #endif
