@@ -52,10 +52,10 @@
 # C_COMPILE   - The compiler command for C files.
 # CXX_COMPILE - The compiler command for C++ files.
 # OBJDIR      - The directory to which the object file(s) will be written.
-# OBJECT_EXT  - Suffix for object file names (e.g., "o" or "obj").
+# OBJ_EXT  - Suffix for object file names (e.g., "o" or "obj").
 # BASIC_OBJS  - The list of object files that will be compiled without the
 #               $(OBJDIR) prefix.  We use this for the suffix change because
-#               there is only one suffix for object files ($(OBJECT_EXT)).
+#               there is only one suffix for object files ($(OBJ_EXT)).
 # -----------------------------------------------------------------------------
 
 DEPDIR?=	.
@@ -63,7 +63,7 @@ DEPDIR?=	.
 # XXX: Not every compiler uses -M to generate depedencies.  This needs to be
 # generalized.
 DEP_GEN_FLAG=	-M
-DEPEND_FILES=	$(addprefix $(DEPDIR)/, $(BASIC_OBJS:.$(OBJECT_EXT)=.d))
+DEPEND_FILES=	$(addprefix $(DEPDIR)/, $(BASIC_OBJS:.$(OBJ_EXT)=.d))
 
 # These expressions reformat the output from the dependency text to be of the
 # form:
@@ -74,17 +74,17 @@ DEPEND_FILES=	$(addprefix $(DEPDIR)/, $(BASIC_OBJS:.$(OBJECT_EXT)=.d))
 # from the C and C++ compilers which prints only the object file to be
 # created ($*).  The second handles output from makedepend(1) which includes
 # the path leading to the source file in the object file name.
-_CC_SED_EXP=	'\''s|\($*\)\.$(OBJECT_EXT)[ :]*|$$(OBJDIR)/\1.$(OBJECT_EXT) $@: |g'\''
-_MKDEP_SED_EXP=	'\''s|.*\($*\)\.$(OBJECT_EXT)[ :]*|$$(OBJDIR)/\1.$(OBJECT_EXT) $@: |g'\''
+_CC_SED_EXP=	'\''s|\($*\)\.$(OBJ_EXT)[ :]*|$$(OBJDIR)/\1.$(OBJ_EXT) $@: |g'\''
+_MKDEP_SED_EXP=	'\''s|.*\($*\)\.$(OBJ_EXT)[ :]*|$$(OBJDIR)/\1.$(OBJ_EXT) $@: |g'\''
 
 # Determine, based on the C compiler, how to generate the dependencies.  If
 # the compiler is cl (Windows only), use makedepend(1).  Otherwise, we can use
 # the compiler itself to do the job.
 ifdef USE_MAKEDEPEND
-   _C_DEPGEN=	$(SHELL) -ec 'makedepend -f- -o.$(OBJECT_EXT)		\
+   _C_DEPGEN=	$(SHELL) -ec 'makedepend -f- -o.$(OBJ_EXT)		\
 		   $(DEPENDFLAGS) -- $(DEPEND_EXTRAS) -- $< |		\
 		   sed $(_MKDEP_SED_EXP) > $@ ; [ -s $@ ] || rm -f $@'
-   _CXX_DEPGEN=	$(SHELL) -ec 'makedepend -f- -o.$(OBJECT_EXT)		\
+   _CXX_DEPGEN=	$(SHELL) -ec 'makedepend -f- -o.$(OBJ_EXT)		\
 		   $(DEPENDFLAGS) -- $(DEPEND_EXTRAS) -- $< |		\
 		   sed $(_MKDEP_SED_EXP) > $@ ; [ -s $@ ] || rm -f $@'
 else
