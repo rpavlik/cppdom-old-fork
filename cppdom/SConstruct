@@ -346,13 +346,13 @@ if not SCons.Script.options.help_msg:
    buildDir = "build." + GetPlatform()
    Export('buildDir')
 
-   BuildDir(pj(buildDir, 'test'), 'test', duplicate=0)
-   BuildDir(pj(buildDir, 'cppdom'), 'cppdom', duplicate = 0)
+#   BuildDir(pj(buildDir, 'test'), 'test', duplicate=0)
+#   BuildDir(pj(buildDir, 'cppdom'), 'cppdom', duplicate = 0)
    # Process subdirectories
    subdirs = Split('cppdom test')
 
    for d in subdirs:
-      SConscript(pj(buildDir, d,'SConscript'))
+      SConscript(pj(d,'SConscript'), build_dir=pj(buildDir, d), duplicate=0)
 
    # Setup the builder for cppdom-config
    env = baseEnv.Copy(BUILDERS = builders)
