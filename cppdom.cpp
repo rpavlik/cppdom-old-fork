@@ -340,6 +340,7 @@ namespace cppdom
       {
          (*i)->mParent = NULL;
       }
+      mNodeList.clear();
    }
 
    Node& Node::operator=(const Node& node)
