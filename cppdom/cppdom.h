@@ -60,6 +60,7 @@
 #include <string>
 #include <sstream>
 #include <list>
+#include <vector>
 #include <map>
 #include <iosfwd>
 #include <fstream>
@@ -235,9 +236,8 @@ namespace cppdom
    typedef cppdom_boost::shared_ptr<class Node> NodePtr;
 
    /** list of node smart pointer */
-   typedef std::list<NodePtr> NodeList;
+   typedef std::vector<NodePtr> NodeList;
    typedef NodeList::iterator NodeListIterator;
-
 
 
    /**
