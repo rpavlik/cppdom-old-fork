@@ -533,11 +533,19 @@ namespace cppdom
 
       /** @name Children and parents */
       //@{
-      /** Returns true if the node has a child of the given name. */
+      /** Returns true if the node has a child of the given name.
+       * @param name    Name can be a single element name or a chain of the form "tag/tag/tag"
+       */
       bool hasChild(const std::string& name);
 
-      /** Returns the first child of the given local name */
+      /** Returns the first child of the given local name.
+       */
       NodePtr getChild(const std::string& name);
+
+      /** Return first child of the given name.
+       * @param name    Name can be a single element name or a chain of the form "tag/tag/tag"
+       */
+      NodePtr Node::getChildPath(const std::string& path);
 
       /** returns a list of the nodes children */
       NodeList& getChildren();
@@ -688,6 +696,7 @@ namespace cppdom
        * \exception throws cppdom::Error when the file name is invalid.
        */
       void loadFile(const std::string& filename) throw(Error);
+      void loadFileChecked(const std::string& filename);
 
       /** Save the document to the given filename.
       * @todo Fix this method.  It doesn't work
@@ -740,6 +749,18 @@ namespace cppdom
       virtual void gotCdata(const std::string& cdata)
       { cppdom::ignore_unused_variable_warning(cdata); }
    };
+
+
+   // ----------------------------------- //
+   /** @name Helper methods */
+   //@{
+   /** Merges data from one node to another.
+    * @param fromNode   Node to read data from.
+    * @param toNode     Node to merge data onto.
+    * @post All elements and attributes in fromNode will exist in toNode.
+    */
+   void merge(NodePtr fromNode, NodePtr toNode);
+   //@}
 }
 
 #endif

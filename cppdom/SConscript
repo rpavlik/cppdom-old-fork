@@ -14,6 +14,7 @@ headers = Split("""
    xmlparser.h
    xmltokenizer.h
    version.h
+   ext/OptionRepository.h
 """)
 
 sources = Split("""
@@ -21,6 +22,7 @@ sources = Split("""
    xmlparser.cpp
    xmltokenizer.cpp
    version.cpp
+   ext/OptionRepository.cpp
 """)
 
 # If boost is available then compile on the spirit addtion
