@@ -7,8 +7,8 @@
 # =============================================================================
 
 DZR_BASE_DIR=	..
-OBJDIR=objs
-DEPDIR=deps
+OBJDIR=objs.$(HOSTTYPE)
+DEPDIR=deps.$(HOSTTYPE)
 
 # Nothing but comments should come before this line.
 default: all
