@@ -472,6 +472,10 @@ namespace cppdom
    void Node::addChild(NodePtr& node)
    {
       // Check for invalid call
+      if(node.get() == NULL)
+      {
+         throw CPPDOM_ERROR(xml_invalid_argument, "Attempted to add NULL node as child.");
+      }
       if(xml_nt_document == getType())
       {
          if(!mNodeList.empty())
