@@ -544,18 +544,21 @@ namespace cppdom
    }
 
    /** \exception throws cppdom::Error when a streaming or parsing error occur */
-   void Node::save(std::ostream& out, int indent)
+   void Node::save(std::ostream& out, int indent, bool doIndent, bool doNewline)
    {
       // output indendation spaces
-      for(int i=0; i<indent; ++i)
+      if(doIndent)
       {
-         out << ' ';
+         for(int i=0; i<indent; ++i)
+         {  out << ' '; }
       }
 
       // output cdata
       if (mNodeType == xml_nt_cdata)
       {
-         out << mCdata.c_str() << std::endl;
+         out << mCdata.c_str();
+         if(doNewline)
+            out << std::endl;
          return;
       }
 
@@ -578,7 +581,9 @@ namespace cppdom
       {
       case xml_nt_node:
          {
-            out << '>' << std::endl;
+            out << '>';
+            if(doNewline)
+               out << std::endl;
 
             // output all subnodes
             NodeList::const_iterator iter,stop;
@@ -587,23 +592,27 @@ namespace cppdom
 
             for(; iter!=stop; ++iter)
             {
-               (*iter)->save(out, indent+1);
+               (*iter)->save(out, indent+1, doIndent, doNewline);
             }
 
             // output indendation spaces
-            for(int i=0;i<indent;i++)
+            if(doIndent)
             {
-               out << ' ';
+               for(int i=0;i<indent;i++)
+               { out << ' '; }
             }
 
             // output closing tag
-            out << '<' << '/'
-               << mContext->getTagname(mNodeNameHandle) << '>' << std::endl;
+            out << '<' << '/' << mContext->getTagname(mNodeNameHandle) << '>';
+            if(doNewline)
+               out << std::endl;
          }
          break;
       case xml_nt_leaf:
          // a leaf has no subnodes
-         out << '/' << '>' << std::endl;
+         out << '/' << '>';
+         if(doNewline)
+            out << std::endl;
          break;
       default:
          // unknown nodetype
@@ -657,7 +666,7 @@ namespace cppdom
    /** \todo implement: print <!doctype> tag;
    * \exception throws cppdom::Error when a streaming or parsing error occur
    */
-   void Document::save(std::ostream& out)
+   void Document::save(std::ostream& out, bool doIndent, bool doNewline)
    {
       // output all processing instructions
       NodeList::const_iterator iter, stop;
@@ -691,7 +700,7 @@ namespace cppdom
 
 
       // call save() method of the first (and hopefully only) node in Document
-      (*mNodeList.begin())->save(out, 0);
+      (*mNodeList.begin())->save(out, 0, doIndent, doNewline);
    }
 
    void Document::loadFile(const std::string& filename) throw(Error)
