@@ -99,6 +99,19 @@ public:
    unsigned getRandomNum(unsigned max)
    {  return unsigned(float(max)*drand48()); }
 
+   std::string getRandomWord(unsigned len)
+   {
+      std::string word;
+      char ch;
+      char ch_a('a');
+      for (unsigned i=0;i<len;++i)
+      {
+         ch = ch_a + getRandomNum(25);
+         word += ch;
+      }
+      return word;
+   }
+
 
 protected:
    std::vector<std::string>   mAvailElementNames;     // List of elt names to choose from

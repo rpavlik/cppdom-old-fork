@@ -198,8 +198,16 @@ cppdom::DocumentPtr ParseMetricTest::createDocument(unsigned depth, unsigned see
 {
    srand48(seed);    // Seed randomness
 
+   const unsigned num_elt_names(100);
+
    // Fill up the elt and attrib names
    mAvailElementNames.clear();
+   for(unsigned w=0;w<num_elt_names;++w)
+   {
+      std::string random_word = getRandomWord(getRandomNum(7) + 3);
+      mAvailElementNames.push_back( random_word);
+   }
+   /*
    mAvailElementNames.push_back("escher_elt");
    mAvailElementNames.push_back("person");
    mAvailElementNames.push_back("place");
@@ -214,6 +222,7 @@ cppdom::DocumentPtr ParseMetricTest::createDocument(unsigned depth, unsigned see
    mAvailElementNames.push_back("three_element");
    mAvailElementNames.push_back("four_element");
    mAvailElementNames.push_back("five_element");
+   */
    mAvailAttribNames.clear();
    mAvailAttribNames.push_back("name");
    mAvailAttribNames.push_back("size");
