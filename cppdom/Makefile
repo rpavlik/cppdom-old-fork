@@ -145,3 +145,5 @@ install: all
 	-$(INSTALLCMD) -d $(prefix)/bin
 	-cp $(LIB_NAME)/*.h $(prefix)/include/$(LIB_NAME)
 	-cp $(SHARED_LIB_FILENAME) $(STATIC_LIB_FILENAME) $(prefix)/lib$(LIBBITSUF)
+
+CLOBBER_FILES += $(SHARED_LIB_FILENAME) $(STATIC_LIB_FILENAME)
