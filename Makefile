@@ -82,7 +82,7 @@ $(STATIC_LIB_FILENAME): $(OBJS)
 #        - determine if you need all the dirs (bin, share, lib, include)
 #        - append cp or install commands for your .h, lib files...
 #        - prefix is your install path, edit it to specify the default
-prefix ?= installed
+prefix ?= installed.$(HOSTTYPE)
 INSTALLCMD=./install-sh
 install: all tests
 	-$(INSTALLCMD) -d $(prefix)/include
