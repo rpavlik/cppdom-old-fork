@@ -1,0 +1,6 @@
+<ROOT>
+ <Page pageFormat="landscape">
+  this is the first page's content
+  <EmptyPage is_really_empty="yes"/>
+ </Page>
+</ROOT>
