@@ -89,8 +89,8 @@ int main(int argc, char** argv)
    noninteractive_suite->addTest(global_registry.makeTest());
 
    // metric
-   CppUnit::TestSuite* metric_suite = new CppUnit::TestSuite(cppdom::test::Suites::metric());
-   metric_suite->addTest(CppUnit::TestFactoryRegistry::getRegistry(cppdom::test::Suites::metric()).makeTest());
+   CppUnit::TestSuite* metric_suite = new CppUnit::TestSuite(cppdomtest::Suites::metric());
+   metric_suite->addTest(CppUnit::TestFactoryRegistry::getRegistry(cppdomtest::Suites::metric()).makeTest());
 
    //------------------------------------
    // Test Runner
