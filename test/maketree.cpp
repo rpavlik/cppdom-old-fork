@@ -39,12 +39,15 @@ int main()
    root->addChild(element1);
    element1->setAttribute("attrib1", 1);
    element1->setAttribute("attrib2", "two");
+   std::string escaped_attrib_text = "<this>&<that>\"\'<done>";
+   element1->setAttribute("attrib3", escaped_attrib_text);
    element1->addChild(element1_cdata);
 
    // Cdata must have it's type set
    // then set the actual contents of the cdata
    element1_cdata->setType(cppdom::xml_nt_cdata);
-   element1_cdata->setCdata("This is element1");
+   std::string escaped_elt1_cdata("This is 'element1'<here>&\"there\"");
+   element1_cdata->setCdata(escaped_elt1_cdata);
 
    // Add a couple of nested nodes and set the attributes
    root->addChild(element2);
@@ -61,11 +64,11 @@ int main()
    // Get the cdata contents and make sure they match up
    std::string cdata_text;
    cdata_text = element1->getCdata();
-   std::cout << "This is element1: " << cdata_text << std::endl;
+   std::cout << escaped_elt1_cdata << cdata_text << std::endl;
    cdata_text = element1->getFullCdata();
-   std::cout << "This is element1: " << cdata_text << std::endl;
+   std::cout << escaped_elt1_cdata << cdata_text << std::endl;
    cdata_text = element1_cdata->getCdata();
-   std::cout << "This is element1: " << cdata_text << std::endl;
+   std::cout << escaped_elt1_cdata << cdata_text << std::endl;
 
    cdata_text = element3->getCdata();
    std::cout << "We are element 3: " << cdata_text << std::endl;
@@ -80,9 +83,34 @@ int main()
    doc.save(std::cout);
    std::cout << "------- No indent, no newline document ------\n";
    doc.save(std::cout, false, false);
+   std::cout << std::endl;
 
    std::string filename("maketree.xml");
    doc.saveFile(filename);
+
+   // Now load it to test some things
+   cppdom::Document loaded_doc(ctx);
+   loaded_doc.loadFile(filename);
+
+   cppdom::NodePtr r_element1 = loaded_doc.getChild("root")->getChild("Element1");
+   
+   std::string r_elt1_cdata = r_element1->getCdata();
+   while(r_elt1_cdata[r_elt1_cdata.size()-1] == ' ')     // Remove trailing whitespace
+   { r_elt1_cdata.erase(r_elt1_cdata.size()-1); }
+
+   /*
+   r_elt1_cdata.erase(std::find_if(r_elt1_cdata.rbegin(), r_elt1_cdata.rend(),
+                    std::not1(std::ptr_fun(std::isspace))).base(),
+                    r_elt1_cdata.end());
+                    */
+
+   assert(r_elt1_cdata == escaped_elt1_cdata);
+
+   std::string r_attrib = r_element1->getAttribute("attrib3");
+   assert(r_attrib == escaped_attrib_text);
+
+   std::cout << "---------------------------------------\n"
+             << "Tests passed." << std::endl;
 
    return 0;
 }

@@ -1,5 +1,9 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  --------------------------------------------------------
+2003-10-07 allenb       Added support for "stringification" of attrib text and
+                        cdata text.  This makes the system automatically
+                        escape any tokens (&<>"') before saving and upon load.
+                        NEW VERSION: 0.2.1
 2003-02-20 allenb       Added isEqual method to Node interface.
                         Created test application to test combinations of
                         isEqual comparisons.
