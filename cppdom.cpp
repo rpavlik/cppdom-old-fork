@@ -60,6 +60,8 @@ void XMLError::getStrError( XMLString &error ) const
       XMLERRORCODE(xml_attr_equal_expected,"expected '=' after attribute name");
       XMLERRORCODE(xml_attr_value_expected,"expected value after 'a' in attribute");
       XMLERRORCODE(xml_save_invalid_nodetype,"invalid nodetype encountered while saving");
+      XMLERRORCODE(xml_filename_invalid,"invalid file name");
+      XMLERRORCODE(xml_file_access,"could not access file");
       XMLERRORCODE(xml_dummy,"dummy error code (this error should never been seen)");
    }
    error.assign(err);
