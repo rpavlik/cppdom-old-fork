@@ -24,6 +24,8 @@ def GetPlatform():
       return 'irix'
    elif string.find(sys.platform, 'linux') != -1:
       return 'linux'
+   elif string.find(sys.platform, 'freebsd') != -1:
+      return 'linux'
    elif string.find(sys.platform, 'cygwin') != -1:
       return 'win32'
    elif string.find(os.name, 'win32') != -1:
