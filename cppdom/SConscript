@@ -10,12 +10,14 @@ headers = Split("""
    shared_ptr.h
    xmlparser.h
    xmltokenizer.h
+   version.h
 """)
 
 sources = Split("""
    cppdom.cpp
    xmlparser.cpp
    xmltokenizer.cpp
+   version.cpp
 """)
 
 env = baseEnv.Copy()

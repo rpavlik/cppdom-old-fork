@@ -40,7 +40,7 @@ EXTRA_INCLUDES=		-I.
 
 # The list of all source files needed for this librar.  Based on this, a list
 # of object files is put in $(OBJS) automatically.
-SRCS=	xmlparser.cpp xmltokenizer.cpp cppdom.cpp		
+SRCS=	cppdom.cpp xmlparser.cpp xmltokenizer.cpp version.cpp
 
 # Extend this as necessary to find source files that are not in the current
 # directory.  Set EXTRA_PATH_FOR_SOURCES to all the directories that you

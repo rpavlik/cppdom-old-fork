@@ -1,15 +1,17 @@
-DATE        AUTHOR    CHANGE
------------ --------- ---------------------------------------------------------
-May-06-2002 subatomic Added README and build instructions
-May-05-2002 subatomic Brought the code up to coding standard (API changed!).
-May-05-2002 subatomic Added build system based on Doozer gnumake tools
-                      support irix, linux, solaris, freebsd, win32 under
-                      cygwin, probably other too but untested see README.
-May-05-2002 allenb    Added save_file method for document node.
-May-01-2002 subatomic Added predicate.h, and two predicates
-Apr-05-2002 allenb    Fix EOF and -1 chars on Irix.
-Apr-03-2002 allenb    Added Node::getChild(char*) to avoid matching templated
-                      predicate version.
-Feb-19-2002 allenb    cppdom_boost::shared_ptr (no conflict with real boost)
-Feb-09-2002 subatomic const correctness, coding style
-Feb-08-2002 subatomic branched cppdom from 0.6 LGPL version of xmlpp
+DATE        AUTHOR      CHANGE
+---------- -----------  --------------------------------------------------------
+2002-12-02 nonchocoboy  Added versioning information.
+                        NEW VERSION: 0.0.1
+2002-05-06 subatomic    Added README and build instructions
+2002-05-05 subatomic    Brought the code up to coding standard (API changed!).
+2002-05-05 subatomic    Added build system based on Doozer gnumake tools
+                        support irix, linux, solaris, freebsd, win32 under
+                        cygwin, probably other too but untested see README.
+2002-05-05 allenb       Added save_file method for document node.
+2002-05-01 subatomic    Added predicate.h, and two predicates
+2002-04-05 allenb       Fix EOF and -1 chars on Irix.
+2002-04-03 allenb       Added Node::getChild(char*) to avoid matching templated
+                        predicate version.
+2002-02-19 allenb       cppdom_boost::shared_ptr (no conflict with real boost)
+2002-02-09 subatomic    const correctness, coding style
+2002-02-08 subatomic    branched cppdom from 0.6 LGPL version of xmlpp
