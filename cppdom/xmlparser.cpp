@@ -56,7 +56,7 @@ bool XMLParser::parse_document( XMLDocument &doc, XMLContextPtr &ctxptr )
 
    // start parsing
    if (handle)
-      ctxptr->get_eventhandler().start_document();
+      ctxptr->get_eventhandler().startDocument();
 
    parse_header( doc, ctxptr );
 
@@ -73,7 +73,7 @@ bool XMLParser::parse_document( XMLDocument &doc, XMLContextPtr &ctxptr )
    }
 
    if (handle)
-      ctxptr->get_eventhandler().end_document();
+      ctxptr->get_eventhandler().endDocument();
 
    return ret;
 }
@@ -156,7 +156,7 @@ bool XMLParser::parse_header( XMLDocument &doc, XMLContextPtr &ctxptr )
             XMLNodePtr nodeptr( new XMLNode(pinode) );
             doc.procinstructions.push_back( nodeptr );
 
-            if (ctxptr->handle_events()) ctxptr->get_eventhandler().processing_instruction(pinode);
+            if (ctxptr->handle_events()) ctxptr->get_eventhandler().processingInstruction(pinode);
 
             tokenizer++;
             if (*tokenizer != '?')
@@ -215,7 +215,7 @@ bool XMLParser::parse_node( XMLNode &node, XMLContextPtr &ctxptr )
          tokenizer.put_back();
 
          if (handle)
-            ctxptr->get_eventhandler().got_cdata(node.mCdata);
+            ctxptr->get_eventhandler().gotCdata( node.mCdata );
 
          return true;
       }
@@ -264,13 +264,13 @@ bool XMLParser::parse_node( XMLNode &node, XMLContextPtr &ctxptr )
 
    // notify event handler
    if (handle)
-      ctxptr->get_eventhandler().start_node(tagname);
+      ctxptr->get_eventhandler().startNode( tagname );
 
    // parse attributes
    parse_attributes(node.attributes);
 
    if (handle)
-      ctxptr->get_eventhandler().parsed_attributes(node.attributes);
+      ctxptr->get_eventhandler().parsedAttributes( node.attributes );
 
    // check for leaf
    tokenizer++;
@@ -329,7 +329,7 @@ bool XMLParser::parse_node( XMLNode &node, XMLContextPtr &ctxptr )
    if (*tokenizer != '>')
       throw XMLError(xml_opentag_expected);
 
-   if (handle) ctxptr->get_eventhandler().end_node(node);
+   if (handle) ctxptr->get_eventhandler().endNode( node );
 
    return true;
 }
