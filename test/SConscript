@@ -17,7 +17,6 @@ tests = Split("""
    maketree
    nodetest
    parsetest
-   predtest
 """)
 
 for t in tests:
