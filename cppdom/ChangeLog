@@ -1,5 +1,7 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  --------------------------------------------------------
+2003-02-07 nonchocoboy  Replaced Doozer-based build system with an SCons-based
+                        build system.
 2003-01-14 allenb       Added debug name member to the Node class.  This member
                         stores the string rep of the Node name but only
                         if CPPDOM_DEBUG is defined.  This member can REALLY
