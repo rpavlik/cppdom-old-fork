@@ -1,5 +1,7 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  --------------------------------------------------------
+2003-01-02 nonchocoboy  Brought the VC7 build up to date.
+                        NEW VERSON: 0.1.0
 2003-01-02 nonchocoboy  Moved implementation code out of the headers to make
                         building as a shared library easier.
 2003-01-02 nonchocoboy  Removed xml_char_type and XMLString typedefs.
