@@ -44,6 +44,9 @@ bool configureInput( const std::string& filename )
          std::cout << "attr: " << attr.get( "action" ) << "\n" << std::flush;
          std::cout << "attr: " << attr.get( "device" ) << "\n" << std::flush;
          std::cout << "attr: " << attr.get( "input" ) << "\n" << std::flush;
+
+         cppdom::XMLNode* parent = (*it)->getParent();
+         assert(parent != NULL && parent->getName() == std::string("gameinput"));
       }
       catch (cppdom::XMLError e)
       {
