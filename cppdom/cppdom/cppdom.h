@@ -300,8 +300,7 @@ namespace cppdom
       template<>
       std::string getValue<std::string>() const
       {
-         std::string value(mData);
-         return value;
+         return mData;
       }
 #endif // ! _MSC_VER
 #endif // ! CPPDOM_NO_MEMBER_TEMPLATES
@@ -318,8 +317,7 @@ namespace cppdom
    template<>
    inline std::string Attribute::getValue<std::string>() const
    {
-      std::string value(mData);
-      return value;
+      return mData;
    }
 #endif // ! _MSC_VER
 #endif // ! CPPDOM_NO_MEMBER_TEMPLATES
