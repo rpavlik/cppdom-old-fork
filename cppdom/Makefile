@@ -10,8 +10,8 @@ DZR_BASE_DIR=	.
 
 # Nothing but comments should come before this line.
 default: all
-OBJDIR=objs
-DEPDIR=deps
+OBJDIR=objs.$(HOSTTYPE)
+DEPDIR=deps.$(HOSTTYPE)
 
 # -----------------------------------------------------------------------------
 # Application-specific variable settings.  It is safe to modify these.
