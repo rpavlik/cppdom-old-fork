@@ -64,8 +64,8 @@
 #include <iosfwd>
 #include <fstream>
 #include <iostream>
-#include <cppdom/config.h>
-#include <cppdom/shared_ptr.h>   // the boost::shared_ptr class
+#include "config.h"
+#include "shared_ptr.h"   // the boost::shared_ptr class
 
 //! namespace of the cppdom project
 namespace cppdom

@@ -40,7 +40,7 @@
 #define CPPDOM_PREDICATES_H
 
 #include <string>
-#include <cppdom/cppdom.h>
+#include "cppdom.h"
 
 namespace cppdom
 {
