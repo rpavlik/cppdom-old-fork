@@ -354,14 +354,15 @@ public:
    void insert( xmlnode &node)
    {
       xmlnodeptr nodeptr(new xmlnode(node));
-      nodelist.push_back(nodeptr);
+      mNodelist.push_back(nodeptr);
    }
    //@}
 
    /** @name navigation through the nodes */
    //@{
    /** returns subnode list */
-   xmlnodelist& children(){ return nodelist; }
+   xmlnodelist& children()
+   { return mNodelist; }
 
    /** Returns the first child of the given local name */
    xmlnodeptr getChild( const xmlstring& name );
@@ -397,7 +398,7 @@ protected:
    xmlnodetype       nodetype;         /**< The type of the node */
    xmlattributes     attributes;       /**< Attributes of the element */
    xmlstring         mCdata;           /**< Character data (if there is any) */
-   xmlnodelist       nodelist;         /**< stl list with subnodes */
+   xmlnodelist       mNodelist;         /**< stl list with subnodes */
 };
 
 
