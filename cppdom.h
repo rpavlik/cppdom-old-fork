@@ -62,7 +62,7 @@ typedef xmlpp_boost::shared_ptr<xmlstring> xmlstringptr;
 
 
 //! xml parsing error codes enumeration
-enum xmlerrorcode 
+enum xmlerrorcode
 {
       //! unspecified or unknown error
    xml_unknown = 0,
@@ -128,9 +128,10 @@ protected:
 };
 
 
-//! xml stream position
-/*! represents the position in the xml input stream; usable if load()
-    throws an error on parsing xml content */
+/** xml stream position
+* represents the position in the xml input stream; usable if load()
+*    throws an error on parsing xml content
+*/
 class XMLPP_API xmllocation
 {
 public:
@@ -178,63 +179,65 @@ typedef xmlcontextptr XMLContextPtr;
 typedef xmleventhandlerptr XMLEventHandlerPtr;
 
 
-//! xml parsing context class
-/*! the class is the parsing context for the parsed xml document.
-    the class has a tagname lookup table and an entity map */
+/** xml parsing context class.
+* the class is the parsing context for the parsed xml document.
+* the class has a tagname lookup table and an entity map
+*/
 class XMLPP_API xmlcontext
 {
 public:
-   //! ctor
+   /** ctor */
    xmlcontext();
-   //! dtor
+   /** dtor */
    virtual ~xmlcontext();
 
-   //! returns the entity representation for the named entity
+   /** returns the entity representation for the named entity */
    xmlstring get_entity( const xmlstring &entname );
 
-   //! returns the tagname by the tagname handle
+   /** returns the tagname by the tagname handle */
    xmlstring get_tagname( xmltagnamehandle handle );
 
-   //! inserts a tag name and returns a tag name handle to the string
+   /** inserts a tag name and returns a tag name handle to the string */
    xmltagnamehandle insert_tagname( const xmlstring &tagname );
 
-   //! returns the current location in the xml stream
-   xmllocation &get_location(){ return location; }
+   /** returns the current location in the xml stream */
+   xmllocation &get_location()
+   { return location; }
 
-   //! called once when the context instance starts up; overwrite to customize
-   /*! note that the base member should always be called, to set init to true; */
-   virtual void init_context(){ init = true; }
+   /** called once when the context instance starts up; overwrite to customize
+   * @note: The base member should always be called, to set init to true
+   */
+   virtual void init_context()
+   { init = true; }
 
-   // event handling methods
-
-   //! sets the event handler; enables handling events
+   /** @name event handling methods */
+   //@{
+   /** sets the event handler; enables handling events */
    void set_eventhandler(xmleventhandlerptr ehptr);
-   //! returns the currently used eventhandler (per reference)
-   xmleventhandler &get_eventhandler(){ return *eventhandler.get(); }
-   //! returns if a valid event handler is set
-   bool handle_events() const { return handleevents; }
+
+   /** returns the currently used eventhandler (per reference) */
+   xmleventhandler &get_eventhandler()
+   { return *eventhandler.get(); }
+
+   /** returns if a valid event handler is set */
+   bool handle_events() const
+   { return handleevents; }
 
 protected:
-   //! indicates if init_context() was already called
-   bool init;
-   //! next available tagname handle
-   int nexthandle;
-   //! the tagname map matches xmltagnamehandles to the real xmlstring's
-   xmltagnamemap tagnames;
-   //! the entity map contains entity codes and their string representations
-   xmlentitymap entities;
-   //! location of the xml input stream
-   xmllocation location;
-   //! indicates if the event handler is used
-   bool handleevents;
-   //! current parsing event handler
-   xmleventhandlerptr eventhandler;
+
+   bool init;        /**< indicates if init_context() was already called */
+   int nexthandle;   /**< next available tagname handle */
+   xmltagnamemap tagnames;    /**< matches xmltagnamehandles to the real xmlstring's */
+   xmlentitymap entities;     /**< Contains entity codes and their string representations */
+   xmllocation location;      /**< location of the xml input stream */
+   bool handleevents;         /**< indicates if the event handler is used */
+   xmleventhandlerptr eventhandler;    /**< current parsing event handler */
 };
 
 typedef xmlcontext XMLContext;
 
 //! node type enumeration
-enum xmlnodetype 
+enum xmlnodetype
 {
       //! normal node, can contain subnodes
    xml_nt_node,
@@ -267,7 +270,7 @@ public:
 
    //! returns attribute value by name
    xmlstring get( const xmlstring &key );
-   
+
    //! sets new attribute value
    void set(const xmlstring &key, const xmlstring &value);
 };
@@ -375,7 +378,7 @@ public:
    void load( std::istream &instream, xmlcontextptr &ctxptr );
    //! saves node to xml output stream
    void save( std::ostream &outstream );
-   
+
    void load_file( const std::string& st )
    {
       istream.open( st.c_str(), std::ios::in );
@@ -388,7 +391,7 @@ protected:
    xmlnodelist procinstructions;
    //! node list of document type definition rules
    xmlnodelist dtdrules;
-   
+
    std::ifstream istream;
 };
 
