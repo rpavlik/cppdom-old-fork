@@ -43,7 +43,7 @@ namespace cppdom
 #define XMLERRORCODE(x,y)  case x: err = y; break;
 
    // XMLError methods
-   void XMLError::getStrError(XMLString& error) const
+   void XMLError::getStrError(std::string& error) const
    {
       const char *err;
       switch(errorcode)
@@ -82,7 +82,7 @@ namespace cppdom
    {
    }
 
-   XMLString XMLContext::getEntity(const XMLString& entname)
+   std::string XMLContext::getEntity(const std::string& entname)
    {
       if (!init)
       {
@@ -93,7 +93,7 @@ namespace cppdom
       return (iter == entities.end() ? entname : iter->second);
    }
 
-   XMLString XMLContext::getTagname(XMLTagNameHandle handle)
+   std::string XMLContext::getTagname(XMLTagNameHandle handle)
    {
       if (!init)
       {
@@ -101,11 +101,11 @@ namespace cppdom
       }
       XMLTagNameMap::const_iterator iter = tagnames.find(handle);
 
-      XMLString empty("");
+      std::string empty("");
       return (iter == tagnames.end() ? empty : iter->second);
    }
 
-   XMLTagNameHandle XMLContext::insertTagname(const XMLString& tagname)
+   XMLTagNameHandle XMLContext::insertTagname(const std::string& tagname)
    {
       if (!init)
       {
@@ -136,7 +136,7 @@ namespace cppdom
 
 
    // XMLAttributes methods
-   bool XMLAttributes::has(const XMLString& key) const
+   bool XMLAttributes::has(const std::string& key) const
    {
       XMLAttributes::const_iterator iter;
 
@@ -145,17 +145,17 @@ namespace cppdom
       return (iter != end());
    }
 
-   XMLString XMLAttributes::get(const XMLString& key) const
+   std::string XMLAttributes::get(const std::string& key) const
    {
       XMLAttributes::const_iterator iter;
 
       // try to find the key in the map
       iter = find(key);
-      XMLString empty("");
+      std::string empty("");
       return ((iter == end()) ? empty : iter->second);
    }
 
-   void XMLAttributes::set(const XMLString& key, const XMLString& value)
+   void XMLAttributes::set(const std::string& key, const std::string& value)
    {
       XMLAttributes::iterator iter;
 
@@ -199,18 +199,18 @@ namespace cppdom
       return *this;
    };
 
-   XMLString XMLNode::getName()
+   std::string XMLNode::getName()
    {
       return contextptr->getTagname(nodenamehandle);
    }
 
-   void XMLNode::setName(const XMLString& nname)
+   void XMLNode::setName(const std::string& nname)
    {
       nodenamehandle = contextptr->insertTagname(nname);
    }
 
    /** \note currently no path-like childname can be passed, like in e.g. msxml */
-   XMLNodePtr XMLNode::getChild(const XMLString& name)
+   XMLNodePtr XMLNode::getChild(const std::string& name)
    {
       // possible speedup: first search if a handle to the childname is existing
       XMLNodeList::const_iterator iter;
