@@ -41,6 +41,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <cppdom/cppdom.h>
+#include <stdlib.h>
 
 namespace cppdomtest
 {
@@ -59,7 +60,7 @@ public:
 
 public:
    // Load the named file without catching exceptions
-   cppdom::Document loadDocNoCatch(std::string filename);
+   cppdom::DocumentPtr loadDocNoCatch(std::string filename);
 };
 
 
@@ -68,6 +69,10 @@ class ParseMetricTest : public CppUnit::TestFixture
 
 CPPUNIT_TEST_SUITE(ParseMetricTest);
 CPPUNIT_TEST(timeLoadTestDocs);
+CPPUNIT_TEST(timeLoadSaveSmallRandomDoc);
+CPPUNIT_TEST(timeLoadSaveMediumRandomDoc);
+CPPUNIT_TEST(timeLoadSaveLargeRandomDoc);
+//CPPUNIT_TEST(timeLoadSaveHugeRandomDoc);
 CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -75,9 +80,31 @@ public:
    /** Time loading of a bunch of test documents. */
    void timeLoadTestDocs();
 
+   /** Time the saving and loading of a large document. */
+   void timeLoadSaveSmallRandomDoc();
+   void timeLoadSaveMediumRandomDoc();
+   void timeLoadSaveLargeRandomDoc();
+   void timeLoadSaveHugeRandomDoc();
+
 public:
    // Load the named file without catching exceptions
-   cppdom::Document loadDocNoCatch(std::string filename);
+   cppdom::DocumentPtr loadDocNoCatch(std::string filename);
+
+   // Create a psuedo random document
+   cppdom::DocumentPtr createDocument(unsigned depth, unsigned seed=21);
+
+   // Create a random branch of given depth
+   cppdom::NodePtr createBranch(unsigned depth);
+
+   unsigned getRandomNum(unsigned max)
+   {  return unsigned(float(max)*drand48()); }
+
+
+protected:
+   std::vector<std::string>   mAvailElementNames;     // List of elt names to choose from
+   std::vector<std::string>   mAvailAttribNames;      // Available attrib names to use
+   std::vector<std::string>   mAvailAttribValues;      // Available attrib names to use
+   cppdom::ContextPtr         mLocalContext;          // The context to use
 };
 
 }
