@@ -114,13 +114,13 @@ namespace cppdom
       }
 
       /// compare operator for a generic string
-      bool operator==(std::string str)
+      bool operator==(const std::string& str)
       {
          return !isliteral ? str == generic : false;
       }
 
       /// compare operator for a generic string
-      bool operator!=(std::string str)
+      bool operator!=(const std::string& str)
       {
          return !isliteral ? str != generic : true;
       }
