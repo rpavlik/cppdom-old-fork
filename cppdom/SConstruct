@@ -32,6 +32,8 @@ def GetPlatform():
       return 'win32'
    elif string.find(os.name, 'win32') != -1:
       return 'win32'
+   elif string.find(sys.platform, 'sun') != -1:
+      return 'sun'
    else:
       return sys.platform
 Export('GetPlatform')
@@ -116,6 +118,33 @@ def BuildIRIXEnvironment():
       LINKFLAGS   = LINKFLAGS
    )
 
+def BuildSunEnvironment():
+   "Builds a base environment for other modules to build on set up for linux"
+   global optimize, profile, builders
+
+   CXXFLAGS = ['-Wall', '-fexceptions']
+   LINKFLAGS = []
+
+   # Enable profiling?
+   if profile != 'no':
+      CXXFLAGS.extend(['-pg'])
+      LINKFLAGS.extend(['-pg'])
+
+   # Debug or optimize build?
+   if optimize != 'no':
+      CXXFLAGS.extend(['-DNDEBUG', '-O2'])
+   else:
+      CXXFLAGS.extend(['-D_DEBUG', '-g'])
+
+   ret_env = Environment( ENV = os.environ )
+   
+   # Override the tool chains used
+   for t in ['gcc', 'gnulink', 'g++']:
+      Tool(t)(ret_env)    
+   
+   ret_env['CXXFLAGS'] = CXXFLAGS;
+   return ret_env;
+
 def BuildWin32Environment():
    return Environment(ENV = os.environ)
 
@@ -172,6 +201,8 @@ elif GetPlatform() == 'linux':
    baseEnv = BuildLinuxEnvironment()
 elif GetPlatform() == 'win32':
    baseEnv = BuildWin32Environment()
+elif GetPlatform() == 'sun':
+   baseEnv = BuildSunEnvironment()
 else:
    print 'Unsupported build environment: ' + GetPlatform()
    sys.exit(-1)
