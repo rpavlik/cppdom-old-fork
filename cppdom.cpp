@@ -303,6 +303,10 @@ namespace cppdom
       : mContext(ctx), mNodeType(xml_nt_node), mParent(0)
    {}
 
+   Node::Node(std::string nodeName, ContextPtr ctx)
+      : mContext(ctx), mNodeType(xml_nt_node), mParent(0)
+   { setName(nodeName); }
+
    Node::Node(const Node& node)
       : mNodeNameHandle(node.mNodeNameHandle)
       , mContext(node.mContext)
@@ -552,6 +556,13 @@ namespace cppdom
    {
       mNodeType = xml_nt_document;
    }
+
+   Document::Document(std::string docName, ContextPtr context)
+      : Node(docName, context)
+   {
+      mNodeType = xml_nt_document;
+   }
+
 
    NodeList& Document::getPiList()
    {
