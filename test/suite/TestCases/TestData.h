@@ -5,6 +5,11 @@ namespace cppdomtest
 {
 
    const std::string game_xml_filename("data/game.xml");
+   const std::string nodetest_xml_filename("data/nodetest.xml");
+   const std::string simple_nodes_xml_filename("data/simple_nodes.xml");
+       
+   const std::string rime_xml_filename("data/rime10.xml");
+   const std::string hamlet_xml_filename("data/hamlet.xml");
 }
       
 #endif
