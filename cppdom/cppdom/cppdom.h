@@ -571,6 +571,15 @@ public:
       file_istream.close();
    }
 
+   void save_file( const std::string& st )
+   {
+      std::fstream file_stream;
+      file_stream.open( st.c_str(), std::ios::in | std::ios::out );
+      this->save( file_stream);
+      file_stream.close();
+   }
+
+
 protected:
    /** node list of parsed processing instructions */
    xmlnodelist procinstructions;
