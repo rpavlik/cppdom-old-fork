@@ -42,8 +42,8 @@ namespace cppdom {
 // macro for keeping the errorcode switch short and easy
 #define XMLERRORCODE(x,y)  case x: err = y; break;
 
-// xmlerror methods
-void xmlerror::get_strerror(xmlstring &error) const
+// XMLError methods
+void XMLError::get_strerror(XMLString &error) const
 {
    const char *err;
    switch(errorcode)
@@ -66,39 +66,39 @@ void xmlerror::get_strerror(xmlstring &error) const
 }
 
 
-// xmlcontext methods
+// XMLContext methods
 
-xmlcontext::xmlcontext()
-:eventhandler(new xmleventhandler)
+XMLContext::XMLContext()
+:eventhandler(new XMLEventHandler)
 {
    init = false;
    nexthandle = 0;
    handleevents = false;
 }
 
-xmlcontext::~xmlcontext()
+XMLContext::~XMLContext()
 {
 }
 
-xmlstring xmlcontext::get_entity( const xmlstring &entname )
+XMLString XMLContext::get_entity( const XMLString &entname )
 {
    if (!init) init_context();
 
-   xmlentitymap::const_iterator iter = entities.find( entname );
+   XMLEntityMap::const_iterator iter = entities.find( entname );
    return ( iter == entities.end() ? entname : iter->second );
 }
 
-xmlstring xmlcontext::get_tagname( xmltagnamehandle handle )
+XMLString XMLContext::get_tagname( XMLTagNameHandle handle )
 {
    if (!init)
       init_context();
-   xmltagnamemap::const_iterator iter = tagnames.find( handle );
+   XMLTagNameMap::const_iterator iter = tagnames.find( handle );
 
-   xmlstring empty("");
+   XMLString empty("");
    return ( iter == tagnames.end() ? empty : iter->second );
 }
 
-xmltagnamehandle xmlcontext::insert_tagname( const xmlstring &tagname )
+XMLTagNameHandle XMLContext::insert_tagname( const XMLString &tagname )
 {
    if (!init)
       init_context();
@@ -106,7 +106,7 @@ xmltagnamehandle xmlcontext::insert_tagname( const xmlstring &tagname )
    // bugfix: first search, if the tagname is already in the list
    // since usually there are not much different tagnames, the search
    // shouldn't slow down parsing too much
-   xmltagnamemap::const_iterator iter,stop;
+   XMLTagNameMap::const_iterator iter,stop;
    iter = tagnames.begin();
    stop = tagnames.end();
 
@@ -119,36 +119,36 @@ xmltagnamehandle xmlcontext::insert_tagname( const xmlstring &tagname )
    }
 
    // insert new tagname
-   xmltagnamemap::value_type keyvaluepair(nexthandle,tagname);
+   XMLTagNameMap::value_type keyvaluepair(nexthandle,tagname);
    tagnames.insert(keyvaluepair);
 
    return nexthandle++;
 }
 
 
-// xmlattributes methods
-bool xmlattributes::has(const xmlstring &key) const
+// XMLAttributes methods
+bool XMLAttributes::has(const XMLString &key) const
 {
-   xmlattributes::const_iterator iter;
+   XMLAttributes::const_iterator iter;
 
    // try to find the key in the map
    iter = find( key );
    return (iter != end());
 }
 
-xmlstring xmlattributes::get(const xmlstring &key) const
+XMLString XMLAttributes::get(const XMLString &key) const
 {
-   xmlattributes::const_iterator iter;
+   XMLAttributes::const_iterator iter;
 
    // try to find the key in the map
    iter = find( key );
-   xmlstring empty("");
+   XMLString empty("");
    return ((iter == end()) ? empty : iter->second);
 }
 
-void xmlattributes::set(const xmlstring &key, const xmlstring &value)
+void XMLAttributes::set(const XMLString &key, const XMLString &value)
 {
-   xmlattributes::iterator iter;
+   XMLAttributes::iterator iter;
 
    // try to find the key in the map
    iter = find( key );
@@ -157,15 +157,15 @@ void xmlattributes::set(const xmlstring &key, const xmlstring &value)
    else
    {
       // insert, because the key-value pair was not found
-      xmlattributes::value_type pa(key,value);
+      XMLAttributes::value_type pa(key,value);
       insert(pa);
    }
 }
 
 
-// xmlnode methods
+// XMLNode methods
 
-xmlnode::xmlnode( const xmlnode &node )
+XMLNode::XMLNode( const XMLNode &node )
 {
    nodenamehandle = node.nodenamehandle;
    contextptr = node.contextptr;
@@ -175,7 +175,7 @@ xmlnode::xmlnode( const xmlnode &node )
    mNodelist = node.mNodelist;
 };
 
-xmlnode &xmlnode::operator =( const xmlnode &node )
+XMLNode &XMLNode::operator =( const XMLNode &node )
 {
    nodenamehandle = node.nodenamehandle;
    contextptr = node.contextptr;
@@ -186,27 +186,27 @@ xmlnode &xmlnode::operator =( const xmlnode &node )
    return *this;
 };
 
-xmlstring xmlnode::getName()
+XMLString XMLNode::getName()
 {
    return contextptr->get_tagname( nodenamehandle );
 }
 
-void xmlnode::setName( const xmlstring &nname )
+void XMLNode::setName( const XMLString &nname )
 {
    nodenamehandle = contextptr->insert_tagname(nname);
 }
 
 /*! \note currently no path-like childname can be passed, like in e.g. msxml */
-xmlnodeptr xmlnode::getChild(const xmlstring &name)
+XMLNodePtr XMLNode::getChild(const XMLString &name)
 {
    // possible speedup: first search if a handle to the childname is existing
 
-   xmlnodelist::const_iterator iter;
+   XMLNodeList::const_iterator iter;
 
    // search for first occurance of node
    for(iter = mNodelist.begin(); iter != mNodelist.end(); ++iter)
    {
-      xmlnodeptr np = (*iter);
+      XMLNodePtr np = (*iter);
       if (np->getName() == name)
       {
          return np;
@@ -214,18 +214,18 @@ xmlnodeptr xmlnode::getChild(const xmlstring &name)
    }
 
    // no valid child found
-   return xmlnodeptr(NULL);
+   return XMLNodePtr(NULL);
 }
 
-/*! \exception throws cppdom::xmlerror when a streaming or parsing error occur */
-void xmlnode::load( std::istream &instream, xmlcontextptr &ctxptr )
+/*! \exception throws cppdom::XMLError when a streaming or parsing error occur */
+void XMLNode::load( std::istream &instream, XMLContextPtr &ctxptr )
 {
-   xmlparser parser(instream,ctxptr->get_location());
+   XMLParser parser(instream,ctxptr->get_location());
    parser.parse_node( *this, ctxptr );
 }
 
-/*! \exception throws cppdom::xmlerror when a streaming or parsing error occur */
-void xmlnode::save( std::ostream &outstream, int indent )
+/*! \exception throws cppdom::XMLError when a streaming or parsing error occur */
+void XMLNode::save( std::ostream &outstream, int indent )
 {
    // output indendation spaces
    for(int i=0;i<indent;i++)
@@ -242,13 +242,13 @@ void xmlnode::save( std::ostream &outstream, int indent )
    outstream << '<' << contextptr->get_tagname(nodenamehandle).c_str();
 
    // output all attributes
-   xmlattributes::const_iterator iter, stop;
+   XMLAttributes::const_iterator iter, stop;
    iter = attributes.begin();
    stop = attributes.end();
 
    for(;iter!=stop;iter++)
    {
-      xmlattributes::value_type attr = *iter;
+      XMLAttributes::value_type attr = *iter;
       outstream << ' ' << attr.first.c_str() << '='
          << '\"' << attr.second.c_str() << '\"';
    }
@@ -261,7 +261,7 @@ void xmlnode::save( std::ostream &outstream, int indent )
          outstream << '>' << std::endl;
 
          // output all subnodes
-         xmlnodelist::const_iterator iter,stop;
+         XMLNodeList::const_iterator iter,stop;
          iter = mNodelist.begin();
          stop = mNodelist.end();
 
@@ -283,45 +283,45 @@ void xmlnode::save( std::ostream &outstream, int indent )
       break;
    default:
       // unknown nodetype
-      throw xmlerror( xml_save_invalid_nodetype );
+      throw XMLError( xml_save_invalid_nodetype );
    }
 }
 
 
-// xmldocument methods
+// XMLDocument methods
 
-/** \exception throws cppdom::xmlerror when a streaming or parsing error occur */
-void xmldocument::load( std::istream &instream, xmlcontextptr &ctxptr )
+/** \exception throws cppdom::XMLError when a streaming or parsing error occur */
+void XMLDocument::load( std::istream &instream, XMLContextPtr &ctxptr )
 {
-   xmlparser parser(instream, ctxptr->get_location());
+   XMLParser parser(instream, ctxptr->get_location());
    parser.parse_document( *this, ctxptr );
 }
 
 /** \todo implement: print <!doctype> tag;
-* \exception throws cppdom::xmlerror when a streaming or parsing error occur
+* \exception throws cppdom::XMLError when a streaming or parsing error occur
 */
-void xmldocument::save( std::ostream &outstream )
+void XMLDocument::save( std::ostream &outstream )
 {
    // output all processing instructions
-   xmlnodelist::const_iterator iter,stop;
+   XMLNodeList::const_iterator iter,stop;
    iter = procinstructions.begin();
    stop = procinstructions.end();
 
    for(;iter!=stop;iter++)
    {
-      xmlnodeptr np = *iter;
+      XMLNodePtr np = *iter;
 
       // output pi tag
       outstream << "<?" << np->getName().c_str();
 
       // output all attributes
-      xmlattributes::const_iterator aiter, astop;
+      XMLAttributes::const_iterator aiter, astop;
       aiter = attributes.begin();
       astop = attributes.end();
 
       for(;aiter!=astop;aiter++)
       {
-         xmlattributes::value_type attr = *aiter;
+         XMLAttributes::value_type attr = *aiter;
          outstream << ' ' << attr.first.c_str() << '='
             << '\"' << attr.second.c_str() << '\"';
       }
@@ -334,7 +334,7 @@ void xmldocument::save( std::ostream &outstream )
    // left to do ...
 
 
-   // call save() method of the first (and hopefully only) node in xmldocument
+   // call save() method of the first (and hopefully only) node in XMLDocument
    (*mNodelist.begin())->save(outstream,0);
 }
 

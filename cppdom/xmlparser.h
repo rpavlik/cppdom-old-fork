@@ -25,15 +25,15 @@
    Boston, MA  02111-1307  USA.
 
 */
-/*! \file xmlparser.hpp
+/*! \file XMLParser.hpp
 
   definitions for the parsing classes
 
 */
 
 // prevent multiple includes
-#ifndef __xmlparser_hpp_
-#define __xmlparser_hpp_
+#ifndef __XMLParser_hpp_
+#define __XMLParser_hpp_
 
 // needed includes
 #include <cppdom/cppdom.h>
@@ -44,27 +44,27 @@ namespace cppdom {
 
 
 //! xml parser implementation class
-class xmlparser
+class XMLParser
 {
 public:
    //! ctor
-   xmlparser( std::istream &inputstream, xmllocation &loc );
+   XMLParser( std::istream &inputstream, XMLLocation &loc );
 
    //! parses the node as the document root
-   bool parse_document( xmldocument &doc, xmlcontextptr &ctxptr );
+   bool parse_document( XMLDocument &doc, XMLContextPtr &ctxptr );
    
    //! parses a node, without processing instructions
-   bool parse_node( xmlnode &node, xmlcontextptr &ctxptr );
+   bool parse_node( XMLNode &node, XMLContextPtr &ctxptr );
 
 protected:
    //! parses xml header, such as processing instructions, doctype etc.
-   bool parse_header( xmldocument &doc, xmlcontextptr &ctxptr );
+   bool parse_header( XMLDocument &doc, XMLContextPtr &ctxptr );
 
    //! parses an xml tag attribute list
-   bool parse_attributes( xmlattributes &attr );
+   bool parse_attributes( XMLAttributes &attr );
 
    //! parses a <!-- --> comment 
-   void parse_comment( xmlcontextptr &ctxptr );
+   void parse_comment( XMLContextPtr &ctxptr );
 
 protected:
    //! input stream

@@ -57,16 +57,16 @@ public:
    //! ctor with init
    xmltoken( xml_char_type ch ){ isliteral=true; literal=ch; generic.empty(); }
    //! ctor with init
-   xmltoken( xmlstring &str ):generic(str){ isliteral=false; literal=0; }
+   xmltoken( XMLString &str ):generic(str){ isliteral=false; literal=0; }
 
    //! returns if token is a literal
    bool is_literal(){ return isliteral; }
    //! returns if it is and end of xml stream token
-   bool is_endofstream(){ return isliteral && literal==char(EOF)/*xmlstring::traits_type::eof()*/; }
+   bool is_endofstream(){ return isliteral && literal==char(EOF)/*XMLString::traits_type::eof()*/; }
    //! returns literal char
    xml_char_type get_literal(){ return literal; }
    //! returns generic string
-   xmlstring &get_generic(){ return generic; }
+   XMLString &get_generic(){ return generic; }
 
    // operators
 
@@ -76,12 +76,12 @@ public:
    bool operator !=(xml_char_type ch){ return !isliteral?true:ch!=literal; }
 
    //! compare operator for a generic string
-   bool operator ==(xmlstring str){ return !isliteral?str==generic:false; }
+   bool operator ==(XMLString str){ return !isliteral?str==generic:false; }
    //! compare operator for a generic string
-   bool operator !=(xmlstring str){ return !isliteral?str!=generic:true; }
+   bool operator !=(XMLString str){ return !isliteral?str!=generic:true; }
 
    //! set generic string
-   xmltoken &operator =(xmlstring &str){ generic.assign(str); isliteral=false; return *this; }
+   xmltoken &operator =(XMLString &str){ generic.assign(str); isliteral=false; return *this; }
    //! set literal char
    xmltoken &operator =(xml_char_type ch){ literal=ch; isliteral=true; return *this; }
 
@@ -91,7 +91,7 @@ protected:
    //! literal
    xml_char_type literal;
    //! pointer to string
-   xmlstring generic;
+   XMLString generic;
 };
 
 
@@ -101,7 +101,7 @@ class xmltokenizer
 {
 public:
    //! ctor
-   xmltokenizer(std::istream &is,xmllocation &loc):instr(is),location(loc){}
+   xmltokenizer(std::istream &is,XMLLocation &loc):instr(is),location(loc){}
    virtual ~xmltokenizer(){}
 
    //! dereference operator
@@ -133,7 +133,7 @@ protected:
    std::istream &instr;
 
    //! location in the stream
-   xmllocation &location;
+   XMLLocation &location;
 
    //! current token
    xmltoken curtoken;
@@ -148,7 +148,7 @@ class xmlstream_iterator:public xmltokenizer
 {
 public:
    //! ctor
-   xmlstream_iterator(std::istream &is,xmllocation &loc);
+   xmlstream_iterator(std::istream &is,XMLLocation &loc);
 
 protected:
    void get_next();
@@ -172,7 +172,7 @@ class xmldtd_iterator:public xmltokenizer
 {
 public:
    //! ctor
-   xmldtd_iterator(std::istream &is,xmllocation &loc);
+   xmldtd_iterator(std::istream &is,XMLLocation &loc);
 
 protected:
    void get_next(){}

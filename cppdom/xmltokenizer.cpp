@@ -42,7 +42,7 @@ namespace cppdom {
 
 // xmlstream_iterator methods
 
-xmlstream_iterator::xmlstream_iterator(std::istream &is,xmllocation &loc)
+xmlstream_iterator::xmlstream_iterator(std::istream &is,XMLLocation &loc)
 :xmltokenizer(is,loc)
 {
    putback_char = char(-1);
@@ -65,7 +65,7 @@ void xmlstream_iterator::get_next()
 
    bool finished = false;
 
-   xmlstring generic;
+   XMLString generic;
 
    // get next char
    xml_char_type c;
