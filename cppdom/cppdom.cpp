@@ -42,6 +42,9 @@
 
 */
 
+#include <iostream>
+#include <fstream>
+
 // needed includes
 #include <cppdom/cppdom.h>
 #include <cppdom/xmlparser.h>
