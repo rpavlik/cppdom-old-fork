@@ -271,39 +271,39 @@ namespace cppdom
 
    std::string Attributes::get(const std::string& key) const
    {
-      Attributes::const_iterator iter;
+      attr_map_t::const_iterator iter;
 
       // try to find the key in the map
-      iter = find(key);
+      iter = mMap.find(key);
       std::string empty("");
-      return ((iter == end()) ? empty : iter->second);
+      return ((iter == mMap.end()) ? empty : iter->second);
    }
 
    void Attributes::set(const std::string& key, const std::string& value)
    {
-      Attributes::iterator iter;
+      attr_map_t::iterator iter;
 
       // try to find the key in the map
-      iter = find(key);
-      if (iter != end())
+      iter = mMap.find(key);
+      if (iter != mMap.end())
       {
          (*iter).second = value;
       }
       else
       {
          // insert, because the key-value pair was not found
-         Attributes::value_type pa(key,value);
-         insert(pa);
+         attr_map_t::value_type pa(key,value);
+         mMap.insert(pa);
       }
    }
 
    bool Attributes::has(const std::string& key) const
    {
-      Attributes::const_iterator iter;
+      attr_map_t::const_iterator iter;
 
       // try to find the key in the map
-      iter = find(key);
-      return (iter != end());
+      iter = mMap.find(key);
+      return (iter != mMap.end());
    }
 
 

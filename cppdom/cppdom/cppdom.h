@@ -330,33 +330,66 @@ namespace cppdom
 
 
    /**
-    * xml tag attribute map
-    * contains all attributes and values a tag has, represented in a map
+    * XML tag attribute map.
+    * Contains all attributes and values a tag has, represented in a map.
     */
-   class CPPDOM_API Attributes: public std::map<std::string, std::string>
+   class CPPDOM_API Attributes
    {
       friend class Parser;
    public:
+      typedef std::map<std::string, std::string> attr_map_t;
+      typedef attr_map_t::const_iterator const_iterator;
+      typedef attr_map_t::iterator iterator;
+      typedef attr_map_t::value_type value_type;
+
       /** ctor */
       Attributes();
 
       /**
-       * Get the named attribute
-       * @returns empty string "" if not found, else the value
+       * Get the named attribute.
+       * @returns empty string "" if not found, else the value.
        */
       std::string get(const std::string& key) const;
 
       /**
-       * Sets new attribute value
-       * If not found, then just insert the new attribute
+       * Sets new attribute value.
+       * If not found, then just insert the new attribute.
        */
       void set(const std::string& key, const std::string& value);
 
       /**
-       * Check if the attribute map has the given attribute
-       * @return false if not found
+       * Check if the attribute map has the given attribute.
+       * @return false if not found.
        */
       bool has(const std::string& key) const;
+
+      std::pair<iterator, bool> insert(const value_type& x)
+      {
+         return mMap.insert(x);
+      }
+
+      iterator begin()
+      {
+         return mMap.begin();
+      }
+
+      iterator end()
+      {
+         return mMap.end();
+      }
+
+      const_iterator begin() const
+      {
+         return mMap.begin();
+      }
+
+      const_iterator end() const
+      {
+         return mMap.end();
+      }
+
+   private:
+      attr_map_t mMap;
    };
 
 
