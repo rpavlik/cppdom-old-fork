@@ -370,7 +370,7 @@ namespace cppdom
       explicit Node(ContextPtr pctx);
 
       /** Construct a node with a given name */
-      explicit Node::Node(std::string nodeName, ContextPtr ctx);
+      explicit Node(std::string nodeName, ContextPtr ctx);
 
       Node(const Node& node);
       ~Node();
