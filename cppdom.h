@@ -316,8 +316,7 @@ namespace cppdom
       friend class XMLParser;
    public:
       /** ctor */
-      XMLAttributes()
-      {}
+      XMLAttributes();
 
       /**
        * Get the named attribute
@@ -354,138 +353,75 @@ namespace cppdom
       friend class XMLParser;
    protected:
       /** Default Constructor */
-      XMLNode() : mParent(NULL)
-      {
-         nodetype = xml_nt_node;
-      }
+      XMLNode();
 
    public:
       /** constructor, takes xml context pointer */
-      explicit XMLNode(XMLContextPtr pctx) : mParent(NULL)
-      {
-         nodetype = xml_nt_node;
-         contextptr = pctx;
-      }
+      explicit XMLNode(XMLContextPtr pctx);
 
-      /** Destructor */
-      ~XMLNode()
-      {
-         // Disown our rotten children.  Even Brandine!
-         for (XMLNodeList::iterator i = mNodelist.begin(); i != mNodelist.end(); ++i)
-         {
-            (*i)->mParent = NULL;
-         }
-      }
-
-      /** copy constructor */
       XMLNode(const XMLNode& node);
+      ~XMLNode();
 
       /** assign operator */
-      XMLNode &operator=(const XMLNode& node);
+      XMLNode& operator=(const XMLNode& node);
 
       /** @name access to node info */
       //@{
       /** returns type of node */
-      XMLNodeType getType() const
-      {
-         return nodetype;
-      }
+      XMLNodeType getType() const;
 
       /** Returns the local name of the node (the element name) */
       std::string getName();
 
       /** returns attribute map of the node */
-      XMLAttributes& getAttrMap()
-      {
-         return attributes;
-      }
+      XMLAttributes& getAttrMap();
 
       /**
        * Get the named attribute
        * @returns empty string ("") if not found, else the value
        * @post Object does not change.
        */
-      XMLAttribute getAttribute(const std::string& name) const
-      {
-         return attributes.get(name);
-      }
+      XMLAttribute getAttribute(const std::string& name) const;
 
       /** Check if the node has a given attribute */
-      bool hasAttribute(const std::string& name) const
-      {
-         return attributes.has(name);
-      }
+      bool hasAttribute(const std::string& name) const;
 
       /**
        * returns cdata string
        * @note: This only returns data for nodes that are leaf nodes of type "cdata".
        *        Calling this on a node that has cdata as a child does nothing
        */
-      const std::string& getCdata()
-      {
-         return mCdata;
-      }
+      const std::string& getCdata();
       //@}
 
       /** @name node data manipulation */
       //@{
       /** sets new nodetype */
-      void setType(XMLNodeType ntype)
-      {
-         nodetype = ntype;
-      }
+      void setType(XMLNodeType type);
 
       /** set the node name */
-      void setName(const std::string& nname);
+      void setName(const std::string& name);
 
       /** sets new cdata */
-      void setCdata(const std::string& ncdata)
-      {
-         mCdata = ncdata;
-      }
+      void setCdata(const std::string& cdata);
 
       /**
        * sets new attribute value
        * @post Element.attr is set to value.  If it didn't exist before, now it does.
        */
-      void setAttribute(const std::string& attr, const XMLAttribute& value)
-      {
-         attributes.set(attr, value.getString());
-      }
+      void setAttribute(const std::string& attr, const XMLAttribute& value);
 
-      void addChild(XMLNodePtr& node)
-      {
-         node->mParent = this;      // Tell the child who their daddy is
-         mNodelist.push_back(node);
-      }
-
-      bool removeChild(XMLNodePtr& node)
-      {
-         std::cout << "cppdom::XMLNode::removeChild:  not implemented\n";
-         return false;
-      }
-
-      bool removeChild(std::string& childName)
-      {
-         std::cout << "cppdom::XMLNode::removeChild:  not implemented\n";
-         return false;
-      }
-
-      bool removeChildren(std::string& childName)
-      {
-         std::cout << "cppdom::XMLNode::removeChildren:  not implemented\n";
-         return false;
-      }
+      void addChild(XMLNodePtr& node);
+      bool removeChild(XMLNodePtr& node);
+      bool removeChild(std::string& childName);
+      bool removeChildren(std::string& childName);
       //@}
 
       /** @name navigation through the nodes */
       //@{
 
       /** returns a list of the nodes children */
-      XMLNodeList& getChildren()
-      {
-         return mNodelist;
-      }
+      XMLNodeList& getChildren();
 
       /** Returns the first child of the given local name */
       XMLNodePtr getChild(const std::string& name);
@@ -495,49 +431,31 @@ namespace cppdom
        * \note currently no path-like childname can be passed, like in e.g. msxml
        * If has standard compose() functions, could impl this by calling getChildren(pred)
        */
-      XMLNodeList getChildren(const std::string& name)
-      {
-         XMLNodeList ret_nlist(0);
-         XMLNodeList::const_iterator iter;
-
-         // search for all occurances of nodename and insert them into the new list
-         for(iter = mNodelist.begin(); iter != mNodelist.end(); ++iter)
-         {
-            if ((*iter)->getName() == name)
-            {
-               ret_nlist.push_back(*iter);
-            }
-         }
-
-         return ret_nlist;
-      }
+      XMLNodeList getChildren(const std::string& name);
 
       /**
        * Returns list of all children.
        * @see getChildren
        * @note Needed because of predicate template matching char*
        */
-      XMLNodeList getChildren(const char* name)
-      {
-         return getChildren(std::string(name));
-      }
+      XMLNodeList getChildren(const char* name);
 
       /** Return a list of children that pass the given STL predicate */
       template<class Predicate>
       XMLNodeList getChildrenPred(Predicate pred)
       {
-         XMLNodeList ret_nlist(0);
+         XMLNodeList result(0);
          XMLNodeList::const_iterator iter;
 
          // search for all occurances of nodename and insert them into the new list
-         for(iter = mNodelist.begin(); iter != mNodelist.end(); ++iter)
+         for(iter = mNodeList.begin(); iter != mNodeList.end(); ++iter)
          {
             if (pred(*iter))
             {
-               ret_nlist.push_back(*iter);
+               result.push_back(*iter);
             }
          }
-         return ret_nlist;
+         return result;
       }
 
       /**
@@ -545,34 +463,27 @@ namespace cppdom
        *
        * @return Our parent, which may be NULL if we have no parent.
        */
-      XMLNode* getParent() const
-      {
-         return mParent;
-      }
-
+      XMLNode* getParent() const;
       //@}
 
       /** @name load/save functions */
       //@{
       /** loads xml node from input stream */
-      void load(std::istream& instream, XMLContextPtr& ctxptr);
+      void load(std::istream& in, XMLContextPtr& context);
 
       /** saves node to xml output stream */
-      void save(std::ostream& outstream, int indent=0);
+      void save(std::ostream& out, int indent=0);
       //@}
 
-      XMLContextPtr getContext()
-      {
-         return contextptr;
-      }
+      XMLContextPtr getContext();
 
    protected:
-      XMLTagNameHandle  nodenamehandle;   /**< handle to the real tag name */
-      XMLContextPtr     contextptr;       /**< smart pointer to the context class */
-      XMLNodeType       nodetype;         /**< The type of the node */
-      XMLAttributes     attributes;       /**< Attributes of the element */
-      std::string         mCdata;           /**< Character data (if there is any) */
-      XMLNodeList       mNodelist;        /**< stl list with subnodes */
+      XMLTagNameHandle  mNodeNameHandle;  /**< handle to the real tag name */
+      XMLContextPtr     mContext;         /**< smart pointer to the context class */
+      XMLNodeType       mNodeType;        /**< The type of the node */
+      XMLAttributes     mAttributes;      /**< Attributes of the element */
+      std::string       mCdata;           /**< Character data (if there is any) */
+      XMLNodeList       mNodeList;        /**< stl list with subnodes */
       XMLNode*          mParent;          /**< Our parent */
    };
 
@@ -582,66 +493,37 @@ namespace cppdom
    {
       friend class XMLParser;
    public:
-      /** constructor */
-      XMLDocument(){ nodetype = xml_nt_document; }
+      XMLDocument();
 
       /** constructor taking xml context pointer */
-      explicit XMLDocument(XMLContextPtr pctx)
-      {
-         nodetype = xml_nt_document;
-         contextptr = pctx;
-      }
+      explicit XMLDocument(XMLContextPtr context);
 
       /** returns a list of processing instruction nodes */
-      XMLNodeList& getPiList()
-      {
-         return procinstructions;
-      }
+      XMLNodeList& getPiList();
 
       /** returns a list of document type definition rules to check the xml file */
-      XMLNodeList& getDtdList()
-      {
-         return dtdrules;
-      }
+      XMLNodeList& getDtdList();
 
       /** loads xml Document (node) from input stream */
-      void load(std::istream& instream, XMLContextPtr& ctxptr);
+      void load(std::istream& in, XMLContextPtr& context);
 
       /** saves node to xml output stream */
-      void save(std::ostream& outstream);
+      void save(std::ostream& out);
 
       /**
        * \exception throws cppdom::XMLError when the file name is invalid.
        */
-      void loadFile(const std::string& st) throw(XMLError)
-      {
-         std::ifstream file_istream;
-         file_istream.open(st.c_str(), std::ios::in);
+      void loadFile(const std::string& filename) throw(XMLError);
 
-         if (! file_istream.good())
-         {
-            throw XMLError(xml_filename_invalid);
-         }
-
-         this->load(file_istream, contextptr);
-         file_istream.close();
-      }
-
-      void saveFile(const std::string& st)
-      {
-         std::fstream file_stream;
-         file_stream.open(st.c_str(), std::ios::in | std::ios::out);
-         this->save(file_stream);
-         file_stream.close();
-      }
+      void saveFile(const std::string& filename);
 
 
    protected:
       /** node list of parsed processing instructions */
-      XMLNodeList procinstructions;
+      XMLNodeList mProcInstructions;
 
       /** node list of document type definition rules */
-      XMLNodeList dtdrules;
+      XMLNodeList mDtdRules;
    };
 
    typedef cppdom_boost::shared_ptr<class XMLDocument> XMLDocumentPtr;
@@ -652,29 +534,29 @@ namespace cppdom
    {
    public:
       /** ctor */
-      XMLEventHandler(){}
+      XMLEventHandler() {}
 
       /** virtual dtor */
-      virtual ~XMLEventHandler(){}
+      virtual ~XMLEventHandler() {}
 
       /** called when parsing of an xml document starts */
-      virtual void startDocument(){}
+      virtual void startDocument() {}
 
       /** called when ended parsing a document */
-      virtual void endDocument(){}
+      virtual void endDocument() {}
 
       /** called when parsing a processing instruction */
-      virtual void processingInstruction(XMLNode& pinode){}
+      virtual void processingInstruction(XMLNode& pinode) {}
 
       /** called when start parsing a node */
-      virtual void startNode(const std::string& nodename){}
+      virtual void startNode(const std::string& nodename) {}
       /** called when an attribute list was parsed */
-      virtual void parsedAttributes(XMLAttributes& attr){}
+      virtual void parsedAttributes(XMLAttributes& attr) {}
       /** called when parsing of a node was finished */
-      virtual void endNode(XMLNode& node){}
+      virtual void endNode(XMLNode& node) {}
 
       /** called when a cdata section ended */
-      virtual void gotCdata(const std::string& cdata){}
+      virtual void gotCdata(const std::string& cdata) {}
    };
 }
 

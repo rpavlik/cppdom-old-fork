@@ -241,14 +241,8 @@ namespace cppdom
 
    // XMLAttributes methods
 
-   bool XMLAttributes::has(const std::string& key) const
-   {
-      XMLAttributes::const_iterator iter;
-
-      // try to find the key in the map
-      iter = find(key);
-      return (iter != end());
-   }
+   XMLAttributes::XMLAttributes()
+   {}
 
    std::string XMLAttributes::get(const std::string& key) const
    {
@@ -278,40 +272,133 @@ namespace cppdom
       }
    }
 
+   bool XMLAttributes::has(const std::string& key) const
+   {
+      XMLAttributes::const_iterator iter;
+
+      // try to find the key in the map
+      iter = find(key);
+      return (iter != end());
+   }
+
 
    // XMLNode methods
 
+   XMLNode::XMLNode()
+      : mNodeType(xml_nt_node), mParent(0)
+   {}
+
+   XMLNode::XMLNode(XMLContextPtr ctx)
+      : mContext(ctx), mNodeType(xml_nt_node), mParent(0)
+   {}
+
    XMLNode::XMLNode(const XMLNode& node)
+      : mNodeNameHandle(node.mNodeNameHandle)
+      , mContext(node.mContext)
+      , mNodeType(node.mNodeType)
+      , mAttributes(node.mAttributes)
+      , mCdata(node.mCdata)
+      , mNodeList(node.mNodeList)
+      , mParent(node.mParent)
+   {}
+
+   XMLNode::~XMLNode()
    {
-      nodenamehandle = node.nodenamehandle;
-      contextptr = node.contextptr;
-      nodetype = node.nodetype;
-      attributes = node.attributes;
-      mCdata = node.mCdata;
-      mNodelist = node.mNodelist;
-      mParent = node.mParent;
-   };
+      for (XMLNodeList::iterator i = mNodeList.begin(); i != mNodeList.end(); ++i)
+      {
+         (*i)->mParent = NULL;
+      }
+   }
 
    XMLNode& XMLNode::operator=(const XMLNode& node)
    {
-      nodenamehandle = node.nodenamehandle;
-      contextptr = node.contextptr;
-      nodetype = node.nodetype;
-      attributes = node.attributes;
+      mNodeNameHandle = node.mNodeNameHandle;
+      mContext = node.mContext;
+      mNodeType = node.mNodeType;
+      mAttributes = node.mAttributes;
       mCdata = node.mCdata;
-      mNodelist = node.mNodelist;
+      mNodeList = node.mNodeList;
       mParent = node.mParent;
       return *this;
-   };
+   }
+
+   XMLNodeType XMLNode::getType() const
+   {
+      return mNodeType;
+   }
 
    std::string XMLNode::getName()
    {
-      return contextptr->getTagname(nodenamehandle);
+      return mContext->getTagname(mNodeNameHandle);
    }
 
-   void XMLNode::setName(const std::string& nname)
+   XMLAttributes& XMLNode::getAttrMap()
    {
-      nodenamehandle = contextptr->insertTagname(nname);
+      return mAttributes;
+   }
+
+   XMLAttribute XMLNode::getAttribute(const std::string& name) const
+   {
+      return mAttributes.get(name);
+   }
+
+   bool XMLNode::hasAttribute(const std::string& name) const
+   {
+      return mAttributes.has(name);
+   }
+
+   const std::string& XMLNode::getCdata()
+   {
+      return mCdata;
+   }
+
+   void XMLNode::setType(XMLNodeType type)
+   {
+      mNodeType = type;
+   }
+
+   void XMLNode::setName(const std::string& name)
+   {
+      mNodeNameHandle = mContext->insertTagname(name);
+   }
+
+   void XMLNode::setCdata(const std::string& cdata)
+   {
+      mCdata = cdata;
+   }
+
+   void XMLNode::setAttribute(const std::string& attr, const XMLAttribute& value)
+   {
+      mAttributes.set(attr, value.getString());
+   }
+
+   void XMLNode::addChild(XMLNodePtr& node)
+   {
+      node->mParent = this;      // Tell the child who their daddy is
+      mNodeList.push_back(node);
+   }
+
+   bool XMLNode::removeChild(XMLNodePtr& node)
+   {
+      std::cout << "cppdom::XMLNode::removeChild:  not implemented\n";
+      return false;
+   }
+
+   bool XMLNode::removeChild(std::string& childName)
+   {
+      std::cout << "cppdom::XMLNode::removeChild:  not implemented\n";
+      return false;
+   }
+
+   bool XMLNode::removeChildren(std::string& childName)
+   {
+      std::cout << "cppdom::XMLNode::removeChildren:  not implemented\n";
+      return false;
+   }
+
+   XMLNodeList& XMLNode::getChildren()
+   {
+      return mNodeList;
    }
 
    /** \note currently no path-like childname can be passed, like in e.g. msxml */
@@ -321,7 +408,7 @@ namespace cppdom
       XMLNodeList::const_iterator iter;
 
       // search for first occurance of node
-      for(iter = mNodelist.begin(); iter != mNodelist.end(); ++iter)
+      for(iter = mNodeList.begin(); iter != mNodeList.end(); ++iter)
       {
          XMLNodePtr np = (*iter);
          if (np->getName() == name)
@@ -334,75 +421,101 @@ namespace cppdom
       return XMLNodePtr();
    }
 
-   /** \exception throws cppdom::XMLError when a streaming or parsing error occur */
-   void XMLNode::load(std::istream& instream, XMLContextPtr& ctxptr )
+   XMLNodeList XMLNode::getChildren(const std::string& name)
    {
-      XMLParser parser(instream, ctxptr->getLocation());
-      parser.parseNode(*this, ctxptr);
+      XMLNodeList result(0);
+      XMLNodeList::const_iterator iter;
+
+      // search for all occurances of nodename and insert them into the new list
+      for(iter = mNodeList.begin(); iter != mNodeList.end(); ++iter)
+      {
+         if ((*iter)->getName() == name)
+         {
+            result.push_back(*iter);
+         }
+      }
+
+      return result;
+   }
+
+   XMLNodeList XMLNode::getChildren(const char* name)
+   {
+      return getChildren(std::string(name));
+   }
+
+   XMLNode* XMLNode::getParent() const
+   {
+      return mParent;
    }
 
    /** \exception throws cppdom::XMLError when a streaming or parsing error occur */
-   void XMLNode::save(std::ostream& outstream, int indent)
+   void XMLNode::load(std::istream& in, XMLContextPtr& context)
+   {
+      XMLParser parser(in, context->getLocation());
+      parser.parseNode(*this, context);
+   }
+
+   /** \exception throws cppdom::XMLError when a streaming or parsing error occur */
+   void XMLNode::save(std::ostream& out, int indent)
    {
       // output indendation spaces
       for(int i=0; i<indent; ++i)
       {
-         outstream << ' ';
+         out << ' ';
       }
 
       // output cdata
-      if (nodetype == xml_nt_cdata)
+      if (mNodeType == xml_nt_cdata)
       {
-         outstream << mCdata.c_str() << std::endl;
+         out << mCdata.c_str() << std::endl;
          return;
       }
 
       // output tag name
-      outstream << '<' << contextptr->getTagname(nodenamehandle).c_str();
+      out << '<' << mContext->getTagname(mNodeNameHandle);
 
       // output all attributes
       XMLAttributes::const_iterator iter, stop;
-      iter = attributes.begin();
-      stop = attributes.end();
+      iter = mAttributes.begin();
+      stop = mAttributes.end();
 
       for(; iter!=stop; ++iter)
       {
          XMLAttributes::value_type attr = *iter;
-         outstream << ' ' << attr.first.c_str() << '='
-            << '\"' << attr.second.c_str() << '\"';
+         out << ' ' << attr.first << '=' << '\"' << attr.second << '\"';
       }
 
       // depending on the nodetype, do output
-      switch(nodetype)
+      switch(mNodeType)
       {
       case xml_nt_node:
          {
-            outstream << '>' << std::endl;
+            out << '>' << std::endl;
 
             // output all subnodes
             XMLNodeList::const_iterator iter,stop;
-            iter = mNodelist.begin();
-            stop = mNodelist.end();
+            iter = mNodeList.begin();
+            stop = mNodeList.end();
 
-            for(;iter!=stop;iter++)
+            for(; iter!=stop; ++iter)
             {
-               (*iter)->save(outstream, indent+1);
+               (*iter)->save(out, indent+1);
             }
 
             // output indendation spaces
             for(int i=0;i<indent;i++)
             {
-               outstream << ' ';
+               out << ' ';
             }
 
             // output closing tag
-            outstream << '<' << '/'
-               << contextptr->getTagname(nodenamehandle).c_str() << '>' << std::endl;
+            out << '<' << '/'
+               << mContext->getTagname(mNodeNameHandle) << '>' << std::endl;
          }
          break;
       case xml_nt_leaf:
          // a leaf has no subnodes
-         outstream << '/' << '>' << std::endl;
+         out << '/' << '>' << std::endl;
          break;
       default:
          // unknown nodetype
@@ -410,46 +523,71 @@ namespace cppdom
       }
    }
 
+   XMLContextPtr XMLNode::getContext()
+   {
+      return mContext;
+   }
+
 
    // XMLDocument methods
 
-   /** \exception throws cppdom::XMLError when a streaming or parsing error occur */
-   void XMLDocument::load(std::istream& instream, XMLContextPtr& ctxptr)
+   XMLDocument::XMLDocument()
    {
-      XMLParser parser(instream, ctxptr->getLocation());
-      parser.parseDocument(*this, ctxptr);
+      mNodeType = xml_nt_document;
+   }
+
+   XMLDocument::XMLDocument(XMLContextPtr context)
+      : XMLNode(context)
+   {
+      mNodeType = xml_nt_document;
+   }
+
+   XMLNodeList& XMLDocument::getPiList()
+   {
+      return mProcInstructions;
+   }
+
+   XMLNodeList& XMLDocument::getDtdList()
+   {
+      return mDtdRules;
+   }
+
+   /** \exception throws cppdom::XMLError when a streaming or parsing error occur */
+   void XMLDocument::load(std::istream& in, XMLContextPtr& context)
+   {
+      XMLParser parser(in, context->getLocation());
+      parser.parseDocument(*this, context);
    }
 
    /** \todo implement: print <!doctype> tag;
    * \exception throws cppdom::XMLError when a streaming or parsing error occur
    */
-   void XMLDocument::save(std::ostream& outstream)
+   void XMLDocument::save(std::ostream& out)
    {
       // output all processing instructions
-      XMLNodeList::const_iterator iter,stop;
-      iter = procinstructions.begin();
-      stop = procinstructions.end();
+      XMLNodeList::const_iterator iter, stop;
+      iter = mProcInstructions.begin();
+      stop = mProcInstructions.end();
 
       for(; iter!=stop; ++iter)
       {
          XMLNodePtr np = *iter;
 
          // output pi tag
-         outstream << "<?" << np->getName().c_str();
+         out << "<?" << np->getName();
 
          // output all attributes
          XMLAttributes::const_iterator aiter, astop;
-         aiter = attributes.begin();
-         astop = attributes.end();
+         aiter = mAttributes.begin();
+         astop = mAttributes.end();
 
          for(; aiter!=astop; ++aiter)
          {
             XMLAttributes::value_type attr = *aiter;
-            outstream << ' ' << attr.first.c_str() << '='
-               << '\"' << attr.second.c_str() << '\"';
+            out << ' ' << attr.first << '=' << '\"' << attr.second << '\"';
          }
          // output closing brace
-         outstream << "?>" << std::endl;
+         out << "?>" << std::endl;
       }
 
       // output <!doctype> tag
@@ -458,6 +596,28 @@ namespace cppdom
 
 
       // call save() method of the first (and hopefully only) node in XMLDocument
-      (*mNodelist.begin())->save(outstream, 0);
+      (*mNodeList.begin())->save(out, 0);
+   }
+
+   void XMLDocument::loadFile(const std::string& filename) throw(XMLError)
+   {
+      std::ifstream in;
+      in.open(filename.c_str(), std::ios::in);
+
+      if (! in.good())
+      {
+         throw XMLError(xml_filename_invalid);
+      }
+
+      load(in, mContext);
+      in.close();
+   }
+
+   void XMLDocument::saveFile(const std::string& filename)
+   {
+      std::ofstream out;
+      out.open(filename.c_str(), std::ios::in | std::ios::out);
+      this->save(out);
+      out.close();
    }
 }

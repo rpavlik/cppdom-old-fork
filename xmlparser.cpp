@@ -45,9 +45,9 @@ namespace cppdom
    bool XMLParser::parseDocument(XMLDocument& doc, XMLContextPtr& ctxptr)
    {
       // set root nodename
-      doc.contextptr = ctxptr;
+      doc.mContext = ctxptr;
       std::string rootstr("root");
-      doc.nodenamehandle = ctxptr->insertTagname(rootstr);
+      doc.mNodeNameHandle = ctxptr->insertTagname(rootstr);
 
       bool handle = ctxptr->handleEvents();
 
@@ -160,12 +160,12 @@ namespace cppdom
                XMLNode pinode(ctxptr);
 
                std::string tagname(token3.getGeneric());
-               pinode.nodenamehandle = ctxptr->insertTagname(tagname);
+               pinode.mNodeNameHandle = ctxptr->insertTagname(tagname);
 
-               parseAttributes(pinode.attributes);
+               parseAttributes(pinode.mAttributes);
 
                XMLNodePtr nodeptr(new XMLNode(pinode));
-               doc.procinstructions.push_back(nodeptr);
+               doc.mProcInstructions.push_back(nodeptr);
 
                if (ctxptr->handleEvents())
                {
@@ -197,7 +197,7 @@ namespace cppdom
    // parses the contents of the current node
    bool XMLParser::parseNode(XMLNode& node, XMLContextPtr& ctxptr)
    {
-      node.contextptr = ctxptr;
+      node.mContext = ctxptr;
       bool handle = ctxptr->handleEvents();
 
       ++tokenizer;
@@ -220,16 +220,16 @@ namespace cppdom
          if (!token1.isLiteral())
          {
             std::string cdataname("cdata");
-            node.nodenamehandle = ctxptr->insertTagname(cdataname);
+            node.mNodeNameHandle = ctxptr->insertTagname(cdataname);
 
             // parse cdata section(s) and return
-            node.nodetype = xml_nt_cdata;
+            node.mNodeType = xml_nt_cdata;
             node.mCdata.empty();
 
             while(!token1.isLiteral())
             {
                node.mCdata += token1.getGeneric();
-               tokenizer++;
+               ++tokenizer;
                token1 = *tokenizer;
             }
             tokenizer.putBack();
@@ -284,7 +284,7 @@ namespace cppdom
 
       // insert tag name and set handle for it
       std::string tagname(token2.getGeneric());
-      node.nodenamehandle = ctxptr->insertTagname(tagname);
+      node.mNodeNameHandle = ctxptr->insertTagname(tagname);
 
       // notify event handler
       if (handle)
@@ -293,11 +293,11 @@ namespace cppdom
       }
 
       // parse attributes
-      this->parseAttributes(node.attributes);
+      this->parseAttributes(node.mAttributes);
 
       if (handle)
       {
-         ctxptr->getEventHandler().parsedAttributes(node.attributes);
+         ctxptr->getEventHandler().parsedAttributes(node.mAttributes);
       }
 
       // check for leaf
@@ -313,7 +313,7 @@ namespace cppdom
             throw XMLError(xml_closetag_expected);
          }
 
-         node.nodetype = xml_nt_leaf;
+         node.mNodeType = xml_nt_leaf;
 
          // return, let the caller continue to parse
          return true;
