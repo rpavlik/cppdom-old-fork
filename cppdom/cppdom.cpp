@@ -367,6 +367,11 @@ namespace cppdom
    bool Node::isEqual(NodePtr otherNode, const std::vector<std::string>& ignoreAttribs, 
                                          const std::vector<std::string>& ignoreElements)
    {
+      //std::cout << "isEqual: me:" << getName() << "  other:" << otherNode->getName() << std::endl;
+      // Check current node's element type (ie. name)
+      if(otherNode->getName() != getName())
+      { return false; }
+
       // Check attributes
       Attributes& other_attribs = otherNode->getAttrMap();
 
@@ -379,6 +384,7 @@ namespace cppdom
       {
          std::string attrib_name = (*cur_attrib).first;
          std::string attrib_value = (*cur_attrib).second;
+         //std::cout << "Comparing attribute: " << attrib_name << std::endl;
          
          // If not in ignore list
          if(std::find(ignoreAttribs.begin(), ignoreAttribs.end(), attrib_name) 
@@ -397,15 +403,21 @@ namespace cppdom
 
       // -- Check children -- //
       NodeList other_children = otherNode->getChildren();
+      /*
+      unsigned num_children = mNodeList.size();
+      unsigned num_other_children = other_children.size();
+      std::cout << "children: me:" << num_children << "  other:" << num_other_children << std::endl;
+      */
       if(mNodeList.size() != other_children.size())
       { return false; }
       
       // Recurse into each element
       NodeList::iterator my_child, other_child;
-      for(my_child = mNodeList.begin(), other_child = other_children.end(); 
+      for(my_child = mNodeList.begin(), other_child = other_children.begin(); 
           my_child != mNodeList.end(), other_child != other_children.end();
           my_child++, other_child++)
       {
+         //std::cout << "Comparing some children:" << std::endl;
          if(false == (*my_child)->isEqual((*other_child), ignoreAttribs, ignoreElements))
          {  return false; }         
       }
