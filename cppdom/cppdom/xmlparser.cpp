@@ -55,7 +55,8 @@ bool xmlparser::parse_document( xmldocument &doc, xmlcontextptr &ctxptr )
    bool handle = ctxptr->handle_events();
 
    // start parsing
-   if (handle) ctxptr->get_eventhandler().start_document();
+   if (handle)
+      ctxptr->get_eventhandler().start_document();
 
    parse_header( doc, ctxptr );
 
@@ -71,7 +72,8 @@ bool xmlparser::parse_document( xmldocument &doc, xmlcontextptr &ctxptr )
       doc.nodelist.push_back( nodeptr );
    }
 
-   if (handle) ctxptr->get_eventhandler().end_document();
+   if (handle)
+      ctxptr->get_eventhandler().end_document();
 
    return ret;
 }
@@ -202,17 +204,18 @@ bool xmlparser::parse_node( xmlnode &node, xmlcontextptr &ctxptr )
 
          // parse cdata section(s) and return
          node.nodetype = xml_nt_cdata;
-         node.cdata.empty();
+         node.mCdata.empty();
 
          while(!token1.is_literal())
          {
-            node.cdata += token1.get_generic();
+            node.mCdata += token1.get_generic();
             tokenizer++;
             token1 = *tokenizer;
          }
          tokenizer.put_back();
 
-         if (handle) ctxptr->get_eventhandler().got_cdata(node.cdata);
+         if (handle)
+            ctxptr->get_eventhandler().got_cdata(node.mCdata);
 
          return true;
       }
@@ -260,12 +263,14 @@ bool xmlparser::parse_node( xmlnode &node, xmlcontextptr &ctxptr )
    node.nodenamehandle = ctxptr->insert_tagname( tagname );
 
    // notify event handler
-   if (handle) ctxptr->get_eventhandler().start_node(tagname);
+   if (handle)
+      ctxptr->get_eventhandler().start_node(tagname);
 
    // parse attributes
    parse_attributes(node.attributes);
 
-   if (handle) ctxptr->get_eventhandler().parsed_attributes(node.attributes);
+   if (handle)
+      ctxptr->get_eventhandler().parsed_attributes(node.attributes);
 
    // check for leaf
    tokenizer++;
