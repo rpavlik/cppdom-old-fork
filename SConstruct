@@ -5,6 +5,8 @@ except:
    pass
 
 import os, string, sys, re
+import fnmatch
+import glob
 pj = os.path.join
 
 Default('.')
@@ -45,6 +47,101 @@ def GetPlatform():
    else:
       return sys.platform
 Export('GetPlatform')
+
+import SCons.Node.FS
+
+def Glob(pathname):
+    """Return a list of paths matching a pathname pattern.
+
+    The pattern may contain simple shell-style wildcards a la fnmatch.
+
+    """
+    glob_magic_check = re.compile('[*?[]')
+    fs = SCons.Node.FS.default_fs
+
+    def glob_has_magic(s):
+       " Does the glob string contain magic characters."
+       return magic_check.search(s) is not None
+    
+    def find_node(node_name):
+       """ Returns node if the given node names exists in the default file system.
+           Otherwise returns 0.
+       """
+       try:
+          node = fs.Entry(node_name, create=0)
+       except SCons.Errors.UserError:
+          return 0
+       return node
+    
+    # If no magic, then just check for the specified file
+    if not has_magic(pathname):
+       node = find_node(pathname)
+       if node != 0:
+          return [node]
+       else:
+          return []
+
+    dirname, basename = os.path.split(pathname)
+
+    if not dirname:
+        return Glob_FilesInDir(os.curdir, basename)
+    elif has_magic(dirname):                 # If there is magic in dir name then recurse
+        list = glob(dirname)
+    else:
+        list = [dirname]
+    
+    # Assert: list contains full list of directories to search for file   
+    if not has_magic(basename):
+        result = []
+        for dirname in list:
+            if basename or os.path.isdir(dirname):
+                name = os.path.join(dirname, basename)
+                if os.path.exists(name):
+                    result.append(name)
+    else:
+        result = []
+        for dirname in list:
+            sublist = Glob_FilesInDir(dirname, basename)
+            for name in sublist:
+                result.append(os.path.join(dirname, name))
+    return result
+
+def Glob_FilesInDir(dirnode, pattern):
+   """ Return list of files in directory dirname that match the pattern. """
+   children = dirnode.all_children()
+        
+   #if pattern[0]!='.':
+   #   names=filter(lambda x: x[0]!='.',names)
+   def fn_filter(node):
+      filename = str(node)
+      return fnmatch.fnmatch(filename, pattern)
+   
+   ret_list = [child for child in children if fn_filter(child)]
+   return ret_list
+
+
+def Glob(match):
+    """Similar to glob.glob, except globs SCons nodes, and thus sees
+    generated files and files from build directories.  Basically, it sees
+    anything SCons knows about."""
+    def fn_filter(node):
+        fn = str(node)
+        return fnmatch.fnmatch(os.path.basename(fn), match)
+    
+    here = Dir('.')
+    
+    children = here.all_children()
+    nodes = map(File, filter(fn_filter, children))
+    node_srcs = [n.srcnode() for n in nodes]
+
+    src = here.srcnode()
+    if src is not here:
+        src_children = map(File, filter(fn_filter, src.all_children()))
+        for s in src_children:
+            if s not in node_srcs:
+                nodes.append(File(os.path.basename(str(s))))
+
+    return nodes
 
 def CreateConfig(target, source, env):
    "Creates the prefix-config file users use to compile against this library"
@@ -278,7 +375,7 @@ else:
    baseEnv = Environment()
 Export('baseEnv')
 
-# Do we have the super cool savable version
+# --- OPTIONS --- #
 option_filename = "config.cache." + GetPlatform()
 opts = Options(option_filename)
 opts.Add('WithCppUnit',
@@ -287,9 +384,7 @@ opts.Add('WithCppUnit',
          lambda k,v,env=None: WhereIs(pj(v, 'bin', 'cppunit-config')) != None
         )
 AddBoostOptions(opts)        
-opts.Add('prefix',
-         'Installation prefix',
-         '/usr/local')
+opts.Add('prefix', 'Installation prefix', '/usr/local')
 opts.Add('StaticOnly', 'If not "no" then build only static library', 'no')
   
 help_text = """--- CppDom Build system ---
@@ -320,10 +415,12 @@ if not SCons.Script.options.help_msg:
    except LookupError, le:
       pass
 
-   # Handle options
-   PREFIX = baseEnv['prefix']
-   PREFIX = os.path.abspath(PREFIX)
-   Export('PREFIX')
+   # Setup file paths
+   PREFIX = os.path.abspath(baseEnv['prefix'])
+   buildDir = "build." + GetPlatform()
+   distDir = pj(buildDir, 'dist')
+
+   Export('buildDir', 'PREFIX', 'distDir')
 
    # Update environment for options   
    if baseEnv["BoostAvailable"]:
@@ -348,12 +445,7 @@ if not SCons.Script.options.help_msg:
    baseEnv.Append(TARFLAGS = ['-z',])
    baseEnv.Tar('cppdom-' + '%i.%i.%i' % CPPDOM_VERSION + '.tar.gz', tar_sources)
 
-   # Build in a build directory
-   buildDir = "build." + GetPlatform()
-   Export('buildDir')
 
-#   BuildDir(pj(buildDir, 'test'), 'test', duplicate=0)
-#   BuildDir(pj(buildDir, 'cppdom'), 'cppdom', duplicate = 0)
    # Process subdirectories
    subdirs = Split('cppdom test')
 
@@ -381,3 +473,9 @@ if not SCons.Script.options.help_msg:
    env.Depends('cppdom-config', 'cppdom/version.h')
    env.Install(pj(PREFIX, 'bin'), cppdom_config)
    env.Alias('install', PREFIX)
+   
+   globed_stuff = glob.glob("cppdom/*")   
+   print "Globed stuff: ", globed_stuff
+   globed_stuff = Glob("./*")
+   print "Globed stuff: ", globed_stuff
+   
