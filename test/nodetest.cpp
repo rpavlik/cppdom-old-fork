@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <iostream>
 #include <string>
 #include <cppdom/cppdom.h>
