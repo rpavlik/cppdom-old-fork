@@ -1,0 +1,4 @@
+DATE        AUTHOR    CHANGE
+----------- --------- ---------------------------------------------------------
+Apr-03-2002 allenb    Added Node::getChild(char*) to avoid matching templated
+                      predicate version.
