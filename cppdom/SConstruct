@@ -85,6 +85,30 @@ def BuildLinuxEnvironment():
       LINKFLAGS   = LINKFLAGS
    )
 
+def BuildDarwinEnvironment():
+   "Builds a base environment for other modules to build on set up for Darwin"
+   global optimize, profile, builders
+
+   CXXFLAGS = ['-Wall']
+   LINKFLAGS = ['-dynamiclib']
+
+   # Enable profiling?
+   if profile != 'no':
+      CXXFLAGS.extend(['-pg'])
+      LINKFLAGS.extend(['-pg'])
+
+   # Debug or optimize build?
+   if optimize != 'no':
+      CXXFLAGS.extend(['-DNDEBUG', '-O2'])
+   else:
+      CXXFLAGS.extend(['-D_DEBUG', '-g'])
+
+   return Environment(
+      ENV         = os.environ,
+      CXXFLAGS    = CXXFLAGS,
+      LINKFLAGS   = LINKFLAGS
+   )
+
 def BuildIRIXEnvironment():
    "Builds a base environment for other modules to build on set up for IRIX"
    global optimize, profile, builders
@@ -169,6 +193,8 @@ if GetPlatform() == 'irix':
    baseEnv = BuildIRIXEnvironment()
 elif GetPlatform() == 'linux' or GetPlatform() == 'freebsd':
    baseEnv = BuildLinuxEnvironment()
+elif GetPlatform() == 'darwin':
+   baseEnv = BuildDarwinEnvironment()
 elif GetPlatform() == 'win32':
    baseEnv = BuildWin32Environment()
 elif GetPlatform() == 'sun':
