@@ -32,8 +32,6 @@
 */
 
 // needed includes
-#include <cstdio>
-#include <cstdarg>
 #include "xml/xmlpp.h"
 #include "xml/xmlparser.h"
 
@@ -82,7 +80,7 @@ xmlcontext::~xmlcontext()
 {
 }
 
-xmlstring xmlcontext::get_entity( xmlstring &entname )
+xmlstring xmlcontext::get_entity( const xmlstring &entname )
 {
    if (!init) init_context();
 
@@ -99,7 +97,7 @@ xmlstring xmlcontext::get_tagname( xmltagnamehandle handle )
    return ( iter == tagnames.end() ? empty : iter->second );
 }
 
-xmltagnamehandle xmlcontext::insert_tagname( xmlstring &tagname )
+xmltagnamehandle xmlcontext::insert_tagname( const xmlstring &tagname )
 {
    if (!init) init_context();
 
@@ -126,17 +124,17 @@ xmltagnamehandle xmlcontext::insert_tagname( xmlstring &tagname )
 
 // xmlattributes methods
 
-xmlstring xmlattributes::get(xmlstring &key)
+xmlstring xmlattributes::get(const xmlstring &key)
 {
    xmlattributes::const_iterator iter;
 
    // try to find the key in the map
    iter = find( key );
    xmlstring empty("");
-   return iter == end() ? empty : iter->first;
+   return iter == end() ? empty : iter->second;
 }
 
-void xmlattributes::set(xmlstring &key, xmlstring &value)
+void xmlattributes::set(const xmlstring &key, const xmlstring &value)
 {
    xmlattributes::iterator iter;
 
@@ -176,18 +174,18 @@ xmlnode &xmlnode::operator =( const xmlnode &node )
    return *this;
 };
 
-xmlstring xmlnode::get_name()
+xmlstring xmlnode::name()
 {
    return contextptr->get_tagname( nodenamehandle );
 }
 
-void xmlnode::set_name( xmlstring &nname )
+void xmlnode::set_name( const xmlstring &nname )
 {
    nodenamehandle = contextptr->insert_tagname(nname);
 }
 
 /*! \note currently no path-like childname can be passed, like in e.g. msxml */
-xmlnodeptr xmlnode::get_firstchild(xmlstring &childname)
+xmlnodeptr xmlnode::firstchild(const xmlstring &childname)
 {
    // possible speedup: first search if a handle to the childname is existing
 
@@ -199,7 +197,7 @@ xmlnodeptr xmlnode::get_firstchild(xmlstring &childname)
    while(iter!=stop)
    {
       xmlnodeptr np = *(iter++);
-      if (np->get_name() == childname)
+      if (np->name() == childname)
          return np;
    };
 
@@ -208,7 +206,7 @@ xmlnodeptr xmlnode::get_firstchild(xmlstring &childname)
 }
 
 /*! \note currently no path-like childname can be passed, like in e.g. msxml */
-xmlnodelist xmlnode::select_nodes(xmlstring &nodename)
+xmlnodelist xmlnode::select_nodes(const xmlstring &nodename)
 {
    xmlnodelist nlist;
 
@@ -220,7 +218,7 @@ xmlnodelist xmlnode::select_nodes(xmlstring &nodename)
    while(iter!=stop)
    {
       xmlnodeptr np = *(iter++);
-      if (np->get_name() == nodename)
+      if (np->name() == nodename)
          nlist.push_back(np);
    };
 
@@ -321,7 +319,7 @@ void xmldocument::save( std::ostream &outstream )
       xmlnodeptr np = *iter;
       
       // output pi tag
-      outstream << "<?" << np->get_name().c_str();
+      outstream << "<?" << np->name().c_str();
 
       // output all attributes
       xmlattributes::const_iterator aiter, astop;
