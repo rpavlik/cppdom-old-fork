@@ -55,6 +55,42 @@
 //! namespace of the boost library
 namespace xmlpp_boost {
 
+   template< typename T >
+    inline void checked_delete(T * x)
+    {
+        delete x;
+    }
+
+    template< typename T >
+    inline void checked_array_delete(T  * x)
+    {
+        delete [] x;
+    }
+
+namespace detail {
+
+template<typename T> struct shared_deleter
+{
+	static void del(T * p)
+	{
+		checked_delete(p);
+	}
+};
+
+struct dynamic_cast_tag {};
+
+template<class T> struct shared_ptr_traits
+{
+	typedef T & reference;
+};
+
+template<> struct shared_ptr_traits<void>
+{
+	typedef void reference;
+};
+
+} // namespace detail
+
 // shared_ptr --------------------------------------------------------------//
 
 //! reference counting smart pointer
@@ -197,6 +233,11 @@ template<class _K, class _Pr, class _A> inline
       const set<_K, _Pr, _A>& _Y)
    {return (!(_X == _Y)); }
 */
+
+template<typename T, typename U> shared_ptr<T> shared_dynamic_cast(shared_ptr<U> const & r)
+{
+	return shared_ptr<T>(r, detail::dynamic_cast_tag());
+}
 
 } // namespace boost
 
