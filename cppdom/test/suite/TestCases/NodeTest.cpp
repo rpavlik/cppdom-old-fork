@@ -55,7 +55,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(NodeTest);
 // Test equality test (isEqual())
 // - Uses an xml file that is coded to specify several
 //   tests to use for this
-// 
+//
 // The file has a set of nodes one for each test.
 //   under that node is information about the test as
 //   well as two nodes to use to run the test.
@@ -65,7 +65,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(NodeTest);
    <test id="Basic not equal ignoring attrib" equal="0" ignore_attr="attrib" ignore_elem="blah">
    Test basic inequality. where we are ignoring the differing attribute.
       <node data="X" attrib="1"/>
-      <node attrib="2" data="Y"/>   
+      <node attrib="2" data="Y"/>
    </test>
 </root>
 */
@@ -138,14 +138,14 @@ void NodeTest::testEqual()
       CPPUNIT_ASSERT(nl.size() >= 2);
       unsigned cur_child=0;
 
-      while((nl[cur_child]->getType() != cppdom::xml_nt_node) &&
-            (nl[cur_child]->getType() != cppdom::xml_nt_leaf))
+      while((nl[cur_child]->getType() != Node::xml_nt_node) &&
+            (nl[cur_child]->getType() != Node::xml_nt_leaf))
       {  cur_child++; }
       child1 = nl[cur_child];
       cur_child++;                  // Goto next child
 
-      while((nl[cur_child]->getType() != cppdom::xml_nt_node) &&
-            (nl[cur_child]->getType() != cppdom::xml_nt_leaf))
+      while((nl[cur_child]->getType() != Node::xml_nt_node) &&
+            (nl[cur_child]->getType() != Node::xml_nt_leaf))
       {  cur_child++; }
       child2 = nl[cur_child];
 
