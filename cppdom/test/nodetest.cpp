@@ -61,6 +61,6 @@ bool configureInput( const std::string& filename )
 int main()
 {
    // Just call single function to load and process input file
-   configureInput( "hamlet.xml" );
+   configureInput( "game.xml" );
    return 1;
 }
