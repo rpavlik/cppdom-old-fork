@@ -13,10 +13,10 @@ using namespace std;
 
 
 // dumps the node
-void dump_node( XMLNode &node, int level = 0 )
+void dump_node( Node &node, int level = 0 )
 {
    std::string name = node.getName();
-   XMLNodeType type = node.getType();
+   NodeType type = node.getType();
    std::string c_data;
 
    for(int i=0;i<level;i++) cout << " ";
@@ -44,10 +44,10 @@ void dump_node( XMLNode &node, int level = 0 )
    else
       cout << c << name.c_str() << endl;
 
-   XMLAttributes attr = node.getAttrMap();
+   Attributes attr = node.getAttrMap();
 
    // guru: added output of attributes
-   for (XMLAttributes::iterator j = attr.begin(); j!=attr.end(); j++)
+   for (Attributes::iterator j = attr.begin(); j!=attr.end(); j++)
    {
       for (int i=0; i<level; i++)
          cout << " ";
@@ -55,15 +55,15 @@ void dump_node( XMLNode &node, int level = 0 )
       cout << j->first << ": " << j->second << endl;
    }
 
-   XMLNodeList& nlist = node.getChildren();
+   NodeList& nlist = node.getChildren();
 
-   XMLNodeList::const_iterator iter, stop;
+   NodeList::const_iterator iter, stop;
    iter = nlist.begin();
    stop = nlist.end();
 
    while (iter != stop)
    {
-      XMLNodePtr node = *iter;
+      NodePtr node = *iter;
 
       dump_node ( *node, level+1 );
 
@@ -75,8 +75,8 @@ void process_xml( std::string filename )
 {
    cout << "processing [" << filename << "] ..." << endl;
 
-   XMLContextPtr context( new XMLContext );
-   XMLDocument node( context );
+   ContextPtr context( new Context );
+   Document node( context );
    ifstream istr( filename.c_str() );
 
    // Verify that file opened
@@ -104,9 +104,9 @@ void process_xml( std::string filename )
       ostr.close();
 
    }
-   catch (XMLError e)
+   catch (Error e)
    {
-      XMLLocation where( context->getLocation() );
+      Location where( context->getLocation() );
       std::string errmsg;
       e.getStrError(errmsg);
 

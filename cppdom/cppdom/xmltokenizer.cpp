@@ -50,126 +50,126 @@
 // namespace declaration
 namespace cppdom
 {
-   // XMLToken methods
-   XMLToken::XMLToken()
+   // Token methods
+   Token::Token()
       : mIsLiteral(true)
       , mLiteral(0)
    {}
 
-   XMLToken::XMLToken(char ch)
+   Token::Token(char ch)
       : mIsLiteral(true)
       , mLiteral(ch)
    {}
 
-   XMLToken::XMLToken(const std::string& str)
+   Token::Token(const std::string& str)
       : mIsLiteral(false)
       , mLiteral(0)
       , mGeneric(str)
    {}
 
-   bool XMLToken::isLiteral() const
+   bool Token::isLiteral() const
    {
       return mIsLiteral;
    }
 
-   bool XMLToken::isEndOfStream() const
+   bool Token::isEndOfStream() const
    {
       return mIsLiteral && mLiteral == char(EOF);
    }
 
-   char XMLToken::getLiteral() const
+   char Token::getLiteral() const
    {
       return mLiteral;
    }
 
-   const std::string& XMLToken::getGeneric() const
+   const std::string& Token::getGeneric() const
    {
       return mGeneric;
    }
 
-   bool XMLToken::operator==(char ch) const
+   bool Token::operator==(char ch) const
    {
       return !isLiteral() ? false : ch == mLiteral;
    }
 
-   bool XMLToken::operator!=(char ch) const
+   bool Token::operator!=(char ch) const
    {
       return ! operator==(ch);
    }
 
-   bool XMLToken::operator==(const std::string& str) const
+   bool Token::operator==(const std::string& str) const
    {
       return !isLiteral() ? str == mGeneric : false;
    }
 
-   bool XMLToken::operator!=(const std::string& str) const
+   bool Token::operator!=(const std::string& str) const
    {
       return ! operator==(str);
    }
 
-   XMLToken& XMLToken::operator=(const std::string& str)
+   Token& Token::operator=(const std::string& str)
    {
       mGeneric = str;
       mIsLiteral = false;
       return *this;
    }
 
-   XMLToken& XMLToken::operator=(char ch)
+   Token& Token::operator=(char ch)
    {
       mLiteral = ch;
       mIsLiteral = true;
       return *this;
    }
 
-   // XMLTokenizer methods
+   // Tokenizer methods
 
-   XMLTokenizer::XMLTokenizer(std::istream& in, XMLLocation& loc)
+   Tokenizer::Tokenizer(std::istream& in, Location& loc)
       : mInput(in), mLocation(loc)
    {}
 
-   XMLTokenizer::~XMLTokenizer()
+   Tokenizer::~Tokenizer()
    {}
 
-   XMLToken& XMLTokenizer::operator*()
+   Token& Tokenizer::operator*()
    {
       return mCurToken;
    }
 
-   const XMLToken* XMLTokenizer::operator->()
+   const Token* Tokenizer::operator->()
    {
       return &mCurToken;
    }
 
-   XMLTokenizer& XMLTokenizer::operator++()
+   Tokenizer& Tokenizer::operator++()
    {
       getNext();
       return *this;
    }
 
-   XMLTokenizer& XMLTokenizer::operator++(int)
+   Tokenizer& Tokenizer::operator++(int)
    {
       getNext();
       return *this;
    }
 
-   XMLToken& XMLTokenizer::get()
+   Token& Tokenizer::get()
    {
       return mCurToken;
    }
 
-   void XMLTokenizer::putBack(XMLToken& token)
+   void Tokenizer::putBack(Token& token)
    {
       mTokenStack.push(token);
    }
 
-   void XMLTokenizer::putBack()
+   void Tokenizer::putBack()
    {
       mTokenStack.push(mCurToken);
    }
 
    // xmlstream_iterator methods
-   xmlstream_iterator::xmlstream_iterator(std::istream& in, XMLLocation& loc)
-      : XMLTokenizer(in, loc)
+   xmlstream_iterator::xmlstream_iterator(std::istream& in, Location& loc)
+      : Tokenizer(in, loc)
       , mCdataMode(false)
       , mPutbackChar(-1)
    {}
@@ -181,7 +181,7 @@ namespace cppdom
       if (mTokenStack.size() != 0)
       {
          // get the token from the stack and return it
-         XMLToken tok;
+         Token tok;
          mCurToken = mTokenStack.top();
          mTokenStack.pop();
 

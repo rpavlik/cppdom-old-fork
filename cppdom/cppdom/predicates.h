@@ -55,7 +55,7 @@ namespace cppdom
       /** set the attribute name to match. */
       void setName(const std::string& attrName) { mName = attrName; }
 
-      bool operator()(const XMLNodePtr& node)
+      bool operator()(const NodePtr& node)
       {
          return node->hasAttribute(mName);
       }
@@ -81,7 +81,7 @@ namespace cppdom
       /** set the attribute value to match. */
       void setValue(const std::string& val) { mValue = val; }
 
-      bool operator()(const XMLNodePtr& node)
+      bool operator()(const NodePtr& node)
       {
          // if doesn't have the attribute, then were done.
          if (!node->hasAttribute(mName))

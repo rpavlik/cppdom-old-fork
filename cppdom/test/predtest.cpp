@@ -3,8 +3,8 @@
 
 int main()
 {
-   cppdom::XMLContextPtr ctx( new cppdom::XMLContext );
-   cppdom::XMLDocument doc( ctx );
+   cppdom::ContextPtr ctx( new cppdom::Context );
+   cppdom::Document doc( ctx );
    std::string filename = "game.xml";
    
    // load a xml document from a file
@@ -12,7 +12,7 @@ int main()
    {
       doc.loadFile( filename );
    }
-   catch (cppdom::XMLError e)
+   catch (cppdom::Error e)
    {
       std::cerr << "Error: " << e.getString() << std::endl;
       if (e.getInfo().size())
@@ -32,12 +32,12 @@ int main()
       return false;
    }
 
-   cppdom::XMLNodePtr root = doc.getChild( "gameinput" );
+   cppdom::NodePtr root = doc.getChild( "gameinput" );
 
       
 
    // get all nodes with noattrs attributes...
-   cppdom::XMLNodeList nl = root->getChildrenPred( cppdom::HasAttributeNamePredicate( "noattrs" ) );
+   cppdom::NodeList nl = root->getChildrenPred( cppdom::HasAttributeNamePredicate( "noattrs" ) );
    
    assert( nl.size() == 1 && "test failed" );
    

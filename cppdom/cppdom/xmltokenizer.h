@@ -56,15 +56,15 @@
 namespace cppdom
 {
    /// xml token
-   /** an XMLToken is a representation for a literal character or a
+   /** an Token is a representation for a literal character or a
        generic string (not recognized as a literal) */
-   class XMLToken
+   class Token
    {
       friend class xmlstream_iterator;
    public:
-      XMLToken();
-      XMLToken(char ch);
-      XMLToken(const std::string& str);
+      Token();
+      Token(char ch);
+      Token(const std::string& str);
 
       /// returns if token is a literal
       bool isLiteral() const;
@@ -93,10 +93,10 @@ namespace cppdom
       bool operator!=(const std::string& str) const;
 
       /// set generic string
-      XMLToken& operator=(const std::string& str);
+      Token& operator=(const std::string& str);
 
       /// set literal char
-      XMLToken& operator=(char ch);
+      Token& operator=(char ch);
 
    protected:
       /// indicates if token is a literal char
@@ -111,31 +111,31 @@ namespace cppdom
 
 
    /// base tokenizer class
-   /** base class for iterating through XMLToken */
-   class XMLTokenizer
+   /** base class for iterating through Token */
+   class Tokenizer
    {
    public:
       /** constructor */
-      XMLTokenizer(std::istream& in, XMLLocation& loc);
-      virtual ~XMLTokenizer();
+      Tokenizer(std::istream& in, Location& loc);
+      virtual ~Tokenizer();
 
       /// dereference operator
-      XMLToken& operator*();
+      Token& operator*();
 
       /// pointer access operator
-      const XMLToken* operator->();
+      const Token* operator->();
 
       /// advances in the xml stream
-      XMLTokenizer& operator++();
+      Tokenizer& operator++();
 
       /// advances in the xml stream
-      XMLTokenizer& operator++(int);
+      Tokenizer& operator++(int);
 
       /// returns current token
-      XMLToken& get();
+      Token& get();
 
       /// puts the token back into the stream
-      void putBack(XMLToken& token);
+      void putBack(Token& token);
 
       /// puts the last token back into the stream
       void putBack();
@@ -150,24 +150,24 @@ namespace cppdom
       std::istream& mInput;
 
       /** location in the stream */
-      XMLLocation& mLocation;
+      Location& mLocation;
 
       /** current token */
-      XMLToken mCurToken;
+      Token mCurToken;
 
       /** stack for put_back()'ed tokens */
-      std::stack<XMLToken> mTokenStack;
+      std::stack<Token> mTokenStack;
    };
 
    /**
     * xml input stream iterator
-    * an iterator through all XMLToken contained in the xml input stream
+    * an iterator through all Token contained in the xml input stream
     */
-   class xmlstream_iterator : public XMLTokenizer
+   class xmlstream_iterator : public Tokenizer
    {
    public:
       /** ctor */
-      xmlstream_iterator(std::istream& in, XMLLocation& loc);
+      xmlstream_iterator(std::istream& in, Location& loc);
 
    protected:
       void getNext();
@@ -189,11 +189,11 @@ namespace cppdom
     * dtd input stream iterator
     * an iterator through a dtd input stream
     */
-   class xmldtd_iterator: public XMLTokenizer
+   class xmldtd_iterator: public Tokenizer
    {
    public:
       /** ctor */
-      xmldtd_iterator(std::istream& in, XMLLocation& loc);
+      xmldtd_iterator(std::istream& in, Location& loc);
 
    protected:
       void getNext(){}

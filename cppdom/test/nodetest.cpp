@@ -5,15 +5,15 @@
 
 bool configureInput( const std::string& filename )
 {
-   cppdom::XMLContextPtr ctx( new cppdom::XMLContext );
-   cppdom::XMLDocument doc( ctx );
+   cppdom::ContextPtr ctx( new cppdom::Context );
+   cppdom::Document doc( ctx );
 
    // load a xml document from a file
    try
    {
       doc.loadFile( filename );
    }
-   catch (cppdom::XMLError e)
+   catch (cppdom::Error e)
    {
       std::cerr << "Error: " << e.getString() << std::endl;
       if (e.getInfo().size())
@@ -34,22 +34,22 @@ bool configureInput( const std::string& filename )
 
    std::cerr << "succesfully loaded " << filename << std::endl;
 
-   cppdom::XMLNodeList nl = doc.getChild( "gameinput" )->getChildren();
-   cppdom::XMLNodeListIterator it = nl.begin();
+   cppdom::NodeList nl = doc.getChild( "gameinput" )->getChildren();
+   cppdom::NodeListIterator it = nl.begin();
    while (it != nl.end())
    {
       std::cerr << "in name: " << (*it)->getName() << std::endl;
       try
       {
-         cppdom::XMLAttributes& attr = (*it)->getAttrMap();
+         cppdom::Attributes& attr = (*it)->getAttrMap();
          std::cout << "attr: " << attr.get( "action" ) << "\n" << std::flush;
          std::cout << "attr: " << attr.get( "device" ) << "\n" << std::flush;
          std::cout << "attr: " << attr.get( "input" ) << "\n" << std::flush;
 
-         cppdom::XMLNode* parent = (*it)->getParent();
+         cppdom::Node* parent = (*it)->getParent();
          assert(parent != NULL && parent->getName() == std::string("gameinput"));
       }
-      catch (cppdom::XMLError e)
+      catch (cppdom::Error e)
       {
          std::cerr << "Error: " << e.getString() << std::endl;
          it++;

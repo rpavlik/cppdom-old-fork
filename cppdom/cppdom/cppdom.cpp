@@ -49,18 +49,18 @@
 // namespace declaration
 namespace cppdom
 {
-   // XMLError methods
+   // Error methods
 
-   XMLError::XMLError(XMLErrorCode code)
+   Error::Error(ErrorCode code)
       : mErrorCode(code)
    {}
 
-   XMLErrorCode XMLError::getError() const
+   ErrorCode Error::getError() const
    {
       return mErrorCode;
    }
 
-   void XMLError::getStrError(std::string& error) const
+   void Error::getStrError(std::string& error) const
    {
    // macro for keeping the errorcode switch short and easy
 #define XMLERRORCODE(x,y)  case x: err = y; break;
@@ -88,89 +88,89 @@ namespace cppdom
 #undef XMLERRORCODE
    }
 
-   std::string XMLError::getString() const
+   std::string Error::getString() const
    {
       std::string err;
       getStrError(err);
       return err;
    }
 
-   std::string XMLError::getInfo() const
+   std::string Error::getInfo() const
    {
       return "unknown error";
    }
 
-   // XMLLocation methods
+   //LLocation methods
 
-   XMLLocation::XMLLocation()
+   Location::Location()
    {
       reset();
    }
 
-   int XMLLocation::getLine() const
+   int Location::getLine() const
    {
       return mLine;
    }
 
-   int XMLLocation::getPos() const
+   int Location::getPos() const
    {
       return mPos;
    }
 
-   void XMLLocation::step(int chars)
+   void Location::step(int chars)
    {
       mPos += chars;
    }
 
-   void XMLLocation::newline()
+   void Location::newline()
    {
       ++mLine;
       mPos = 1;
    }
 
-   void XMLLocation::reset()
+   void Location::reset()
    {
       mLine = mPos = 0;
    }
 
-   // XMLContext methods
+   // Context methods
 
-   XMLContext::XMLContext()
-      : mEventHandler(new XMLEventHandler)
+   Context::Context()
+      : mEventHandler(new EventHandler)
    {
       mInit = false;
       mNextHandle = 0;
       mHandleEvents = false;
    }
 
-   XMLContext::~XMLContext()
+   Context::~Context()
    {
    }
 
-   std::string XMLContext::getEntity(const std::string& entName)
+   std::string Context::getEntity(const std::string& entName)
    {
       if (!mInit)
       {
          initContext();
       }
 
-      XMLEntityMap::const_iterator iter = mEntities.find(entName);
+      EntityMap::const_iterator iter = mEntities.find(entName);
       return (iter == mEntities.end() ? entName : iter->second);
    }
 
-   std::string XMLContext::getTagname(XMLTagNameHandle handle)
+   std::string Context::getTagname(TagNameHandle handle)
    {
       if (!mInit)
       {
          initContext();
       }
-      XMLTagNameMap::const_iterator iter = mTagNames.find(handle);
+      TagNameMap::const_iterator iter = mTagNames.find(handle);
 
       std::string empty("");
       return (iter == mTagNames.end() ? empty : iter->second);
    }
 
-   XMLTagNameHandle XMLContext::insertTagname(const std::string& tagName)
+   TagNameHandle Context::insertTagname(const std::string& tagName)
    {
       if (!mInit)
       {
@@ -180,7 +180,7 @@ namespace cppdom
       // bugfix: first search, if the tagname is already in the list
       // since usually there are not much different tagnames, the search
       // shouldn't slow down parsing too much
-      XMLTagNameMap::const_iterator iter,stop;
+      TagNameMap::const_iterator iter,stop;
       iter = mTagNames.begin();
       stop = mTagNames.end();
 
@@ -193,71 +193,71 @@ namespace cppdom
       }
 
       // insert new tagname
-      XMLTagNameMap::value_type keyvaluepair(mNextHandle, tagName);
+      TagNameMap::value_type keyvaluepair(mNextHandle, tagName);
       mTagNames.insert(keyvaluepair);
 
       return mNextHandle++;
    }
 
-   XMLLocation& XMLContext::getLocation()
+   Location& Context::getLocation()
    {
       return mLocation;
    }
 
-   void XMLContext::initContext()
+   void Context::initContext()
    {
       mInit = true;
    }
 
-   void XMLContext::setEventHandler(XMLEventHandlerPtr ehptr)
+   void Context::setEventHandler(EventHandlerPtr ehptr)
    {
       mEventHandler = ehptr;
       mHandleEvents = true;
    }
 
-   XMLEventHandler& XMLContext::getEventHandler()
+   EventHandler& Context::getEventHandler()
    {
       return *mEventHandler.get();
    }
 
-   bool XMLContext::handleEvents() const
+   bool Context::handleEvents() const
    {
       return mHandleEvents;
    }
    
 
-   // XMLAttributes methods
+   // Attributes methods
 
-   XMLAttribute::XMLAttribute()
+   Attribute::Attribute()
       : mData("")
    {}
 
-   XMLAttribute::XMLAttribute(const XMLAttribute& attr)
+   Attribute::Attribute(const Attribute& attr)
       : mData(attr.mData)
    {}
 
-   XMLAttribute::XMLAttribute(const std::string& val)
+   Attribute::Attribute(const std::string& val)
       : mData(val)
    {}
 
-   const std::string& XMLAttribute::getString() const
+   const std::string& Attribute::getString() const
    {
       return mData;
    }
 
-   XMLAttribute::operator std::string() const
+   Attribute::operator std::string() const
    {
       return getString();
    }
 
-   // XMLAttributes methods
+   // Attributes methods
 
-   XMLAttributes::XMLAttributes()
+   Attributes::Attributes()
    {}
 
-   std::string XMLAttributes::get(const std::string& key) const
+   std::string Attributes::get(const std::string& key) const
    {
-      XMLAttributes::const_iterator iter;
+      Attributes::const_iterator iter;
 
       // try to find the key in the map
       iter = find(key);
@@ -265,9 +265,9 @@ namespace cppdom
       return ((iter == end()) ? empty : iter->second);
    }
 
-   void XMLAttributes::set(const std::string& key, const std::string& value)
+   void Attributes::set(const std::string& key, const std::string& value)
    {
-      XMLAttributes::iterator iter;
+      Attributes::iterator iter;
 
       // try to find the key in the map
       iter = find(key);
@@ -278,14 +278,14 @@ namespace cppdom
       else
       {
          // insert, because the key-value pair was not found
-         XMLAttributes::value_type pa(key,value);
+         Attributes::value_type pa(key,value);
          insert(pa);
       }
    }
 
-   bool XMLAttributes::has(const std::string& key) const
+   bool Attributes::has(const std::string& key) const
    {
-      XMLAttributes::const_iterator iter;
+      Attributes::const_iterator iter;
 
       // try to find the key in the map
       iter = find(key);
@@ -293,17 +293,17 @@ namespace cppdom
    }
 
 
-   // XMLNode methods
+   // Node methods
 
-   XMLNode::XMLNode()
+   Node::Node()
       : mNodeType(xml_nt_node), mParent(0)
    {}
 
-   XMLNode::XMLNode(XMLContextPtr ctx)
+   Node::Node(ContextPtr ctx)
       : mContext(ctx), mNodeType(xml_nt_node), mParent(0)
    {}
 
-   XMLNode::XMLNode(const XMLNode& node)
+   Node::Node(const Node& node)
       : mNodeNameHandle(node.mNodeNameHandle)
       , mContext(node.mContext)
       , mNodeType(node.mNodeType)
@@ -313,15 +313,15 @@ namespace cppdom
       , mParent(node.mParent)
    {}
 
-   XMLNode::~XMLNode()
+   Node::~Node()
    {
-      for (XMLNodeList::iterator i = mNodeList.begin(); i != mNodeList.end(); ++i)
+      for (NodeList::iterator i = mNodeList.begin(); i != mNodeList.end(); ++i)
       {
          (*i)->mParent = NULL;
       }
    }
 
-   XMLNode& XMLNode::operator=(const XMLNode& node)
+   Node& Node::operator=(const Node& node)
    {
       mNodeNameHandle = node.mNodeNameHandle;
       mContext = node.mContext;
@@ -333,95 +333,95 @@ namespace cppdom
       return *this;
    }
 
-   XMLNodeType XMLNode::getType() const
+   NodeType Node::getType() const
    {
       return mNodeType;
    }
 
-   std::string XMLNode::getName()
+   std::string Node::getName()
    {
       return mContext->getTagname(mNodeNameHandle);
    }
 
-   XMLAttributes& XMLNode::getAttrMap()
+   Attributes& Node::getAttrMap()
    {
       return mAttributes;
    }
 
-   XMLAttribute XMLNode::getAttribute(const std::string& name) const
+   Attribute Node::getAttribute(const std::string& name) const
    {
       return mAttributes.get(name);
    }
 
-   bool XMLNode::hasAttribute(const std::string& name) const
+   bool Node::hasAttribute(const std::string& name) const
    {
       return mAttributes.has(name);
    }
 
-   const std::string& XMLNode::getCdata()
+   const std::string& Node::getCdata()
    {
       return mCdata;
    }
 
-   void XMLNode::setType(XMLNodeType type)
+   void Node::setType(NodeType type)
    {
       mNodeType = type;
    }
 
-   void XMLNode::setName(const std::string& name)
+   void Node::setName(const std::string& name)
    {
       mNodeNameHandle = mContext->insertTagname(name);
    }
 
-   void XMLNode::setCdata(const std::string& cdata)
+   void Node::setCdata(const std::string& cdata)
    {
       mCdata = cdata;
    }
 
-   void XMLNode::setAttribute(const std::string& attr, const XMLAttribute& value)
+   void Node::setAttribute(const std::string& attr, const Attribute& value)
    {
       mAttributes.set(attr, value.getString());
    }
 
-   void XMLNode::addChild(XMLNodePtr& node)
+   void Node::addChild(NodePtr& node)
    {
       node->mParent = this;      // Tell the child who their daddy is
       mNodeList.push_back(node);
    }
 
-   bool XMLNode::removeChild(XMLNodePtr& node)
+   bool Node::removeChild(NodePtr& node)
    {
-      std::cout << "cppdom::XMLNode::removeChild:  not implemented\n";
+      std::cout << "cppdom::Node::removeChild:  not implemented\n";
       return false;
    }
 
-   bool XMLNode::removeChild(std::string& childName)
+   bool Node::removeChild(std::string& childName)
    {
-      std::cout << "cppdom::XMLNode::removeChild:  not implemented\n";
+      std::cout << "cppdom::Node::removeChild:  not implemented\n";
       return false;
    }
 
-   bool XMLNode::removeChildren(std::string& childName)
+   bool Node::removeChildren(std::string& childName)
    {
-      std::cout << "cppdom::XMLNode::removeChildren:  not implemented\n";
+      std::cout << "cppdom::Node::removeChildren:  not implemented\n";
       return false;
    }
 
-   XMLNodeList& XMLNode::getChildren()
+   NodeList& Node::getChildren()
    {
       return mNodeList;
    }
 
    /** \note currently no path-like childname can be passed, like in e.g. msxml */
-   XMLNodePtr XMLNode::getChild(const std::string& name)
+   NodePtr Node::getChild(const std::string& name)
    {
       // possible speedup: first search if a handle to the childname is existing
-      XMLNodeList::const_iterator iter;
+      NodeList::const_iterator iter;
 
       // search for first occurance of node
       for(iter = mNodeList.begin(); iter != mNodeList.end(); ++iter)
       {
-         XMLNodePtr np = (*iter);
+         NodePtr np = (*iter);
          if (np->getName() == name)
          {
             return np;
@@ -429,13 +429,13 @@ namespace cppdom
       }
 
       // no valid child found
-      return XMLNodePtr();
+      return NodePtr();
    }
 
-   XMLNodeList XMLNode::getChildren(const std::string& name)
+   NodeList Node::getChildren(const std::string& name)
    {
-      XMLNodeList result(0);
-      XMLNodeList::const_iterator iter;
+      NodeList result(0);
+      NodeList::const_iterator iter;
 
       // search for all occurances of nodename and insert them into the new list
       for(iter = mNodeList.begin(); iter != mNodeList.end(); ++iter)
@@ -449,25 +449,25 @@ namespace cppdom
       return result;
    }
 
-   XMLNodeList XMLNode::getChildren(const char* name)
+   NodeList Node::getChildren(const char* name)
    {
       return getChildren(std::string(name));
    }
 
-   XMLNode* XMLNode::getParent() const
+   Node* Node::getParent() const
    {
       return mParent;
    }
 
-   /** \exception throws cppdom::XMLError when a streaming or parsing error occur */
-   void XMLNode::load(std::istream& in, XMLContextPtr& context)
+   /** \exception throws cppdom::Error when a streaming or parsing error occur */
+   void Node::load(std::istream& in, ContextPtr& context)
    {
-      XMLParser parser(in, context->getLocation());
+      Parser parser(in, context->getLocation());
       parser.parseNode(*this, context);
    }
 
-   /** \exception throws cppdom::XMLError when a streaming or parsing error occur */
-   void XMLNode::save(std::ostream& out, int indent)
+   /** \exception throws cppdom::Error when a streaming or parsing error occur */
+   void Node::save(std::ostream& out, int indent)
    {
       // output indendation spaces
       for(int i=0; i<indent; ++i)
@@ -486,13 +486,13 @@ namespace cppdom
       out << '<' << mContext->getTagname(mNodeNameHandle);
 
       // output all attributes
-      XMLAttributes::const_iterator iter, stop;
+      Attributes::const_iterator iter, stop;
       iter = mAttributes.begin();
       stop = mAttributes.end();
 
       for(; iter!=stop; ++iter)
       {
-         XMLAttributes::value_type attr = *iter;
+         Attributes::value_type attr = *iter;
          out << ' ' << attr.first << '=' << '\"' << attr.second << '\"';
       }
 
@@ -504,7 +504,7 @@ namespace cppdom
             out << '>' << std::endl;
 
             // output all subnodes
-            XMLNodeList::const_iterator iter,stop;
+            NodeList::const_iterator iter,stop;
             iter = mNodeList.begin();
             stop = mNodeList.end();
 
@@ -530,71 +530,71 @@ namespace cppdom
          break;
       default:
          // unknown nodetype
-         throw XMLError(xml_save_invalid_nodetype);
+         throw Error(xml_save_invalid_nodetype);
       }
    }
 
-   XMLContextPtr XMLNode::getContext()
+   ContextPtr Node::getContext()
    {
       return mContext;
    }
 
 
-   // XMLDocument methods
+   // Document methods
 
-   XMLDocument::XMLDocument()
+   Document::Document()
    {
       mNodeType = xml_nt_document;
    }
 
-   XMLDocument::XMLDocument(XMLContextPtr context)
-      : XMLNode(context)
+   Document::Document(ContextPtr context)
+      : Node(context)
    {
       mNodeType = xml_nt_document;
    }
 
-   XMLNodeList& XMLDocument::getPiList()
+   NodeList& Document::getPiList()
    {
       return mProcInstructions;
    }
 
-   XMLNodeList& XMLDocument::getDtdList()
+   NodeList& Document::getDtdList()
    {
       return mDtdRules;
    }
 
-   /** \exception throws cppdom::XMLError when a streaming or parsing error occur */
-   void XMLDocument::load(std::istream& in, XMLContextPtr& context)
+   /** \exception throws cppdom::Error when a streaming or parsing error occur */
+   void Document::load(std::istream& in, ContextPtr& context)
    {
-      XMLParser parser(in, context->getLocation());
+      Parser parser(in, context->getLocation());
       parser.parseDocument(*this, context);
    }
 
    /** \todo implement: print <!doctype> tag;
-   * \exception throws cppdom::XMLError when a streaming or parsing error occur
+   * \exception throws cppdom::Error when a streaming or parsing error occur
    */
-   void XMLDocument::save(std::ostream& out)
+   void Document::save(std::ostream& out)
    {
       // output all processing instructions
-      XMLNodeList::const_iterator iter, stop;
+      NodeList::const_iterator iter, stop;
       iter = mProcInstructions.begin();
       stop = mProcInstructions.end();
 
       for(; iter!=stop; ++iter)
       {
-         XMLNodePtr np = *iter;
+         NodePtr np = *iter;
 
          // output pi tag
          out << "<?" << np->getName();
 
          // output all attributes
-         XMLAttributes::const_iterator aiter, astop;
+         Attributes::const_iterator aiter, astop;
          aiter = mAttributes.begin();
          astop = mAttributes.end();
 
          for(; aiter!=astop; ++aiter)
          {
-            XMLAttributes::value_type attr = *aiter;
+            Attributes::value_type attr = *aiter;
             out << ' ' << attr.first << '=' << '\"' << attr.second << '\"';
          }
          // output closing brace
@@ -606,25 +606,25 @@ namespace cppdom
       // left to do ...
 
 
-      // call save() method of the first (and hopefully only) node in XMLDocument
+      // call save() method of the first (and hopefully only) node in Document
       (*mNodeList.begin())->save(out, 0);
    }
 
-   void XMLDocument::loadFile(const std::string& filename) throw(XMLError)
+   void Document::loadFile(const std::string& filename) throw(Error)
    {
       std::ifstream in;
       in.open(filename.c_str(), std::ios::in);
 
       if (! in.good())
       {
-         throw XMLError(xml_filename_invalid);
+         throw Error(xml_filename_invalid);
       }
 
       load(in, mContext);
       in.close();
    }
 
-   void XMLDocument::saveFile(const std::string& filename)
+   void Document::saveFile(const std::string& filename)
    {
       std::ofstream out;
       out.open(filename.c_str(), std::ios::in | std::ios::out);
