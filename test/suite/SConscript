@@ -1,0 +1,23 @@
+Import('pkg baseEnv')
+Import('GetPlatform SetupCppUnit')
+
+sources = Split("""
+   runner
+   ErrorTest
+""")
+sources = map(lambda n: n + '.cpp', sources)
+
+env = baseEnv.Copy()
+env.Append(CPPPATH = Split('#'),
+           LIBPATH = ['#cppdom'],
+           LIBS    = ['cppdom'])
+SetupCppUnit(env)
+
+# Win32 doesn' have libdl
+if GetPlatform() != 'win32':
+   env.Append(LIBS = Split('dl'))
+
+if GetPlatform() == 'linux':
+   env.Append(CXXFLAGS = ['-fexceptions'])
+
+env.Program('runner', sources)

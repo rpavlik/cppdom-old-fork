@@ -117,6 +117,33 @@ def BuildIRIXEnvironment():
 def BuildWin32Environment():
    return Environment(ENV = os.environ)
 
+def HasCppUnit(env):
+   "Tests if the user has CppUnit available"
+   sys.stdout.write('checking for cppunit... ')
+   if env['with-cppunit'] == None:
+      found = 0
+   else:
+      cfg = os.path.join(env['with-cppunit'], 'bin', 'cppunit-config')
+      found = os.path.isfile(cfg)
+
+   if found:
+      sys.stdout.write('yes\n')
+   else:
+      sys.stdout.write('no\n')
+   return found
+Export('HasCppUnit')
+
+def SetupCppUnit(env):
+   "Sets up env for CppUnit"
+   if not HasCppUnit(env):
+      print 'ERROR: Could not find CppUnit installation.'
+      sys.exit(1)
+   cfg = pj(env['with-cppunit'], 'bin', 'cppunit-config')
+   ParseConfig(env, cfg + ' --cflags --libs')
+Export('SetupCppUnit')
+
+
+
 #------------------------------------------------------------------------------
 # Grok the arguments to this build
 #------------------------------------------------------------------------------
@@ -151,12 +178,14 @@ else:
    sys.exit(-1)
 Export('baseEnv')
 
-# Process subdirectories
-subdirs = Split("""
-   cppdom
-   test
-""")
-
+opts = Options('config.cache')
+opts.Add('with-cppunit',
+         'CppUnit installation directory',
+         '/usr/local',
+         lambda k,v: WhereIs(pj(v, 'bin', 'cppunit-config')) != None
+        )
+opts.Update(baseEnv)
+Help(opts.GenerateHelpText(baseEnv))
 
 
 # Create the CppDom package
@@ -180,7 +209,9 @@ pkg.addExtraDist(Split("""
 Export('pkg')
 
 # Process subdirectories
-subdirs = Split('cppdom test')
+subdirs = Split('cppdom')
+if HasCppUnit(baseEnv):
+   subdirs.append('test')
 SConscript(dirs = subdirs)
 
 
