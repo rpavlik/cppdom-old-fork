@@ -52,9 +52,17 @@ namespace cppdom
 {
    // Error methods
 
-   Error::Error(ErrorCode code)
-      : mErrorCode(code)
+   Error::Error(ErrorCode code, std::string localDesc, std::string location)
+      : mErrorCode(code), mLocalDesc(localDesc), mLocation(location)
    {}
+
+   Error::Error(ErrorCode code, std::string localDesc, std::string file, unsigned line_num)
+      : mErrorCode(code), mLocalDesc(localDesc)
+   {
+      std::stringstream location_stream;
+      location_stream << file << ":" << line_num;
+      mLocation = location_stream.str();
+   }
 
    ErrorCode Error::getError() const
    {
@@ -85,6 +93,7 @@ namespace cppdom
          XMLERRORCODE(xml_file_access,"could not access file");
 
          XMLERRORCODE(xml_invalid_operation, "attempted to execute command that would cause invalid structure");
+         XMLERRORCODE(xml_invalid_argument,  "attempted to use an invalid argument");
 
          XMLERRORCODE(xml_dummy,"dummy error code (this error should never been seen)");
       }
@@ -96,12 +105,13 @@ namespace cppdom
    {
       std::string err;
       getStrError(err);
+      err += ":" + mLocalDesc;
       return err;
    }
 
    std::string Error::getInfo() const
    {
-      return "unknown error";
+      return mLocation;
    }
 
    //LLocation methods
@@ -450,6 +460,12 @@ namespace cppdom
 
    void Node::setAttribute(const std::string& attr, const Attribute& value)
    {
+      // Check for valid input
+      if(std::string::npos != attr.find(" "))  // If found space
+      {
+         throw CPPDOM_ERROR(xml_invalid_argument, "Attempted to use attribute name with a space");
+      }
+
       mAttributes.set(attr, value.getString());
    }
 
@@ -459,7 +475,7 @@ namespace cppdom
       if(xml_nt_document == getType())
       {
          if(!mNodeList.empty())
-         {  throw Error(xml_invalid_operation); }
+         {  throw CPPDOM_ERROR(xml_invalid_operation, "Attempted to add second child to a document node"); }
       }
 
       node->mParent = this;      // Tell the child who their daddy is
@@ -616,7 +632,7 @@ namespace cppdom
          break;
       default:
          // unknown nodetype
-         throw Error(xml_save_invalid_nodetype);
+         throw CPPDOM_ERROR(xml_save_invalid_nodetype, "Tried to save an unknown node type");
       }
    }
 
@@ -710,7 +726,7 @@ namespace cppdom
 
       if (! in.good())
       {
-         throw Error(xml_filename_invalid);
+         throw CPPDOM_ERROR(xml_filename_invalid, "Filename passed to loadFile was invalid");
       }
 
       load(in, mContext);
