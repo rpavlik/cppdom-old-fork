@@ -15,9 +15,9 @@ using namespace std;
 // dumps the node
 void dump_node( XMLNode &node, int level = 0 )
 {
-   XMLString name = node.getName();
+   std::string name = node.getName();
    XMLNodeType type = node.getType();
-   XMLString c_data;
+   std::string c_data;
 
    for(int i=0;i<level;i++) cout << " ";
 
@@ -107,7 +107,7 @@ void process_xml( std::string filename )
    catch (XMLError e)
    {
       XMLLocation where( context->getLocation() );
-      XMLString errmsg;
+      std::string errmsg;
       e.getStrError(errmsg);
 
       // print out where the error occured

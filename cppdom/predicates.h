@@ -1,5 +1,5 @@
-#ifndef CPPDOM_PREDICATES
-#define CPPDOM_PREDICATES
+#ifndef CPPDOM_PREDICATES_H
+#define CPPDOM_PREDICATES_H
 
 #include <string>
 #include <cppdom/cppdom.h>
@@ -54,7 +54,7 @@ namespace cppdom
          return mValue == (std::string)node->getAttribute(mName);
       }
    private:
-      std::string mName
+      std::string mName;
       std::string mValue;
    };
 }
