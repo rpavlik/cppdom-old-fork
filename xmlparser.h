@@ -36,7 +36,7 @@
  * -----------------------------------------------------------------
  *
  ************************************************************ cppdom-cpr-end */
-/** \file XMLParser.hpp
+/** \file xmlparser.h
 
   definitions for the parsing classes
 

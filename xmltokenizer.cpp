@@ -36,7 +36,7 @@
  * -----------------------------------------------------------------
  *
  ************************************************************ cppdom-cpr-end */
-/*! \file XMLTokenizer.cpp
+/*! \file xmltokenizer.cpp
 
   contains the xml stream tokenizer
 

@@ -36,7 +36,7 @@
  * -----------------------------------------------------------------
  *
  ************************************************************ cppdom-cpr-end */
-/*! \file shared_ptr.hpp
+/*! \file shared_ptr.h
 
   the shared_ptr template class from the boost library.
   cut'n'pasted from the file smart_ptr.hpp

@@ -36,6 +36,12 @@
  * -----------------------------------------------------------------
  *
  ************************************************************ cppdom-cpr-end */
+/**
+* @file predicates.h
+* 
+* Predicate objects for use with cppdom selection methods.
+*
+*/
 #ifndef CPPDOM_PREDICATES_H
 #define CPPDOM_PREDICATES_H
 
