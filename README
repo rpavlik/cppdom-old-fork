@@ -1,5 +1,20 @@
 see COPYING for the license (LGPL)
 
+Dependencies
+============
+- Reasonably compliant C++ compiler (gcc 3.x, vc 7.1, etc)
+- Boost library: See www.boost.org for details and downloads
+- CppUnit (optional for test suite): See cppunit.sf.net
+
+
+Building
+========
+CppDom uses the scons build system.  You can download scons from www.scons.org
+once you have scons, the follow steps should be all you need.
+
+Please see 'scons --help' for a list of options for specifying where the
+dependencies are located.
+
 type 'scons' to build cppdom shared lib.
 type 'scons install' to install on the system
 type 'scons install prefix=$HOME/software' to install in your account
