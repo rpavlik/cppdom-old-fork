@@ -127,6 +127,14 @@ xmltagnamehandle xmlcontext::insert_tagname( const xmlstring &tagname )
 
 
 // xmlattributes methods
+bool xmlattributes::has(const xmlstring &key) const
+{
+   xmlattributes::const_iterator iter;
+
+   // try to find the key in the map
+   iter = find( key );
+   return (iter != end());
+}
 
 xmlstring xmlattributes::get(const xmlstring &key) const
 {
