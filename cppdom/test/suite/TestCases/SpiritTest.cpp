@@ -133,7 +133,8 @@ void SpiritTest::testXmlParser()
 {
    std::cout << "xml grammar" << std::endl;
 
-   cppdom::spirit::XmlGrammar xml_grammar;
+   cppdom::spirit::XmlBuilder builder;
+   cppdom::spirit::XmlGrammar xml_grammar(&builder);
    BOOST_SPIRIT_DEBUG_GRAMMAR(xml_grammar);
 
    parse_info<char const*> result;
@@ -167,7 +168,9 @@ void SpiritTest::testXmlParser()
 
    std::cout << "-------------------------" << std::endl;
    result = bs::parse(
-            "<root><node1><node2><node3><node4>"
+            "<root><node1 attrib='value'>"
+            "<node2 a1='val a1' a2='1.567' a3='false'>"
+            "<node3><node4>"
             "Stuff<!-- More here -->And more<b>this</b>dfdf"
             "</node4>txt and txt </node3>  aa</node2></node1>"
             "</root>"
