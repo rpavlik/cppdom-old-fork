@@ -38,15 +38,24 @@
 // namespace declaration
 namespace cppdom
 {
+   // XMLError methods
 
+   XMLError::XMLError(XMLErrorCode code)
+      : mErrorCode(code)
+   {}
+
+   XMLErrorCode XMLError::getError() const
+   {
+      return mErrorCode;
+   }
+
+   void XMLError::getStrError(std::string& error) const
+   {
    // macro for keeping the errorcode switch short and easy
 #define XMLERRORCODE(x,y)  case x: err = y; break;
 
-   // XMLError methods
-   void XMLError::getStrError(std::string& error) const
-   {
       const char *err;
-      switch(errorcode)
+      switch(mErrorCode)
       {
          XMLERRORCODE(xml_unknown,"unspecified or unknown error");
          XMLERRORCODE(xml_instream_error,"error in the infile stream");
@@ -65,8 +74,20 @@ namespace cppdom
          XMLERRORCODE(xml_dummy,"dummy error code (this error should never been seen)");
       }
       error.assign(err);
+#undef XMLERRORCODE
    }
 
+   std::string XMLError::getString() const
+   {
+      std::string err;
+      getStrError(err);
+      return err;
+   }
+
+   std::string XMLError::getInfo() const
+   {
+      return "unknown error";
+   }
 
    // XMLContext methods
 

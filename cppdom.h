@@ -93,26 +93,21 @@ namespace cppdom
    {
    public:
       /** constructor */
-      XMLError(XMLErrorCode code) { errorcode = code; }
+      XMLError(XMLErrorCode code);
 
       /** returns the error code */
-      XMLErrorCode getError() const { return errorcode; }
+      XMLErrorCode getError() const;
 
       /** returns the string representation of the error code */
       void getStrError(std::string& error) const;
 
-      std::string getString() const
-      {
-         std::string err;
-         this->getStrError(err);
-         return err;
-      }
+      std::string getString() const;
 
       /** return additional error info */
-      const std::string getInfo() const { return "unknown error"; }
+      std::string getInfo() const;
 
    protected:
-      XMLErrorCode errorcode;
+      XMLErrorCode mErrorCode;
    };
 
 
