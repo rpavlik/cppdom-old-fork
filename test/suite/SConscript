@@ -9,6 +9,7 @@ pj = os.path.join
 sources = Split("""
    runner.cpp
    TestCases/ErrorTest.cpp
+   TestCases/ParseTest.cpp
    TestCases/PredTest.cpp
 """)
 
