@@ -51,8 +51,7 @@ void process_xml( std::string filename )
    catch (Error e)
    {
       Location where( context->getLocation() );
-      std::string errmsg;
-      e.getStrError(errmsg);
+      std::string errmsg = e.getStrError();
 
       // print out where the error occured
       cout << filename << ":" << where.getLine() << " ";
