@@ -68,6 +68,10 @@
 #include "config.h"
 #include "shared_ptr.h"   // the boost::shared_ptr class
 
+/** Macro for constructing a CPPDOM error */
+//std::string(__FILE__) + std::string(__LINE__)
+#define CPPDOM_ERROR(error_code, local_desc) cppdom::Error(error_code, local_desc, __FILE__, __LINE__ )
+
 //! namespace of the cppdom project
 namespace cppdom
 {
@@ -88,6 +92,7 @@ namespace cppdom
       xml_save_invalid_nodetype,    /**< invalid nodetype encountered while saving */
 
       xml_invalid_operation,        /**< Attempted to execute an xml operation that would cause invalid structure */
+      xml_invalid_argument,         /**< Attempted to pass an invalid argument */
    // added by kevin for 0.7 compatibility...
       xml_filename_invalid,
       xml_file_access,
@@ -106,7 +111,10 @@ namespace cppdom
    {
    public:
       /** constructor */
-      Error(ErrorCode code);
+      Error(ErrorCode code, std::string localDesc, std::string location);
+
+      /** constructor that can take line num */
+      Error(ErrorCode code, std::string localDesc, std::string file, unsigned line_num);
 
       /** returns the error code */
       ErrorCode getError() const;
@@ -120,7 +128,9 @@ namespace cppdom
       std::string getInfo() const;
 
    protected:
-      ErrorCode mErrorCode;
+      ErrorCode   mErrorCode;
+      std::string mLocalDesc; /**< Local description of the error */
+      std::string mLocation;  /**< The location text */
    };
 
 
@@ -432,6 +442,7 @@ namespace cppdom
 
       /**
        * sets new attribute value
+       * @param attr - Attribute name to set.  There must not be ANY spaces in this name
        * @post Element.attr is set to value.  If it didn't exist before, now it does.
        */
       void setAttribute(const std::string& attr, const Attribute& value);
