@@ -1,279 +1,350 @@
+// this xmlpp was branched from the original LGPL'd xmlpp version 0.6
+// this new branched xmlpp is under the same LGPL (of course) and
+// is being maintained by:
+//    kevin meinert <subatomic@users.sf.net>
+//    allen bierbaum <allenb@users.sf.net>
+//    ben scott <nonchocoboy@users.sf.net>
+/////////////////////////////////////////////////////////////////////
 /*
    xmlpp - an xml parser and validator written in C++
-   (c) 2000 Michael Fink
-   (c) 2001 Karl Pitrich
-      
-   $Id$
-*/
+   copyright (c) 2000-2001 Michael Fink
 
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Library General Public
+   License as published by the Free Software Foundation; either
+   version 2 of the License, or (at your option) any later version.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public
+   License along with this library; if not, write to the
+   Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+   Boston, MA  02111-1307  USA.
+
+*/
 /*! \file xmlparser.cpp
 
   member functions for the tokenizer and parser classes
 
 */
 
-#include "xmlparser.h"
+// needed includes
+#include "xml/xmlparser.h"
 
+// namespace declaration
 namespace xmlpp {
+
+
+// xmlparser methods
 
 xmlparser::xmlparser( std::istream &inputstream, xmllocation &loc )
 :instream(inputstream), tokenizer(inputstream,loc)
-{ }
+{
+}
 
-bool xmlparser::parse_document(XMLDocument &doc, XMLContextPtr &ctxptr) {
+bool xmlparser::parse_document( xmldocument &doc, xmlcontextptr &ctxptr )
+{
    // set root nodename
    doc.contextptr = ctxptr;
-   string rootstr("root");
-   doc.nodenamehandle = ctxptr->insert_tagname(rootstr);
+   xmlstring rootstr("root");
+   doc.nodenamehandle = ctxptr->insert_tagname( rootstr );
 
-   parse_header(doc, ctxptr);
+   bool handle = ctxptr->handle_events();
+
+   // start parsing
+   if (handle) ctxptr->get_eventhandler().start_document();
+
+   parse_header( doc, ctxptr );
 
    // parse the only one subnode
-	XMLNodePtr subnode=new XMLNode(ctxptr);
-	
-   bool ret = parse_node(*subnode, ctxptr);
+   xmlnode subnode( ctxptr );
+
+   bool ret = parse_node( subnode, ctxptr );
 
    // if successful, put node into nodelist
-   if (ret) doc.add_child(subnode);
+   if (ret)
+   {
+      xmlnodeptr nodeptr( new xmlnode(subnode) );
+      doc.nodelist.push_back( nodeptr );
+   }
+
+   if (handle) ctxptr->get_eventhandler().end_document();
 
    return ret;
 }
 
 // parses the header, ie processing instructions and doctype tag
 //! \todo parse <!doctype> tag
-bool xmlparser::parse_header(XMLDocument &doc, XMLContextPtr &ctxptr) {
-	while(1) {
-		tokenizer++;
-		xmltoken token1 = *tokenizer;
-		if (token1 != '<')
-			throw xmlerror( xml_opentag_expected );
+bool xmlparser::parse_header( xmldocument &doc, xmlcontextptr &ctxptr )
+{
+   while(1==1)
+   {
+      tokenizer++;
+      xmltoken token1 = *tokenizer;
+      if (token1 != '<')
+         throw xmlerror( xml_opentag_expected );
 
-		// token after opening < is a literal?
-		tokenizer++;
-		xmltoken token2 = *tokenizer;
-		if (!token2.is_literal()) {
-			// generic string encountered: assume no pi and doctype tags
-			tokenizer.put_back();
-			tokenizer.put_back(token1);
-			return false;
-		}
+      // token after opening < is a literal?
+      tokenizer++;
+      xmltoken token2 = *tokenizer;
+      if (!token2.is_literal())
+      {
+         // generic string encountered: assume no pi and doctype tags
+         tokenizer.put_back();
+         tokenizer.put_back(token1);
+         return false;
+      }
 
-		// now check for the literal
-		switch(token2.get_literal()) {
-			// comment or doctype tag
-	      case '!':
-			{
-				tokenizer++;
-				xmltoken token3 = *tokenizer;
+      // now check for the literal
+      switch(token2.get_literal())
+      {
+         // comment or doctype tag
+      case '!':
+         {
+            tokenizer++;
+            xmltoken token3 = *tokenizer;
 
-				if (!token3.is_literal()) {
-					// now a doctype tag or a comment may follow
-					if (token3.get_generic().at(0) == '-' &&
-						 token3.get_generic().at(1) == '-') {
-						parse_comment(ctxptr);
-					} else {
-						string doctypestr(token3.get_generic());
-						std::transform(doctypestr.begin(),
-											doctypestr.end(),
-											doctypestr.begin(),toupper);
+            if (!token3.is_literal())
+            {
+               // now a doctype tag or a comment may follow
+               if (token3.get_generic().at(0) == '-' &&
+                   token3.get_generic().at(1) == '-')
+                   parse_comment(ctxptr);
+               else
+               {
+                  xmlstring doctypestr(token3.get_generic());
 
-						if (doctypestr == "DOCTYPE") {
-							// \todo parse doctype tag
-							// read the complete tag till the closing >
-							while (*(tokenizer++) != '>');
-							
-						} else {
-							throw xmlerror( xml_unknown );
-						}
-					}
-				} else {
-					throw xmlerror( xml_pi_doctype_expected );
-				}
-				break;
-			}
-		case '?':
-		{
-			tokenizer++;
-			xmltoken token3 = *tokenizer;
+                  std::transform(doctypestr.begin(),doctypestr.end(),doctypestr.begin(),toupper);
 
-			if (token3.is_literal())
-				throw xmlerror( xml_pi_doctype_expected );
+                  if (doctypestr == "DOCTYPE")
+                  {
+                     // \todo parse doctype tag
 
-			// parse processing instruction
-			XMLNodePtr pinode=new XMLNode(ctxptr);
-			pinode->type(xml_nt_dummy);
-			string tagname( token3.get_generic() );
-			pinode->name(tagname);
-			parse_attributes(pinode->attributes);
-			doc.add_pi(pinode);	
-				
-			tokenizer++;
-			if (*tokenizer != '?')
-				throw xmlerror( xml_pi_doctype_expected );
+                     // read the complete tag till the closing >
+                     while (*(tokenizer++) != '>');
+                  }
+                  else
+                     throw xmlerror( xml_unknown );
+               }
+            }
+            else
+               throw xmlerror( xml_pi_doctype_expected );
 
-			tokenizer++;
-				if (*tokenizer != '>')
-					throw xmlerror( xml_closetag_expected );
-			break;
-		}
-		default:
-			// unknown literal encountered
-			throw xmlerror( xml_pi_doctype_expected );
-		} // end switch
-	} // end while
+            break;
+         }
+      case '?':
+         {
+            tokenizer++;
+            xmltoken token3 = *tokenizer;
+
+            if (token3.is_literal())
+               throw xmlerror( xml_pi_doctype_expected );
+
+            // parse processing instruction
+            xmlnode pinode( ctxptr );
+
+            xmlstring tagname( token3.get_generic() );
+            pinode.nodenamehandle = ctxptr->insert_tagname( tagname );
+
+            parse_attributes( pinode.attributes );
+
+            xmlnodeptr nodeptr( new xmlnode(pinode) );
+            doc.procinstructions.push_back( nodeptr );
+
+            if (ctxptr->handle_events()) ctxptr->get_eventhandler().processing_instruction(pinode);
+
+            tokenizer++;
+            if (*tokenizer != '?')
+               throw xmlerror( xml_pi_doctype_expected );
+
+            tokenizer++;
+            if (*tokenizer != '>')
+               throw xmlerror( xml_closetag_expected );
+            break;
+         }
+      default:
+         // unknown literal encountered
+         throw xmlerror( xml_pi_doctype_expected );
+
+      } // end switch
+
+   } // end while
 }
 
 // parses the contents of the current node
-bool xmlparser::parse_node( XMLNode &node, XMLContextPtr &ctxptr ) {
-	node.contextptr = ctxptr;
-	tokenizer++;
-	xmltoken token1 = *tokenizer;
-	xmltoken token2;
+bool xmlparser::parse_node( xmlnode &node, xmlcontextptr &ctxptr )
+{
+   node.contextptr = ctxptr;
+   bool handle = ctxptr->handle_events();
 
-	if (token1.is_endofstream())
-		return false;
+   tokenizer++;
+   xmltoken token1 = *tokenizer;
 
-	// loop when we encounter a comment
-	bool again;
-	do {
-		again = false;
+   if (token1.is_endofstream())
+      return false;
 
-		// check if we have cdata
-		if (!token1.is_literal()) {
-			string cdataname("cdata");
-			node.nodenamehandle = ctxptr->insert_tagname( cdataname );
+   xmltoken token2;
 
-			// parse cdata section(s) and return
-			node.nodetype = xml_nt_cdata;
-			node.cdata.empty();
-			while(!token1.is_literal()) {
-				node.cdata += token1.get_generic();
-				tokenizer++;
-				token1 = *tokenizer;
-			}
-			// strip parsed whitespace after cdata
-			/*
-			int remove=0;
-			string::reverse_iterator sIt=node.cdata.rbegin();
-			while(sIt!=node.cdata.rend()) {
-	  		  	if((*sIt)!=' ') break;
-				else remove++;
-				sIt++;
-			}
-			if(remove>0)
-				node.cdata.erase(node.cdata.size()-remove,remove);
-			*/
-			tokenizer.put_back();
-			return true;
-		}
+   // loop when we encounter a comment
+   bool again;
+   do
+   {
+      again = false;
 
-		// no cdata, try to continue parsing node content
+      // check if we have cdata
+      if (!token1.is_literal())
+      {
+         xmlstring cdataname("cdata");
+         node.nodenamehandle = ctxptr->insert_tagname( cdataname );
 
-		if (token1 != '<')
-			throw xmlerror(xml_opentag_cdata_expected);
+         // parse cdata section(s) and return
+         node.nodetype = xml_nt_cdata;
+         node.cdata.empty();
 
-		// get node name
-		tokenizer++;
-		token2 = *tokenizer;
-		if (token2.is_literal()) {
-			// check the following literal
-			switch(token2.get_literal()) {
-				// closing '</...>' follows
-				case '/':
-					// return, we have a closing node with no more content
-					tokenizer.put_back();
-					tokenizer.put_back( token1 );
-					return false;
-					
-				// comment follows
-				case '!':
-					parse_comment(ctxptr);
-					// get next token
-					tokenizer++;
-					token1 = *tokenizer;
-					// parse again, until we encounter some useful data
-					again = true;
-				break;
-				
-				default:
-					throw xmlerror(xml_tagname_expected);
-			}
-		}
-	} while (again);
+         while(!token1.is_literal())
+         {
+            node.cdata += token1.get_generic();
+            tokenizer++;
+            token1 = *tokenizer;
+         }
+         tokenizer.put_back();
 
-	// insert tag name and set handle for it
-	string tagname(token2.get_generic());
-	node.nodenamehandle = ctxptr->insert_tagname(tagname);
+         if (handle) ctxptr->get_eventhandler().got_cdata(node.cdata);
 
-	// parse attributes
-	parse_attributes(node.attributes);
+         return true;
+      }
 
-	// check for leaf
-	tokenizer++;
-	xmltoken token3 = *tokenizer;
-	if (token3 == '/' ) {
-		// node has finished
-		tokenizer++;
-		xmltoken token4 = *tokenizer;
-		if (token4 != '>' )
-			throw xmlerror(xml_closetag_expected);
-		node.nodetype = xml_nt_leaf;
-		// return, let the caller continue to parse
-		return true;
-	}
+      // no cdata, try to continue parsing node content
 
-	// now a closing bracket must follow
-	if (token3 != '>')
-		throw xmlerror(xml_closetag_expected);
-	
-	// loop to parse all subnodes
-	while (1) {
-		// create subnode
-		XMLNodePtr subnode=new XMLNode(ctxptr);
-		// try to parse possible sub nodes
-		if (parse_node(*subnode, ctxptr)) {
-			// if successful, put node into nodelist
-			node.add_child(subnode);
-		} else {
-			break;
-		}
-	}
+      if (token1 != '<')
+         throw xmlerror(xml_opentag_cdata_expected);
 
-	// parse end tag
-	xmltoken token5 = *tokenizer++;
-	tokenizer++;
-	if (token5 != '<' && *tokenizer != '/')
-		throw xmlerror(xml_opentag_expected);
+      // get node name
+      tokenizer++;
+      token2 = *tokenizer;
+      if (token2.is_literal())
+      {
+         // check the following literal
+         switch(token2.get_literal())
+         {
+            // closing '</...>' follows
+         case '/':
+            // return, we have a closing node with no more content
+            tokenizer.put_back();
+            tokenizer.put_back( token1 );
+            return false;
 
-	tokenizer++;
-	token1 = *tokenizer;
-	if (token1.is_literal())
-		throw xmlerror(xml_tagname_expected);
+            // comment follows
+         case '!':
+            parse_comment(ctxptr);
 
-	// check if open and close tag names are identical
-	if (token1.get_generic() != token2.get_generic() )
-		throw xmlerror(xml_tagname_close_mismatch);
+            // get next token
+            tokenizer++;
+            token1 = *tokenizer;
 
-	tokenizer++;
-	if (*tokenizer != '>')
-		throw xmlerror(xml_opentag_expected);
+            // parse again, until we encounter some useful data
+            again = true;
+            break;
 
-	return true;
+         default:
+            throw xmlerror(xml_tagname_expected);
+         }
+      }
+   } while (again);
+
+   // insert tag name and set handle for it
+   xmlstring tagname( token2.get_generic() );
+   node.nodenamehandle = ctxptr->insert_tagname( tagname );
+
+   // notify event handler
+   if (handle) ctxptr->get_eventhandler().start_node(tagname);
+
+   // parse attributes
+   parse_attributes(node.attributes);
+
+   if (handle) ctxptr->get_eventhandler().parsed_attributes(node.attributes);
+
+   // check for leaf
+   tokenizer++;
+   xmltoken token3 = *tokenizer;
+   if (token3 == '/' )
+   {
+      // node has finished
+      tokenizer++;
+      xmltoken token4 = *tokenizer;
+      if (token4 != '>' )
+         throw xmlerror(xml_closetag_expected);
+
+      node.nodetype = xml_nt_leaf;
+
+      // return, let the caller continue to parse
+      return true;
+   }
+
+   // now a closing bracket must follow
+   if (token3 != '>')
+      throw xmlerror(xml_closetag_expected);
+
+   // loop to parse all subnodes
+   while (1==1)
+   {
+      // create subnode
+      xmlnode subnode( ctxptr );
+
+      // try to parse possible sub nodes
+      if (parse_node( subnode, ctxptr ))
+      {
+         // if successful, put node into nodelist
+         xmlnodeptr nodeptr( new xmlnode(subnode) );
+         node.nodelist.push_back( nodeptr );
+      }
+      else
+         break;
+   }
+
+   // parse end tag
+   xmltoken token5 = *tokenizer++;
+   tokenizer++;
+   if (token5 != '<' && *tokenizer != '/')
+      throw xmlerror(xml_opentag_expected);
+
+   tokenizer++;
+   token1 = *tokenizer;
+   if (token1.is_literal())
+      throw xmlerror(xml_tagname_expected);
+
+   // check if open and close tag names are identical
+   if (token1.get_generic() != token2.get_generic() )
+      throw xmlerror(xml_tagname_close_mismatch);
+
+   tokenizer++;
+   if (*tokenizer != '>')
+      throw xmlerror(xml_opentag_expected);
+
+   if (handle) ctxptr->get_eventhandler().end_node(node);
+
+   return true;
 }
 
 // parses tag attributes
-bool xmlparser::parse_attributes( XMLAttributes &attr ) {
-   while(1) {
+bool xmlparser::parse_attributes( xmlattributes &attr )
+{
+   while(1==1)
+   {
       tokenizer++;
       xmltoken token1 = *tokenizer;
 
-      if (token1.is_literal()) {
+      if (token1.is_literal())
+      {
          tokenizer.put_back();
          return false;
       }
 
-      // get value name here
-      string name = token1.get_generic();
+      // guru: get value name here
+      xmlstring name = token1.get_generic();
 
       tokenizer++;
       if (*tokenizer != '=')
@@ -286,59 +357,32 @@ bool xmlparser::parse_attributes( XMLAttributes &attr ) {
          throw xmlerror(xml_attr_value_expected);
 
       // remove "" from attribute value
-      string value( token2.get_generic() );
+      xmlstring value( token2.get_generic() );
       value.erase(0,1);
       value.erase(value.length()-1,1);
-		
+
       // insert attribute into the map
-      XMLAttributes::value_type attrpair(name, value);
+      // guru: we got the name already
+      xmlattributes::value_type attrpair(name, value);
       attr.insert(attrpair);
    }
    return true;
 }
 
-void xmlparser::parse_comment( XMLContextPtr &ctxptr ) {
-
-/*		  
-	string comment("");
-	// safety for different method calls
-	if(*tokenizer=='!') tokenizer++;
-	if(*tokenizer=="--") tokenizer++;
-
-	//tokenizer.set_cdata_mode(true);
-	while(1) {
-		if(*tokenizer=="--") {
-			tokenizer++;
-			if(*tokenizer=='>') {
-				cerr << "TEST: " << comment << endl;
-				break;
-			} else {
-				throw xmlerror(xml_closetag_expected);
-				break;
-			}
-		}			  
-		xmltoken t1 = *tokenizer;
-		string part(t1.get_generic());	
-		comment+=part;
-		tokenizer++;
-	}
-	//tokenizer.set_cdata_mode(false);
-*/	
-// original code	
-	while (1) {
-      if (*tokenizer == "--") {
-         tokenizer++;
-			if (*tokenizer == '>') {
-				break;
-			} else {
-				throw xmlerror(xml_closetag_expected);
-				break;
-			}
-		}
+void xmlparser::parse_comment( xmlcontextptr &ctxptr )
+{
+   // get tokens until comment is over
+   while (1==1)
+   {
       tokenizer++;
+      if (*tokenizer == "--")
+      {
+         tokenizer++;
+         if (*tokenizer == '>')
+            break;
+      }
    }
-	
 }
 
-}; // namespace end
-/* vi: set ts=3: */
+// namespace end
+};
