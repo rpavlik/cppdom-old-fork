@@ -1,5 +1,7 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  --------------------------------------------------------
+2003-01-11 allenb       Added flags for disabling indentation and/or newlines
+                        in node and document saving.
 2003-01-11 allenb       Added a simplified interface to cdata.  This new
                         interface allows basic cdata manipulation from the
 						parent element of the actual cdata node.
