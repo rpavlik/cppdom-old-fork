@@ -42,7 +42,7 @@
 #include <cppunit/CompilerOutputter.h>
 #include <cppunit/TestResult.h>
 
-#include <cppunit/extensions/MetricRegistry.h>
+#include <extensions/MetricRegistry.h>
 #include <cppunit/extensions/TestFactoryRegistry.h>
 
 #include <cppunit/ui/text/TestRunner.h>
