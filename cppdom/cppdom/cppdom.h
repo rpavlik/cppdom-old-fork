@@ -361,6 +361,7 @@ namespace cppdom
    /**
     * XML tag attribute map.
     * Contains all attributes and values a tag has, represented in a map.
+    * maps: attrib_name:string --> attrib_value:string
     */
    class CPPDOM_CLASS Attributes
    {
@@ -447,7 +448,6 @@ namespace cppdom
          xml_nt_cdata      /**< cdata node, which only contains char data */
       };
 
-
       friend class Parser;
    protected:
       /** Default Constructor */
@@ -461,8 +461,10 @@ namespace cppdom
       explicit Node(std::string nodeName, ContextPtr ctx);
 
       Node(const Node& node);
+
       ~Node();
 
+   public:
       /** assign operator */
       Node& operator=(const Node& node);
 
@@ -480,7 +482,12 @@ namespace cppdom
          return isEqual(otherNode, empty_strings, empty_strings );
       }
 
-      /** @name access to node info */
+      /** Returns the local name of the node (the element name) */
+      std::string getName();
+      /** set the node name */
+      void setName(const std::string& name);
+
+      /** @name Type information */
       //@{
       /** returns type of node */
       Node::Type getType() const;
@@ -494,14 +501,14 @@ namespace cppdom
       bool isCData()
       { return getType() == xml_nt_cdata;}
 
-      /** Returns the local name of the node (the element name) */
-      std::string getName();
+      /** sets new nodetype */
+      void setType(Node::Type type);
+      //@}
 
-      /** returns attribute map of the node */
-      Attributes& getAttrMap();
-
-      /** returns attribute map of the node */
-      const Attributes& getAttrMap() const;
+      /** @name Attribute information */
+      //@{
+      /** Check if the node has a given attribute */
+      bool hasAttribute(const std::string& name) const;
 
       /**
        * Get the named attribute
@@ -510,39 +517,11 @@ namespace cppdom
        */
       Attribute getAttribute(const std::string& name) const;
 
-      /** Check if the node has a given attribute */
-      bool hasAttribute(const std::string& name) const;
+      /** returns attribute map of the node */
+      Attributes& getAttrMap();
 
-      /**
-       * returns cdata string
-       * @note: For node type "cdata", this returns the local cdata.
-       *        For other nodes, this attempts to find the first child cdata
-       *        node and returns its data.
-       */
-      std::string getCdata();
-
-      /**
-       * Returns the full cdata of the node or immediate children.
-      * @note: For node type "cdata", this returns the local cdata.
-      *        For other nodes, combines the cdata of all cdata children.
-      */
-      std::string getFullCdata();
-      //@}
-
-      /** @name node data manipulation */
-      //@{
-      /** sets new nodetype */
-      void setType(Node::Type type);
-
-      /** set the node name */
-      void setName(const std::string& name);
-
-      /** Sets the node cdata.
-      * @post For cdata type nodes, this sets the contained cdata
-      *       For other types, this sets the cdata of the first cdata node.
-      *       If none exists, then one is created called "cdata".
-      */
-      void setCdata(const std::string& cdata);
+      /** returns attribute map of the node */
+      const Attributes& getAttrMap() const;
 
       /**
        * sets new attribute value
@@ -550,21 +529,18 @@ namespace cppdom
        * @post Element.attr is set to value.  If it didn't exist before, now it does.
        */
       void setAttribute(const std::string& attr, const Attribute& value);
-
-      void addChild(NodePtr& node);
-      bool removeChild(NodePtr& node);
-      bool removeChild(std::string& childName);
-      bool removeChildren(std::string& childName);
       //@}
 
-      /** @name navigation through the nodes */
+      /** @name Children and parents */
       //@{
-
-      /** returns a list of the nodes children */
-      NodeList& getChildren();
+      /** Returns true if the node has a child of the given name. */
+      bool hasChild(const std::string& name);
 
       /** Returns the first child of the given local name */
       NodePtr getChild(const std::string& name);
+
+      /** returns a list of the nodes children */
+      NodeList& getChildren();
 
       /**
        * Returns a list of all children (one level deep) with local name of childName
@@ -604,7 +580,39 @@ namespace cppdom
        * @return Our parent, which may be NULL if we have no parent.
        */
       Node* getParent() const;
+
+      void addChild(NodePtr& node);
+      bool removeChild(NodePtr& node);
+      bool removeChild(std::string& childName);
+      bool removeChildren(std::string& childName);
+
       //@}
+
+      /** @name CData methods */
+      //@{
+      /**
+       * returns cdata string
+       * @note: For node type "cdata", this returns the local cdata.
+       *        For other nodes, this attempts to find the first child cdata
+       *        node and returns its data.
+       */
+      std::string getCdata();
+
+      /**
+       * Returns the full cdata of the node or immediate children.
+      * @note: For node type "cdata", this returns the local cdata.
+      *        For other nodes, combines the cdata of all cdata children.
+      */
+      std::string getFullCdata();
+
+      /** Sets the node cdata.
+      * @post For cdata type nodes, this sets the contained cdata
+      *       For other types, this sets the cdata of the first cdata node.
+      *       If none exists, then one is created called "cdata".
+      */
+      void setCdata(const std::string& cdata);
+      //@}
+
 
       /** @name load/save functions */
       //@{
@@ -619,6 +627,7 @@ namespace cppdom
       void save(std::ostream& out, int indent=0, bool doIndent=true, bool doNewline=true);
       //@}
 
+      /** Returns the context used for this node. */
       ContextPtr getContext();
 
    protected:

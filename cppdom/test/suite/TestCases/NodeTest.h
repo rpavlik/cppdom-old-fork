@@ -50,10 +50,14 @@ class NodeTest : public CppUnit::TestFixture
 {
 
 CPPUNIT_TEST_SUITE(NodeTest);
+CPPUNIT_TEST(testChildAccess);
 CPPUNIT_TEST(testEqual);
 CPPUNIT_TEST_SUITE_END();
 
 public:
+
+   /** Test access to child nodes. */
+   void testChildAccess();
 
    /** Load and run the equal test. */
    void testEqual();

@@ -52,6 +52,37 @@ namespace cppdomtest
 {
 CPPUNIT_TEST_SUITE_REGISTRATION(NodeTest);
 
+void NodeTest::testChildAccess()
+{
+   cppdom::ContextPtr ctx( new cppdom::Context );
+   cppdom::Document doc( ctx );
+   doc.loadFile(cppdomtest::nodetest_xml_filename);
+
+   cppdom::NodePtr nodetest_root = doc.getChild("nodetest_root");      // Get the base node
+   CPPUNIT_ASSERT(nodetest_root.get() != NULL);
+
+   // Test hasChild()
+   CPPUNIT_ASSERT(nodetest_root->hasChild("testnode"));
+   CPPUNIT_ASSERT(nodetest_root->hasChild("not_there_node") == false);
+
+   // Test getChild()
+   cppdom::NodePtr test_node = nodetest_root->getChild("child_1");
+   CPPUNIT_ASSERT(test_node.get() != NULL);
+   CPPUNIT_ASSERT(test_node->getChild("child_1_1").get() != NULL);
+
+   // Test getChildren()
+   cppdom::NodeList kids = test_node->getChildren();
+   CPPUNIT_ASSERT(kids.size() == 2);
+   CPPUNIT_ASSERT(kids[0]->getName() == std::string("child_1_1"));
+   CPPUNIT_ASSERT(kids[1]->getName() == std::string("child_1_2"));
+
+   // Test getChildren(string)
+   kids = nodetest_root->getChildren("dupe_child");
+   CPPUNIT_ASSERT(kids.size() == 2);
+   CPPUNIT_ASSERT(kids[0]->getAttribute("id").getValue<int>() == 1);
+   CPPUNIT_ASSERT(kids[1]->getAttribute("id").getValue<int>() == 2);
+}
+
 // Test equality test (isEqual())
 // - Uses an xml file that is coded to specify several
 //   tests to use for this
@@ -79,7 +110,7 @@ void NodeTest::testEqual()
 
    cppdom::ContextPtr ctx( new cppdom::Context );
    cppdom::Document doc( ctx );
-   std::string test_filename = "data/equal_test.xml";
+   std::string test_filename = equal_test_xml_filename;
 
    // load test test file
    try

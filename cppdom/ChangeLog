@@ -2,6 +2,9 @@ DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
 NOTE: Odd numbered minor versions are development series (ex: 0.1, 0.9, etc)
 
+2005-02-03 allenb       Added tests for Node interface.
+                        Added Node::hasChild() method.
+                        VERSION: 0.5.4
 2004-04-14 allenb       Added ability to make distribution as part of build.
                         VERSION: 0.5.3
 2004-04-14 allenb       Migrated build system to use AutoDist.
