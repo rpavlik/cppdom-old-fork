@@ -17,6 +17,7 @@ void dump_node( xmlnode &node, int level = 0 )
 {
    xmlstring name = node.name();
    xmlnodetype type = node.get_type();
+   xmlstring c_data;
 
    for(int i=0;i<level;i++) cout << " ";
 
@@ -34,17 +35,22 @@ void dump_node( xmlnode &node, int level = 0 )
       break;
    case xml_nt_cdata:
       c = '#';
-      name = node.get_cdata();
+      c_data = node.get_cdata();
       break;
    }
 
-   cout << c << name.c_str() << endl;
+   if(type == xml_nt_cdata)
+      cout << c << name.c_str() << "[" << c_data << "]" << endl;
+   else
+      cout << c << name.c_str() << endl;
+
    xmlattributes attr = node.get_attrmap();
 
    // guru: added output of attributes
    for (xmlattributes::iterator j = attr.begin(); j!=attr.end(); j++)
    {
-      for (int i=0; i<level; i++) cout << " ";
+      for (int i=0; i<level; i++)
+         cout << " ";
       cout << "   ";
       cout << j->first << ": " << j->second << endl;
    }
