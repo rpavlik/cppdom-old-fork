@@ -1,5 +1,7 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
+
+[Version 0.4.0 released - 4.6.2004]============================================
 2004-02-29 allenb       Moved the node type enum into Node as Node::Type. 
                         This breaks all old code that used the type interface.
                         To help avoid future breakage in the future, added
@@ -13,7 +15,8 @@ DATE        AUTHOR      CHANGE
 2004-02-20 allenb       Added more extensive tests to test suite.  Added metric
                         tests for loading and parsing documents.
 2004-02-14 allenb       Restructure the test suite.  Added StaticOnly option
-                        to build.  Added Metric Registry to test suite.                        
+                        to build.  Added Metric Registry to test suite.
+
 [Version 0.3.0 released - 1.28.2004]===========================================
 2004-01-28 patrickh     Restored the ability to compile shared libraries.
 2003-10-07 allenb       Added support for "stringification" of attrib text and
