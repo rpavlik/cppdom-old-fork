@@ -96,19 +96,23 @@ class CPPDOM_API XMLError
 {
 public:
    /** constructor */
-   XMLError( XMLErrorCode code ){ errorcode = code; }
+   XMLError( XMLErrorCode code ) { errorcode = code; }
+
    /** returns the error code */
-   XMLErrorCode get_error() const { return errorcode; }
+   XMLErrorCode getError() const { return errorcode; }
+
    /** returns the string representation of the error code */
-   void get_strerror(XMLString &error) const;
-   XMLString get_string() const
+   void getStrError(XMLString &error) const;
+   
+   XMLString getString() const
    {
       XMLString err;
-      this->get_strerror( err );
+      this->getStrError( err );
       return err;
    }
+   
    /** return additional error info */
-   const XMLString get_info() const { return "unknown error"; }
+   const XMLString getInfo() const { return "unknown error"; }
 
 protected:
    XMLErrorCode errorcode;
@@ -176,40 +180,48 @@ public:
    virtual ~XMLContext();
 
    /** returns the entity representation for the named entity */
-   XMLString get_entity( const XMLString &entname );
+   XMLString getEntity( const XMLString &entname );
 
    /** returns the tagname by the tagname handle */
-   XMLString get_tagname( XMLTagNameHandle handle );
+   XMLString getTagname( XMLTagNameHandle handle );
 
    /** inserts a tag name and returns a tag name handle to the string */
-   XMLTagNameHandle insert_tagname( const XMLString &tagname );
+   XMLTagNameHandle insertTagname( const XMLString &tagname );
 
    /** returns the current location in the xml stream */
-   XMLLocation &get_location()
-   { return location; }
+   XMLLocation &getLocation()
+   { 
+      return location; 
+   }
 
    /** called once when the context instance starts up; overwrite to customize
    * @note: The base member should always be called, to set init to true
    */
-   virtual void init_context()
-   { init = true; }
+   virtual void initContext()
+   { 
+      init = true; 
+   }
 
    /** @name event handling methods */
    //@{
    /** sets the event handler; enables handling events */
-   void set_eventhandler(XMLEventHandlerPtr ehptr)
+   void set_eventhandler( XMLEventHandlerPtr ehptr )
    {
-      eventhandler=ehptr;
-      handleevents=true;
+      eventhandler = ehptr;
+      handleevents = true;
    }
 
    /** returns the currently used eventhandler (per reference) */
-   XMLEventHandler &get_eventhandler()
-   { return *eventhandler.get(); }
+   XMLEventHandler &getEventhandler()
+   { 
+      return *eventhandler.get(); 
+   }
 
    /** returns if a valid event handler is set */
-   bool handle_events() const
-   { return handleevents; }
+   bool handleEvents() const
+   { 
+      return handleevents; 
+   }
 
 protected:
 
@@ -235,6 +247,7 @@ enum XMLNodetype
 // typedefs
 /** smart pointer to node */
 typedef cppdom_boost::shared_ptr<class XMLNode> XMLNodePtr;
+
 /** list of node smart pointer */
 typedef std::list<XMLNodePtr> XMLNodeList;
 typedef XMLNodeList::iterator XMLNodeListIterator;
@@ -247,37 +260,37 @@ typedef XMLNodeList::iterator XMLNodeListIterator;
 class CPPDOM_API XMLAttribute
 {
 public:
-   XMLAttribute()
-    : mData("")
-   {;}
+   XMLAttribute() : mData( "" ) {}
 
-   XMLAttribute(const XMLAttribute& r)
+   XMLAttribute( const XMLAttribute& r )
    {
       mData = r.mData;
    }
 
-   XMLAttribute(const std::string& str_val)
+   XMLAttribute( const std::string& str_val )
    {
       mData = str_val;
    }
 
 #ifndef XMLPP_NO_MEMBER_TEMPLATES
    template<class T>
-   XMLAttribute(const T& val)
+   XMLAttribute( const T& val )
    {
-      setValue<T>(val);
+      setValue<T>( val );
    }
 #endif // ! XMLPP_NO_MEMBER_TEMPLATES
 
    XMLString getString() const
-   { return mData; }
+   {
+      return mData; 
+   }
 
 #ifndef XMLPP_NO_MEMBER_TEMPLATES
    /** Set mData to the string value of val
    * @note Requires a stream operation of type T
    */
    template<class T>
-   void setValue(const T& val)
+   void setValue( const T& val )
    {
       std::ostringstream oss;
       oss << val;
@@ -288,7 +301,7 @@ public:
    T getValue() const
    {
       T t;
-      std::istringstream iss(mData);
+      std::istringstream iss( mData );
       iss >> t;
       return t;
    }
@@ -296,7 +309,9 @@ public:
 
    /** Autoconversion to string (so old code should work) */
    operator std::string() const
-   { return mData; }
+   { 
+      return mData; 
+   }
 
 protected:
    XMLString mData;

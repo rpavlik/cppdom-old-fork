@@ -43,7 +43,7 @@ namespace cppdom {
 #define XMLERRORCODE(x,y)  case x: err = y; break;
 
 // XMLError methods
-void XMLError::get_strerror(XMLString &error) const
+void XMLError::getStrError( XMLString &error ) const
 {
    const char *err;
    switch(errorcode)
@@ -80,28 +80,28 @@ XMLContext::~XMLContext()
 {
 }
 
-XMLString XMLContext::get_entity( const XMLString &entname )
+XMLString XMLContext::getEntity( const XMLString &entname )
 {
-   if (!init) init_context();
+   if (!init) initContext();
 
    XMLEntityMap::const_iterator iter = entities.find( entname );
    return ( iter == entities.end() ? entname : iter->second );
 }
 
-XMLString XMLContext::get_tagname( XMLTagNameHandle handle )
+XMLString XMLContext::getTagname( XMLTagNameHandle handle )
 {
    if (!init)
-      init_context();
+      initContext();
    XMLTagNameMap::const_iterator iter = tagnames.find( handle );
 
    XMLString empty("");
    return ( iter == tagnames.end() ? empty : iter->second );
 }
 
-XMLTagNameHandle XMLContext::insert_tagname( const XMLString &tagname )
+XMLTagNameHandle XMLContext::insertTagname( const XMLString &tagname )
 {
    if (!init)
-      init_context();
+      initContext();
 
    // bugfix: first search, if the tagname is already in the list
    // since usually there are not much different tagnames, the search
@@ -188,12 +188,12 @@ XMLNode &XMLNode::operator =( const XMLNode &node )
 
 XMLString XMLNode::getName()
 {
-   return contextptr->get_tagname( nodenamehandle );
+   return contextptr->getTagname( nodenamehandle );
 }
 
 void XMLNode::setName( const XMLString &nname )
 {
-   nodenamehandle = contextptr->insert_tagname(nname);
+   nodenamehandle = contextptr->insertTagname(nname);
 }
 
 /*! \note currently no path-like childname can be passed, like in e.g. msxml */
@@ -220,7 +220,7 @@ XMLNodePtr XMLNode::getChild(const XMLString &name)
 /*! \exception throws cppdom::XMLError when a streaming or parsing error occur */
 void XMLNode::load( std::istream &instream, XMLContextPtr &ctxptr )
 {
-   XMLParser parser( instream,ctxptr->get_location() );
+   XMLParser parser( instream,ctxptr->getLocation() );
    parser.parseNode( *this, ctxptr );
 }
 
@@ -239,7 +239,7 @@ void XMLNode::save( std::ostream &outstream, int indent )
    }
 
    // output tag name
-   outstream << '<' << contextptr->get_tagname(nodenamehandle).c_str();
+   outstream << '<' << contextptr->getTagname(nodenamehandle).c_str();
 
    // output all attributes
    XMLAttributes::const_iterator iter, stop;
@@ -274,7 +274,7 @@ void XMLNode::save( std::ostream &outstream, int indent )
 
          // output closing tag
          outstream << '<' << '/'
-            << contextptr->get_tagname(nodenamehandle).c_str() << '>' << std::endl;
+            << contextptr->getTagname(nodenamehandle).c_str() << '>' << std::endl;
       }
       break;
    case xml_nt_leaf:
@@ -293,7 +293,7 @@ void XMLNode::save( std::ostream &outstream, int indent )
 /** \exception throws cppdom::XMLError when a streaming or parsing error occur */
 void XMLDocument::load( std::istream &instream, XMLContextPtr &ctxptr )
 {
-   XMLParser parser( instream, ctxptr->get_location() );
+   XMLParser parser( instream, ctxptr->getLocation() );
    parser.parseDocument( *this, ctxptr );
 }
 
