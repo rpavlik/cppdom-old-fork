@@ -21,6 +21,7 @@ default: all
 APP_NAME1=	nodetest
 APP_NAME2=	parsetest
 APP_NAME3=	predtest
+APP_NAME4=  maketree
 
 # The directory where the source files for this application are located.
 srcdir=  	.
@@ -45,6 +46,7 @@ SRCS=	cppdom.cpp xmlparser.cpp xmltokenizer.cpp \
 SRCS1=   cppdom.cpp xmlparser.cpp xmltokenizer.cpp nodetest.cpp
 SRCS2=   cppdom.cpp xmlparser.cpp xmltokenizer.cpp parsetest.cpp
 SRCS3=   cppdom.cpp xmlparser.cpp xmltokenizer.cpp predtest.cpp
+SRCS4=   cppdom.cpp xmlparser.cpp xmltokenizer.cpp maketree.cpp
 
 # This is for extra libraries needed specfically for your application.  The
 # general libraries needed for applications are in $(LIBS).
@@ -60,7 +62,7 @@ EXTRA_PATH_FOR_SOURCES=../cppdom
 # removed by the 'clean' target.
 CLEAN_FILES=		
 CLEAN_DIRS=		
-CLOBBER_FILES= $(APP_NAME1)$(EXE_EXT) $(APP_NAME2)$(EXE_EXT) $(APP_NAME3)$(EXE_EXT)
+CLOBBER_FILES= $(APP_NAME1)$(EXE_EXT) $(APP_NAME2)$(EXE_EXT) $(APP_NAME3)$(EXE_EXT) $(APP_NAME4)$(EXE_EXT)
 
 # The following include line MUST COME BEFORE the targets and objs for 
 # compiling the application.
@@ -70,11 +72,12 @@ include $(DZR_BASE_DIR)/mk/dzr.basicapp.mk
 OBJS1=		$(addprefix $(OBJDIR)/, $(call makeobjs, $(SRCS1)))
 OBJS2=		$(addprefix $(OBJDIR)/, $(call makeobjs, $(SRCS2)))
 OBJS3=		$(addprefix $(OBJDIR)/, $(call makeobjs, $(SRCS3)))
+OBJS4=		$(addprefix $(OBJDIR)/, $(call makeobjs, $(SRCS4)))
 
 # -----------------------------------------------------------------------------
 # Targets.
 # -----------------------------------------------------------------------------
-all: $(APP_NAME1)$(EXE_EXT) $(APP_NAME2)$(EXE_EXT) $(APP_NAME3)$(EXE_EXT)
+all: $(APP_NAME1)$(EXE_EXT) $(APP_NAME2)$(EXE_EXT) $(APP_NAME3)$(EXE_EXT) $(APP_NAME4)$(EXE_EXT)
 
 # Target for the application to be built.
 $(APP_NAME1)$(EXE_EXT): $(OBJS1)
@@ -83,4 +86,6 @@ $(APP_NAME2)$(EXE_EXT): $(OBJS2)
 	$(LINK) $(LINK_OUT)$@ $(OBJS2) $(EXTRA_LIBS) $(LIBS)
 $(APP_NAME3)$(EXE_EXT): $(OBJS3)
 	$(LINK) $(LINK_OUT)$@ $(OBJS3) $(EXTRA_LIBS) $(LIBS)
+$(APP_NAME4)$(EXE_EXT): $(OBJS4)
+	$(LINK) $(LINK_OUT)$@ $(OBJS4) $(EXTRA_LIBS) $(LIBS)
 
