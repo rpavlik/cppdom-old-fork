@@ -39,8 +39,11 @@ if GetPlatform == 'win32':
 						 variant = 'Debug')
    except:
       print '[WRN] Unable to make MSVS Project Files.'
-shlib = env.SharedLibrary('cppdom', source = sources)
-env.Install(pj(PREFIX, 'lib'), shlib)
+
+if env['StaticOnly'] == "no":
+   shlib = env.SharedLibrary('cppdom', source = sources)
+   env.Install(pj(PREFIX, 'lib'), shlib)
+
 lib = env.StaticLibrary('cppdom', source = sources)
 env.Install(pj(PREFIX, 'lib'), lib)
 for h in headers:
