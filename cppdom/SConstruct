@@ -19,6 +19,7 @@ import SConsAddons.Util
 import SConsAddons.Options
 import SConsAddons.Options.CppUnit
 import SConsAddons.Options.Boost
+import SConsAddons.AutoDist as AutoDist
 
 #------------------------------------------------------------------------------
 # Define some generally useful functions
@@ -88,8 +89,6 @@ def BuildIRIXEnvironment():
    "Builds a base environment for other modules to build on set up for IRIX"
    global optimize, profile, builders
 
-   #CXX = 'CC'
-   #LINK = CXX
    CXXFLAGS = ['-n32', '-mips3', '-LANG:std', '-w2']
    LINKFLAGS = CXXFLAGS
 
@@ -106,9 +105,7 @@ def BuildIRIXEnvironment():
 
    return Environment(
       ENV         = os.environ,
-      #CXX         = CXX,
       CXXFLAGS    = CXXFLAGS,
-      #LINK        = LINK,
       LINKFLAGS   = LINKFLAGS
    )
 
@@ -229,12 +226,25 @@ if not SCons.Script.options.help_msg:
    PREFIX = os.path.abspath(baseEnv['prefix'])
    buildDir = "build." + GetPlatform()
    distDir = pj(buildDir, 'dist')
-
    Export('buildDir', 'PREFIX', 'distDir')
+   
+   # Setup package
+   CPPDOM_VERSION
+   cppdom_pkg = AutoDist.Package(name="cppdom", version = "%s.%s.%s"%CPPDOM_VERSION,
+                                 prefix=PREFIX, baseEnv=baseEnv)
+   cppdom_pkg.addExtraDist(Split("""
+         AUTHORS
+         ChangeLog
+         COPYING
+         README
+      """))
+   Export('cppdom_pkg')
 
    # Process subdirectories
    for d in ['cppdom', 'test']:
       SConscript(pj(d,'SConscript'), build_dir=pj(buildDir, d), duplicate=0)
+
+   cppdom_pkg.build()
 
    # Setup tar of source files
    tar_sources = Split("""
@@ -275,6 +285,6 @@ if not SCons.Script.options.help_msg:
 
    env.Depends('cppdom-config', 'cppdom/version.h')
    env.Install(pj(PREFIX, 'bin'), cppdom_config)
-   env.Alias('install', PREFIX)
+   #env.Alias('install', PREFIX)
    
    

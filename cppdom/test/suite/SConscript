@@ -1,5 +1,5 @@
 #!python
-Import('baseEnv', 'GetPlatform', 'buildDir', 'PREFIX')
+Import('baseEnv', 'GetPlatform', 'buildDir', 'cppdom_pkg')
 Import('cppunit_options', 'boost_options')
 
 import os
@@ -16,8 +16,7 @@ sources = Split("""
 if boost_options.isAvailable():
    sources.append("TestCases/SpiritTest.cpp")
 
-
-env = baseEnv.Copy()
+env = cppdom_pkg.getEnv().Copy()
 env.Append(CPPPATH = ["#", "."],
            LIBPATH = [pj('#', buildDir, 'cppdom')],
            LIBS    = ['cppdom'])
@@ -30,4 +29,6 @@ if GetPlatform() != 'win32':
 if GetPlatform() == 'linux':
    env.Append(CXXFLAGS = ['-fexceptions'])
 
-env.Program('runner', sources)
+test_prog = cppdom_pkg.createProgram('runner', env, 'test/cppdom')
+test_prog.addSources(sources)
+test_prog.build()
