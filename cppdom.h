@@ -59,12 +59,8 @@
 // needed includes
 #include <string>
 #include <sstream>
-#include <list>
 #include <vector>
 #include <map>
-#include <iosfwd>
-#include <fstream>
-#include <iostream>
 #include "config.h"
 #include "shared_ptr.h"   // the boost::shared_ptr class
 
