@@ -37,7 +37,11 @@
 #ifdef _MSC_VER
    // disable 'identifier was truncated to 255 characters in debug information' warning
 #  pragma warning(disable: 4786)
-#  define XMLPP_NO_MEMBER_TEMPLATES
+
+   // Visual Studio 7 has support for member templates.
+#  if _MSC_VER < 1300
+#     define XMLPP_NO_MEMBER_TEMPLATES
+#  endif
 #endif
 
 // needed includes
