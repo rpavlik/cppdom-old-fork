@@ -21,6 +21,7 @@ sources = Split("""
 """)
 
 env = baseEnv.Copy()
+env.Append(CPPPATH = ['#'])
 
 # Setup the library target
 lib = env.SharedLibrary('cppdom', sources)
