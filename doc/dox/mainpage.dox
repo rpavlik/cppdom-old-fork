@@ -1,0 +1,19 @@
+/**	@mainpage cppdom - CppDom package
+
+Welcome to CppDom.
+
+@section introduction Introduction
+
+CppDom is a simple tools for working with XML using a simple C++ interface
+that uses STL.
+
+It is based upon the JDOM interface for Java.  http://www.jdom.org
+
+@section starting_points Starting Points
+
+The following are places to start.
+
+- @ref examples_index A list of examples to look at.
+
+*/
+

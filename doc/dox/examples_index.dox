@@ -1,0 +1,16 @@
+/**	@page examples_index An index of examples
+*
+* This page is a list of examples.
+*
+*
+* @ref nodetest.cpp
+*
+* @see nodetest.cpp
+*/
+
+/** \example nodetest.cpp
+
+This is a simple example used to test the basic API.
+
+*/
+
