@@ -199,20 +199,19 @@ def ValidateBoostOption(key, value, environ):
    "Validate the boost option settings"
    req_boost_version = 103100;
    sys.stdout.write("checking for %s [%s]..." % (key, value));
+   environ["BoostAvailable"] = False
 
    if "BoostIncludeDir" == key:
       # Get the boost version
       boost_ver_filename = pj(value, 'boost', 'version.hpp');
       if not os.path.isfile(boost_ver_filename):
-         sys.stdout.write("[%s] not found.\n" % boost_ver_filename);
-         Exit();
+         print "[%s] not found. Boost not available." % boost_ver_filename
          return False;
       ver_file = file(boost_ver_filename);
       ver_num = int(re.search("define\s+?BOOST_VERSION\s+?(\d*)", ver_file.read()).group(1));   # Matches 103000
       sys.stdout.write("found version: %s\n" % ver_num);
       if ver_num < req_boost_version:
          print "   Boost version to old: required version:%s\n" % req_boost_version;
-         Exit();
          return False;
       
       # Check on the libraries that I need to use
@@ -223,6 +222,7 @@ def ValidateBoostOption(key, value, environ):
 #         return False;
       # Add the boost stuff to the environment
       environ.Append(BoostCPPPATH = [value,]);
+      environ["BoostAvailable"] = True
 
    elif "BoostLibDir" == key:
       environ.Append(BoostLIBPATH = [value,])
@@ -232,7 +232,7 @@ def ValidateBoostOption(key, value, environ):
 
 def AddBoostOptions(opts):
    opts.Add('BoostIncludeDir',
-           help = 'Boost installation directory (boost/version.hpp must exhist in this directory": default: BoostDir="/usr/local"',
+           help = 'Boost header path [only required for spirit parsing]: default: "/usr/local"',
            finder = '/usr/local',
            validator=ValidateBoostOption);
 #   opts.Add('BoostLibDir',
@@ -321,7 +321,8 @@ if not SCons.Script.options.help_msg:
    Export('PREFIX')
 
    # Update environment for options   
-   baseEnv.Append(CPPPATH = baseEnv["BoostCPPPATH"]);
+   if baseEnv["BoostAvailable"]:
+      baseEnv.Append(CPPPATH = baseEnv["BoostCPPPATH"]);
 
    tar_sources = Split("""
 	 	  AUTHORS
