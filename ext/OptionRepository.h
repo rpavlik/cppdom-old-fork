@@ -58,6 +58,10 @@ public:
    }
 
 
+   /** Called to check if option exists.
+    */
+   bool hasOption(std::string option);
+
    /** Called to get string value of option.
     * @param  option    Option identifier of the form group/group/.../option.
     * @return Empty string if option not found, otherwise the string value of the option.
@@ -79,6 +83,10 @@ public:
     * @param filename   Name of an XML file of options.  root node must have tag "terra_options"
     */
    void loadOptionsFile(std::string filename);
+
+protected:
+   /** Helper method to split the option string to the elt path and the attrib name. */
+   void splitOptionPath(const std::string& option, std::string& option_path, std::string& attrib_name);
 
 protected:
    cppdom::NodePtr   mOptionRoot;   /** Root of options tree. */

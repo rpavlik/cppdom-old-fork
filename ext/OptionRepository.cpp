@@ -15,10 +15,34 @@ OptionRepository::OptionRepository(std::string rootTagName)
 
 std::string OptionRepository::getOptionString(std::string option)
 {
-   std::string option_path;
-   std::string attrib_name;
+   std::string option_path, attrib_name;
+   splitOptionPath(option,option_path,attrib_name);
 
+   NodePtr option_node = mOptionRoot->getChildPath(option_path);
+   if(option_node.get() == NULL)
+   {  throw CPPDOM_ERROR(xml_invalid_argument, std::string("Could not find node for option:") + option); }
+
+   return option_node->getAttribute(attrib_name).getString();
+}
+
+bool OptionRepository::hasOption(std::string option)
+{
+   std::string option_path, attrib_name;
+   splitOptionPath(option,option_path,attrib_name);
+
+   NodePtr option_node = mOptionRoot->getChildPath(option_path);
+   if(option_node.get() == NULL)
+   { return false; }
+   else
+   {
+      return option_node->hasAttribute(attrib_name);
+   }
+}
+
+void OptionRepository::splitOptionPath(const std::string& option, std::string& option_path, std::string& attrib_name)
+{
    std::string::size_type attrib_start = option.find_last_of('/');
+
    if(attrib_start == std::string::npos)
    {  throw CPPDOM_ERROR(xml_invalid_argument, std::string("Could not find '/' in option:") + option); }
    if((0 == attrib_start) || (option.length()-1 == attrib_start))
@@ -26,12 +50,6 @@ std::string OptionRepository::getOptionString(std::string option)
 
    option_path = option.substr(0,attrib_start);
    attrib_name = option.substr(attrib_start+1,option.length()-attrib_start-1);
-
-   NodePtr option_node = mOptionRoot->getChildPath(option_path);
-   if(option_node.get() == NULL)
-   {  throw CPPDOM_ERROR(xml_invalid_argument, std::string("Could not find node for option:") + option); }
-
-   return option_node->getAttribute(attrib_name).getString();
 }
 
 /** Set the value of an option.
