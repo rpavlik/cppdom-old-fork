@@ -31,7 +31,7 @@ void dump_node( xmlnode &node, int level = 0 )
       c = '-';
       break;
    case xml_nt_document:
-      c = '\';
+      c = '\\';
       break;
    case xml_nt_cdata:
       c = '#';
