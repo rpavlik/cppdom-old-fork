@@ -45,7 +45,7 @@ namespace xmlpp {
 xmlstream_iterator::xmlstream_iterator(std::istream &is,xmllocation &loc)
 :xmltokenizer(is,loc)
 {
-   putback_char = -1;
+   putback_char = char(-1);
    cdata_mode = false;
 }
 
@@ -72,7 +72,7 @@ void xmlstream_iterator::get_next()
 
    do
    {
-      if (putback_char == -1 )
+      if (putback_char == char(-1) )
       {
          c = instr.get();
          location.step();
@@ -80,13 +80,13 @@ void xmlstream_iterator::get_next()
       else
       {
          c = putback_char;
-         putback_char = -1;
+         putback_char = char(-1);
          location.step();
       }
 
       // do we have an eof?
       // TODO: check for instr.eof()
-      if (c == EOF)
+      if (c == char(EOF))
       {
          if (generic.length()!=0)
          {
@@ -125,7 +125,7 @@ void xmlstream_iterator::get_next()
          {
             c = instr.get();
             location.step();
-            if (c==EOF)
+            if (c==char(EOF))
                break;
             generic += c;
          } while (c != delim);
