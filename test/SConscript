@@ -2,8 +2,9 @@
 Import('baseEnv')
 
 env = baseEnv.Copy()
-env['LIBPATH'].extend(['#cppdom'])
-env['LIBS'].extend(['cppdom'])
+env.Append(CPPPATH = ['#'])
+env.Append(LIBPATH = ['#cppdom'])
+env.Append(LIBS = ['cppdom'])
 
 tests = Split("""
    nodetest
