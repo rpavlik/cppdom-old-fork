@@ -36,12 +36,12 @@ int main()
       
 
    // get all nodes with noattrs attributes...
-   xmlpp::XMLNodeList nl = root->getChildrenPred( xmlpp::AttributeType( "noattrs" ) );
+   xmlpp::XMLNodeList nl = root->getChildrenPred( xmlpp::HasAttributeNamePredicate( "noattrs" ) );
    
    assert( nl.size() == 1 && "test failed" );
    
    // get all the nodes that set up Mouse devices
-   nl = root->getChildrenPred( xmlpp::AttributeValue( "device", "Mouse" ) );
+   nl = root->getChildrenPred( xmlpp::HasAttributeValuePredicate( "device", "Mouse" ) );
    assert( nl.size() == 2 && "test failed" );
   
    std::cout << "Tests Passed" << std::endl;

@@ -6,13 +6,12 @@
 
 namespace xmlpp
 {
-   class AttributeType
+   class HasAttributeNamePredicate
    {
    public:
       /** set the attribute name to match. */
-      AttributeType( std::string attrName ) : mName( attrName ) 
-      {
-      }
+      HasAttributeNamePredicate( std::string attrName ) : mName( attrName ) 
+      {;}
    
       /** set the attribute name to match. */
       void setName( std::string attrName ) { mName = attrName; }
@@ -25,16 +24,15 @@ namespace xmlpp
       std::string mName;
    };
 
-   class AttributeValue
+   class HasAttributeValuePredicate
    {
    public:
       /** set the attribute name to match.
        *  set the attribute value to match. 
        */
-      AttributeValue( std::string attrName, std::string val ) : 
+      HasAttributeValuePredicate( std::string attrName, std::string val ) : 
          mName( attrName ), mValue( val ) 
-      {
-      }
+      {;}
 
       /** set the attribute name to match. */
       void setName( std::string attrName ) { mName = attrName; }
