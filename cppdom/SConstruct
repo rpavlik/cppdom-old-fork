@@ -254,9 +254,16 @@ Targets:
    install - Install this puppy
       ex: 'scons install prefix=$HOME/software' to install in your account
    Type 'scons' to just build it
+ 
 """
 
-help_text = help_text + "Options:\n" + opts.GenerateHelpText(baseEnv)
+help_text = help_text + """Options:
+   optimize=yes    Generate optimized code.
+   profile=yes     Turn on generation of profiling code.
+   
+"""
+
+help_text = help_text + opts.GenerateHelpText(baseEnv)
 #help_text += "Options:\n" + opts.GenerateHelpText(baseEnv)
 Help(help_text)
 
