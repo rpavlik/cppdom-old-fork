@@ -189,7 +189,7 @@ void xmlnode::set_name( const xmlstring &nname )
 }
 
 /*! \note currently no path-like childname can be passed, like in e.g. msxml */
-xmlnodeptr xmlnode::firstchild(const xmlstring &childname)
+xmlnodeptr xmlnode::getChild(const xmlstring &name)
 {
    // possible speedup: first search if a handle to the childname is existing
 
@@ -201,7 +201,7 @@ xmlnodeptr xmlnode::firstchild(const xmlstring &childname)
    while(iter!=stop)
    {
       xmlnodeptr np = *(iter++);
-      if (np->name() == childname)
+      if (np->name() == name)
          return np;
    };
 
@@ -210,7 +210,7 @@ xmlnodeptr xmlnode::firstchild(const xmlstring &childname)
 }
 
 /*! \note currently no path-like childname can be passed, like in e.g. msxml */
-xmlnodelist xmlnode::select_nodes(const xmlstring &nodename)
+xmlnodelist xmlnode::getChildren(const xmlstring& name)
 {
    xmlnodelist nlist;
 
@@ -222,7 +222,7 @@ xmlnodelist xmlnode::select_nodes(const xmlstring &nodename)
    while(iter!=stop)
    {
       xmlnodeptr np = *(iter++);
-      if (np->name() == nodename)
+      if (np->name() == name)
          nlist.push_back(np);
    };
 

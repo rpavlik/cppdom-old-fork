@@ -329,17 +329,34 @@ public:
    { attributes.set(attr,value); }
    /** inserts a node into the subnodelist */
    void insert( xmlnode &node)
-   { xmlnodeptr nodeptr(new xmlnode(node)); nodelist.push_back(nodeptr); }
+   {
+      xmlnodeptr nodeptr(new xmlnode(node));
+      nodelist.push_back(nodeptr);
+   }
    //@}
 
    /** @name navigation through the nodes */
    //@{
    /** returns subnode list */
    xmlnodelist& children(){ return nodelist; }
-   /** returns the first child with the given name */
-   xmlnodeptr firstchild( const xmlstring &childname );
-   /** select some nodes and put it into a separate nodelist */
-   xmlnodelist select_nodes(const xmlstring &nodename);
+
+   /** Returns the first child of the given local name */
+   xmlnodeptr getChild( const xmlstring& name );
+
+   /** Returns a list of all children (one level deep) with local name of childName */
+   xmlnodelist getChildren(const xmlstring& name);
+
+   /** select some nodes and put it into a separate nodelist
+   * @deprecated Prefer getChildren instead
+   */
+   xmlnodelist select_nodes(const xmlstring &nodename)
+   { return getChildren(nodename); }
+
+   /** returns the first child with the given name
+   * @deprecated Prefer getChild instead
+   */
+   xmlnodeptr firstchild( const xmlstring &childname )
+   { return getChild(childname); }
    //@}
 
    /** @name load/save functions */
@@ -352,12 +369,12 @@ public:
 
 protected:
 
-   xmltagnamehandle nodenamehandle;    /**< handle to the real tag name */
-   xmlcontextptr contextptr;           /**< smart pointer to the context class */
-   xmlnodetype nodetype;               /**< The type of the node */
-   xmlattributes attributes;           /**< Attributes of the element */
-   xmlstring mCdata;                   /**< Character data (if there is any) */
-   xmlnodelist nodelist;               /**< stl list with subnodes */
+   xmltagnamehandle  nodenamehandle;   /**< handle to the real tag name */
+   xmlcontextptr     contextptr;       /**< smart pointer to the context class */
+   xmlnodetype       nodetype;         /**< The type of the node */
+   xmlattributes     attributes;       /**< Attributes of the element */
+   xmlstring         mCdata;           /**< Character data (if there is any) */
+   xmlnodelist       nodelist;         /**< stl list with subnodes */
 };
 
 
