@@ -1,9 +1,7 @@
 #!python
-import wing.wingdbstub;       # stuff for debugging
+#import wing.wingdbstub;       # stuff for debugging
 import os, string, sys
 pj = os.path.join
-
-print "------------------ HELLO -----------------"
 
 # Bring in the AutoDist build helper
 sys.path.append('tools/build')
@@ -194,8 +192,16 @@ opts.Add('WithCppUnit',
 opts.Update(baseEnv)
 if have_cool_options:
    opts.Save('config.cache', baseEnv);
-Help(opts.GenerateHelpText(baseEnv))
 
+help_text = """--- CppDom Build system ---
+Targets:
+   install - Install this puppy
+      ex: 'scons install prefix=$HOME/software' to install in your account
+   Type 'scons' to just build it
+"""
+
+help_text += "Options:\n" + opts.GenerateHelpText(baseEnv)
+Help(help_text)
 
 # Create the CppDom package
 pkg = Package('cppdom', '%i.%i.%i' % CPPDOM_VERSION)
