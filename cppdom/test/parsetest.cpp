@@ -15,8 +15,8 @@ using namespace std;
 // dumps the node
 void dump_node( xmlnode &node, int level = 0 )
 {
-   xmlstring name = node.name();
-   xmlnodetype type = node.get_type();
+   xmlstring name = node.getName();
+   xmlnodetype type = node.getType();
    xmlstring c_data;
 
    for(int i=0;i<level;i++) cout << " ";
@@ -55,7 +55,7 @@ void dump_node( xmlnode &node, int level = 0 )
       cout << j->first << ": " << j->second << endl;
    }
 
-   xmlnodelist& nlist = node.children();
+   xmlnodelist& nlist = node.getChildren();
 
    xmlnodelist::const_iterator iter, stop;
    iter = nlist.begin();

@@ -41,6 +41,7 @@
 
 // needed includes
 #include <string>
+#include <sstream>
 #include <list>
 #include <map>
 #include <iosfwd>
@@ -251,6 +252,66 @@ typedef xmlnodelist XMLNodeList;
 typedef XMLNodeList::iterator XMLNodeListIterator;
 typedef xmlnodeptr XMLNodePtr;
 
+
+
+/** XML attribute class.
+* Just wraps a string
+*/
+class XMLPP_API xmlattribute
+{
+public:
+   xmlattribute()
+    : mData("")
+   {;}
+
+   xmlattribute(const xmlattribute& r)
+   {
+      mData = r.mData;
+   }
+
+   xmlattribute(const std::string& str_val)
+   {
+      mData = str_val;
+   }
+
+   template<class T>
+   xmlattribute(const T& val)
+   {
+      setValue<T>(val);
+   }
+
+   xmlstring getString() const
+   { return mData; }
+
+   /** Set mData to the string value of val
+   * @note Requires a stream operation of type T
+   */
+   template<class T>
+   void setValue(const T& val)
+   {
+      std::ostringstream oss;
+      oss << val;
+      mData = oss.str();
+   }
+
+   template<class T>
+   T getValue() const
+   {
+      T t;
+      std::istringstream iss(mData);
+      iss >> t;
+      return t;
+   }
+
+   /** Autoconversion to string (so old code should work) */
+   operator std::string() const
+   { return mData; }
+
+protected:
+   xmlstring mData;
+};
+
+
 //! xml tag attribute map
 /*! contains all attributes and values a tag has, represented in a map */
 class XMLPP_API xmlattributes: public std::map<xmlstring, xmlstring>
@@ -302,21 +363,44 @@ public:
    /** @name access to node info */
    //@{
    /** returns type of node */
-   xmlnodetype get_type() const
+   xmlnodetype getType() const
    { return nodetype; }
-   /** returns the node name */
-   xmlstring name();
-   xmlstring get_name()
-   { return name(); }
 
+   /** returns type of node
+   * @deprecated prefer getType() instead
+   */
+   xmlnodetype get_type() const
+   {
+      std::cout << "xmlnode::get_type(): deprecated. Use getType() instead.\n";
+      return getType();
+   }
+
+   /** returns the node name
+   * @deprecated
+   */
+   xmlstring name()
+   {
+      std::cout << "xmlnode::name(): deprecated. Use getName() instead.\n";
+      return getName();
+   }
+   /* @deprecated */
+   xmlstring get_name()
+   {
+      std::cout << "xmlnode::get_name(): deprecated. Use getName() instead.\n";
+      return getName();
+   }
+
+   /** Returns the local name of the node (the element name) */
+   xmlstring getName();
    /** returns attribute map of the node */
    xmlattributes &get_attrmap()
    { return attributes; }
 
    /** Get the named attribute
    * @returns empty string ("") if not found, else the value
+   * @post Object does not change.
    */
-   xmlstring getAttribute( const xmlstring& name ) const
+   xmlattribute getAttribute( const xmlstring& name ) const
    { return attributes.get(name); }
 
    /** Check if the node has a given attribute */
@@ -327,7 +411,10 @@ public:
    * @deprecated Prefer getAttribute instead
    */
    xmlstring get_attribute( const xmlstring &attr ) const
-   { return getAttribute(attr); }
+   {
+      std::cout << "xmlnode::get_attribute: deprecated. Use getAttribute instead.\n";
+      return getAttribute(attr);
+   }
 
    /** returns cdata string
    * @note: This only returns data for nodes that are leaf nodes of type "cdata".
@@ -342,26 +429,78 @@ public:
    /** sets new nodetype */
    void set_type( xmlnodetype ntype )
    { nodetype=ntype; }
-   /** returns the node name */
-   void set_name( const xmlstring &nname );
+
+   /** set the node name */
+   void set_name( const xmlstring &nname )
+   { setName(nname); }
+
+   void setName( const xmlstring& nname);
+
    /** sets new cdata */
    void set_cdata( const xmlstring &ncdata )
    { mCdata=ncdata; }
-   /** sets new attribute value */
+
+   /** sets new attribute value
+   * @post Element.attr is set to value
+   */
+   void setAttribute( const xmlstring &attr, const xmlattribute& value )
+   {
+      attributes.set(attr,value.getString());
+   }
+
+   /** sets new attribute value
+   * @deprecated Prefer setAttribute instead
+   */
    void set_attribute( const xmlstring &attr, const xmlstring &value )
-   { attributes.set(attr,value); }
+   {
+      std::cout << "xmlnode::set_attribute: deprecated. Use setAttribute instead.\n";
+      setAttribute(attr, value);
+   }
+
    /** inserts a node into the subnodelist */
    void insert( xmlnode &node)
    {
+      std::cout << "xmlnode::insert: deprecated. Use addChild instead.\n";
       xmlnodeptr nodeptr(new xmlnode(node));
-      mNodelist.push_back(nodeptr);
+      addChild(nodeptr);
    }
+
+   void addChild(xmlnodeptr& node)
+   {
+      mNodelist.push_back(node);
+   }
+
+   bool removeChild(xmlnodeptr& node)
+   {
+      std::cout << "not implemented\n";
+      return false;
+   }
+
+   bool removeChild(xmlstring& childName)
+   {
+      std::cout << "not implemented\n";
+      return false;
+   }
+
+   bool removeChildren(xmlstring& childName)
+   {
+      std::cout << "not implemented\n";
+      return false;
+   }
+
    //@}
 
    /** @name navigation through the nodes */
    //@{
    /** returns subnode list */
    xmlnodelist& children()
+   {
+      std::cout << "xmlnode::children: Deprecated. Prefer getChildren().\n";
+      return getChildren();
+   }
+
+   /** returns a list of the nodes children */
+   xmlnodelist& getChildren()
    { return mNodelist; }
 
    /** Returns the first child of the given local name */
@@ -374,13 +513,19 @@ public:
    * @deprecated Prefer getChildren instead
    */
    xmlnodelist select_nodes(const xmlstring &nodename)
-   { return getChildren(nodename); }
+   {
+      std::cout << "xmlnode::select_nodes: deprecated. Use getChildren instead.\n";
+      return getChildren(nodename);
+   }
 
    /** returns the first child with the given name
    * @deprecated Prefer getChild instead
    */
    xmlnodeptr firstchild( const xmlstring &childname )
-   { return getChild(childname); }
+   {
+      std::cout << "xmlnode::firstchild: deprecated. Use getChild instead.\n";
+      return getChild(childname);
+   }
    //@}
 
    /** @name load/save functions */
@@ -390,6 +535,9 @@ public:
    /** saves node to xml output stream */
    void save( std::ostream &outstream, int indent=0 );
    //@}
+
+   xmlcontextptr getContext()
+   { return contextptr; }
 
 protected:
 
