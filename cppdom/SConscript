@@ -7,6 +7,7 @@ headers = Split("""
    config.h
    cppdom.h
    predicates.h
+   shared_ptr.h
    xmlparser.h
    xmltokenizer.h
    version.h
