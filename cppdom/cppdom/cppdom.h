@@ -261,11 +261,21 @@ public:
    xmlattributes()
    {}
 
-   //! returns attribute value by name
+   /** Get the named attribute
+   * @returns empty string "" if not found, else the value
+   */
    xmlstring get( const xmlstring &key ) const;
 
-   //! sets new attribute value
+   /** Sets new attribute value
+   * If not found, then just insert the new attribute
+   */
    void set(const xmlstring &key, const xmlstring &value);
+
+   /** Check if the attribute map has the given attribute
+   * @return false if not found
+   */
+   bool has(const xmlstring& key) const;
+
 };
 
 typedef xmlattributes XMLAttributes;
@@ -302,9 +312,22 @@ public:
    /** returns attribute map of the node */
    xmlattributes &get_attrmap()
    { return attributes; }
-   /** returns attribute value for given attribute */
+
+   /** Get the named attribute
+   * @returns empty string ("") if not found, else the value
+   */
+   xmlstring getAttribute( const xmlstring& name ) const
+   { return attributes.get(name); }
+
+   /** Check if the node has a given attribute */
+   bool hasAttribute( const xmlstring& name ) const
+   { return attributes.has(name); }
+
+   /* get attribute
+   * @deprecated Prefer getAttribute instead
+   */
    xmlstring get_attribute( const xmlstring &attr ) const
-   { return attributes.get(attr); }
+   { return getAttribute(attr); }
 
    /** returns cdata string
    * @note: This only returns data for nodes that are leaf nodes of type "cdata".
