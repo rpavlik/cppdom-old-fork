@@ -7,69 +7,13 @@
 //#include <ctime>
 #include <cppdom/cppdom.h>
 
+#include <testHelpers.h>
+
+
 // namespace includes
 using namespace cppdom;
 using namespace std;
 
-
-// dumps the node
-void dump_node( Node &node, int level = 0 )
-{
-   std::string name = node.getName();
-   NodeType type = node.getType();
-   std::string c_data;
-
-   for(int i=0;i<level;i++) cout << " ";
-
-   char c = ' ';
-   switch(type)
-   {
-   case xml_nt_node:
-      c = '+';
-      break;
-   case xml_nt_leaf:
-      c = '-';
-      break;
-   case xml_nt_document:
-      c = '\\';
-      break;
-   case xml_nt_cdata:
-      c = '#';
-      c_data = node.getCdata();
-      break;
-   }
-
-   if(type == xml_nt_cdata)
-      cout << c << name.c_str() << "[" << c_data << "]" << endl;
-   else
-      cout << c << name.c_str() << endl;
-
-   Attributes attr = node.getAttrMap();
-
-   // guru: added output of attributes
-   for (Attributes::iterator j = attr.begin(); j!=attr.end(); j++)
-   {
-      for (int i=0; i<level; i++)
-         cout << " ";
-      cout << "   ";
-      cout << j->first << ": " << j->second << endl;
-   }
-
-   NodeList& nlist = node.getChildren();
-
-   NodeList::const_iterator iter, stop;
-   iter = nlist.begin();
-   stop = nlist.end();
-
-   while (iter != stop)
-   {
-      NodePtr node = *iter;
-
-      dump_node ( *node, level+1 );
-
-      ++iter;
-   }
-};
 
 void process_xml( std::string filename )
 {
@@ -97,7 +41,7 @@ void process_xml( std::string filename )
 //         (tstop-tstart)/static_cast<float>(CLOCKS_PER_SEC)
 //         << " seconds." << endl;
 
-      dump_node( node );
+      testHelpers::dump_node( node );
 
       ofstream ostr( "parsetest.xml" );
       node.save( ostr );
