@@ -50,13 +50,30 @@ namespace spirit
 void XmlBuilder::startElement(char const* first, char const* last)
 {
    std::string str(first,last);
-   std::cout << "Elt: [" << str << "]" << std::endl;
+   std::cout << "Elt in: [" << str << "]" << std::endl;
 }
 
 void XmlBuilder::endElement(char const* first, char const* last)
 {
-   std::cout << "elt exit: " << std::string(first,last) << std::endl;
+   std::cout << "Elt exit: " << std::string(first,last) << std::endl;
 }
+
+void XmlBuilder::startAttribute(char const* first, char const* last)
+{
+   std::cout << "  attrib: " << std::string(first,last);
+}
+
+void XmlBuilder::attribValue(char const* first, char const* last)
+{
+   std::cout << " [" << std::string(first,last) << "] " << std::endl;
+}
+
+void XmlBuilder::elementText(char const* first, char const* last)
+{
+   std::cout << "   Text: [" << std::string(first,last) << "] " << std::endl;
+
+}
+
 
 
 }  // namespace spirit
