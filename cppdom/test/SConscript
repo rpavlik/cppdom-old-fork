@@ -1,13 +1,15 @@
 Import('baseEnv')
 Import('HasCppUnit')
 Import('GetPlatform')
+Import('buildDir')
+Import('PREFIX')
 
 import os
 pj = os.path.join
 
 env = baseEnv.Copy()
 env.Append(CPPPATH = Split('# #test'),
-           LIBPATH = [pj('#', 'build.' + GetPlatform(), 'cppdom')],
+           LIBPATH = [pj('#', buildDir, 'cppdom')],
            LIBS = ['cppdom'])
 
 tests = Split("""

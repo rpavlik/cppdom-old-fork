@@ -41,12 +41,15 @@
 #include <cppunit/BriefTestProgressListener.h>
 #include <cppunit/CompilerOutputter.h>
 #include <cppunit/TestResult.h>
+
+#include <cppunit/extensions/MetricRegistry.h>
 #include <cppunit/extensions/TestFactoryRegistry.h>
+
 #include <cppunit/ui/text/TestRunner.h>
 
 #include <cppdom/version.h>
 
-#include "Suites.h"
+#include <Suites.h>
 
 std::string getHostname(void);
 
@@ -56,9 +59,25 @@ int main(int argc, char** argv)
    std::string test_path = (argc > 1) ? std::string(argv[1]) : "noninteractive";
 
    // Print out what version of GMTL we're testing.
-   std::cout<<std::endl;
-   std::cout<<"CppDOM Version: "<<cppdom::getVersion()<<std::endl;
-   std::cout<<std::endl;
+   std::cout << "\nTesting CppDOM Version: " << cppdom::getVersion() << std::endl << std::endl;
+
+   // -------- CONFIGURE METRIC REGISTRY ------- //
+   CppUnit::MetricRegistry* metric_reg = CppUnit::MetricRegistry::instance();
+
+   std::string metric_prefix = getHostname() + "/";
+#ifdef _DEBUG
+   metric_prefix += "Debug/";
+#endif
+#ifdef _OPT
+   metric_prefix += "Opt/";
+#endif
+
+   std::cout << "Setting up metrics for host: " << getHostname() << std::endl;
+   std::cout << "                     prefix: " << metric_prefix << std::endl;
+
+   metric_reg->setPrefix(metric_prefix);
+   metric_reg->setFilename("cppdom_metrics.txt");
+   metric_reg->setMetric("Main/MetricTest", 1221.75f);
 
    //------------------------------------
    //  Test suites
@@ -87,10 +106,9 @@ int main(int argc, char** argv)
    CppUnit::TestResult& result_event_manager = runner.eventManager();
    CppUnit::BriefTestProgressListener progress;
    result_event_manager.addListener(&progress);
-   
+
    runner.addTest(noninteractive_suite);
    runner.addTest(metric_suite);
-
 
    //------------------------------------
    // Run Tests
@@ -114,7 +132,14 @@ int main(int argc, char** argv)
    return (success ? 0 : 1);
 }
 
-#ifndef WIN32
+#ifdef WIN32
+
+std::string getHostname(void)
+{
+   return "WindowBox";
+}
+
+#else
 
 #include <sys/utsname.h>
 

@@ -1,15 +1,20 @@
 Import('baseEnv')
 Import('GetPlatform SetupCppUnit')
+Import('buildDir')
+Import('PREFIX')
+
+import os
+pj = os.path.join
 
 sources = Split("""
    runner
-   ErrorTest
+   TestCases/ErrorTest
 """)
 sources = map(lambda n: n + '.cpp', sources)
 
 env = baseEnv.Copy()
-env.Append(CPPPATH = Split('#'),
-           LIBPATH = ['#cppdom'],
+env.Append(CPPPATH = ["#", "."],
+           LIBPATH = [pj('#', buildDir, 'cppdom')],
            LIBS    = ['cppdom'])
 SetupCppUnit(env)
 
