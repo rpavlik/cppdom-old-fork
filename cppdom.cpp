@@ -323,6 +323,9 @@ namespace cppdom
 
    Node::Node(const Node& node)
       : mNodeNameHandle(node.mNodeNameHandle)
+#ifdef CPPDOM_DEBUG
+      , mNodeName_debug(node.mNodeName_debug)
+#endif
       , mContext(node.mContext)
       , mNodeType(node.mNodeType)
       , mAttributes(node.mAttributes)
@@ -342,6 +345,9 @@ namespace cppdom
    Node& Node::operator=(const Node& node)
    {
       mNodeNameHandle = node.mNodeNameHandle;
+#ifdef CPPDOM_DEBUG
+      mNodeName_debug = node.mNodeName_debug;
+#endif
       mContext = node.mContext;
       mNodeType = node.mNodeType;
       mAttributes = node.mAttributes;
@@ -429,6 +435,9 @@ namespace cppdom
    void Node::setName(const std::string& name)
    {
       mNodeNameHandle = mContext->insertTagname(name);
+#ifdef CPPDOM_DEBUG
+      mNodeName_debug = name;
+#endif
    }
 
    /** Set the element cdata.

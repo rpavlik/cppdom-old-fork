@@ -87,5 +87,9 @@
 # define CPPDOM_API
 #endif
 
+#ifdef _DEBUG
+#define CPPDOM_DEBUG
+#endif
+
 // -----------------------------------
 #endif

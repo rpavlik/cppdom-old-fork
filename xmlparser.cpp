@@ -59,6 +59,9 @@ namespace cppdom
       doc.mContext = context;
       std::string rootstr("root");
       doc.mNodeNameHandle = context->insertTagname(rootstr);
+#ifdef CPPDOM_DEBUG
+      doc.mNodeName_debug = rootstr;
+#endif
 
       bool handle = context->handleEvents();
 
@@ -171,6 +174,10 @@ namespace cppdom
 
                std::string tagname(token3.getGeneric());
                pinode.mNodeNameHandle = context->insertTagname(tagname);
+#ifdef CPPDOM_DEBUG
+               pinode.mNodeName_debug = tagname;
+#endif
+
 
                parseAttributes(pinode.getAttrMap());
 
@@ -231,6 +238,9 @@ namespace cppdom
          {
             std::string cdataname("cdata");
             node.mNodeNameHandle = context->insertTagname(cdataname);
+#ifdef CPPDOM_DEBUG
+            node.mNodeName_debug = cdataname;
+#endif
 
             // parse cdata section(s) and return
             node.mNodeType = xml_nt_cdata;
@@ -295,6 +305,9 @@ namespace cppdom
       // insert tag name and set handle for it
       std::string tagname(token2.getGeneric());
       node.mNodeNameHandle = context->insertTagname(tagname);
+#ifdef CPPDOM_DEBUG
+      node.mNodeName_debug = tagname;
+#endif
 
       // notify event handler
       if (handle)
