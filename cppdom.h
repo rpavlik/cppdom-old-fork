@@ -316,6 +316,8 @@ public:
    { return nodetype; }
    /** returns the node name */
    xmlstring name();
+   xmlstring get_name()
+   { return name(); }
 
    /** returns attribute map of the node */
    xmlattributes &get_attrmap()
@@ -350,7 +352,7 @@ public:
    /** @name navigation through the nodes */
    //@{
    //! returns subnode list
-   xmlnodelist &children(){ return nodelist; }
+   xmlnodelist& children(){ return nodelist; }
    //! returns the first child with the given name
    xmlnodeptr firstchild( const xmlstring &childname );
    //! select some nodes and put it into a separate nodelist
