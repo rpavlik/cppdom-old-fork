@@ -77,7 +77,7 @@ namespace cppdom
    std::string removeXmlEscaping(const std::string& data, bool isCdata)
    {
       std::string ret_str;
-      for(unsigned i=0; i<data.size(); ++i)
+      for(std::string::size_type i = 0; i < data.size(); ++i)
       {
          if('&' == data[i])      // If we have escaping
          {
