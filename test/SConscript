@@ -13,7 +13,6 @@ env.Append(CPPPATH = Split('# #test'),
            LIBS = ['cppdom'])
 
 tests = Split("""
-   equaltest
    maketree
    nodetest
    parsetest

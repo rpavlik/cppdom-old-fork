@@ -243,7 +243,7 @@ namespace cppdom
 #endif
 
             // parse cdata section(s) and return
-            node.mNodeType = xml_nt_cdata;
+            node.mNodeType = Node::xml_nt_cdata;
             node.mCdata.empty();
 
             while(!token1.isLiteral())
@@ -340,7 +340,7 @@ namespace cppdom
             throw CPPDOM_ERROR(xml_closetag_expected, "");
          }
 
-         node.mNodeType = xml_nt_leaf;
+         node.mNodeType = Node::xml_nt_leaf;
 
          // return, let the caller continue to parse
          return true;

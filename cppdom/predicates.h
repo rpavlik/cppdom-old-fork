@@ -106,7 +106,7 @@ namespace cppdom
    class IsNodeTypePredicate
    {
    public:
-      IsNodeTypePredicate(const cppdom::NodeType nodeType)
+      IsNodeTypePredicate(const cppdom::Node::Type nodeType)
          : mNodeType(nodeType)
       {}
 
@@ -114,7 +114,7 @@ namespace cppdom
       {  return node->getType() == mNodeType; }
 
    private:
-      cppdom::NodeType mNodeType;
+      cppdom::Node::Type mNodeType;
    };
 }
 

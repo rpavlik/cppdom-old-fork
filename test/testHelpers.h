@@ -13,7 +13,7 @@ namespace testHelpers
 void dump_node( Node &node, int level = 0 )
 {
    std::string name = node.getName();
-   NodeType type = node.getType();
+   Node::Type type = node.getType();
    std::string c_data;
 
    for(int i=0;i<level;i++) std::cout << " ";
@@ -21,22 +21,22 @@ void dump_node( Node &node, int level = 0 )
    char c = ' ';
    switch(type)
    {
-   case xml_nt_node:
+   case Node::xml_nt_node:
       c = '+';
       break;
-   case xml_nt_leaf:
+   case Node::xml_nt_leaf:
       c = '-';
       break;
-   case xml_nt_document:
+   case Node::xml_nt_document:
       c = '\\';
       break;
-   case xml_nt_cdata:
+   case Node::xml_nt_cdata:
       c = '#';
       c_data = node.getCdata();
       break;
    }
 
-   if(type == xml_nt_cdata)
+   if(node.isCData())
       std::cout << c << name.c_str() << "[" << c_data << "]" << std::endl;
    else
       std::cout << c << name.c_str() << std::endl;

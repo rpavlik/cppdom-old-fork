@@ -55,7 +55,7 @@ int main()
 
    // Cdata must have it's type set
    // then set the actual contents of the cdata
-   element1_cdata->setType(cppdom::xml_nt_cdata);
+   element1_cdata->setType(Node::xml_nt_cdata);
    std::string escaped_elt1_cdata("\n<test>\n<more>This is 'element1'<here>&\"there\"");
    element1_cdata->setCdata(escaped_elt1_cdata);
 
@@ -66,7 +66,7 @@ int main()
 
    // Set Cdata a couple of different ways (this is a test isn't it :)
    element3->setCdata("We are element 3 <<clear me>>");
-   element3_cdata2->setType(cppdom::xml_nt_cdata);
+   element3_cdata2->setType(Node::xml_nt_cdata);
    element3_cdata2->setCdata("We are still element 3");
    element3->addChild(element3_cdata2);
    element3->setCdata("We are element 3");
@@ -103,10 +103,10 @@ int main()
    loaded_doc.loadFile(filename);
 
    cppdom::NodePtr r_element1 = loaded_doc.getChild("root")->getChild("Element1");
-   
+
    std::string r_elt1_cdata = r_element1->getCdata();
    std::string tr_elt1_cdata = trimWhitespace(r_elt1_cdata);
-   std::string t_escaped_elt1_cdata = trimWhitespace(escaped_elt1_cdata); 
+   std::string t_escaped_elt1_cdata = trimWhitespace(escaped_elt1_cdata);
 
 //   assert(tr_elt1_cdata == t_escaped_elt1_cdata);
 
