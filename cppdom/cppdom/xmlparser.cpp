@@ -63,7 +63,7 @@ namespace cppdom
       doc.mNodeName_debug = rootstr;
 #endif
 
-      bool handle = context->handleEvents();
+      bool handle = context->hasEventHandler();
 
       // start parsing
       if (handle)
@@ -184,7 +184,7 @@ namespace cppdom
                NodePtr nodeptr(new Node(pinode));
                doc.mProcInstructions.push_back(nodeptr);
 
-               if (context->handleEvents())
+               if (context->hasEventHandler())
                {
                   context->getEventHandler().processingInstruction(pinode);
                }
@@ -215,7 +215,7 @@ namespace cppdom
    bool Parser::parseNode(Node& node, ContextPtr& context)
    {
       node.mContext = context;
-      bool handle = context->handleEvents();
+      bool handle = context->hasEventHandler();
 
       ++mTokenizer;
       Token token1 = *mTokenizer;
