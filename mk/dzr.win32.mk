@@ -73,8 +73,8 @@
 # Use Visual C++ as the compiler and linker.
 CC=		cl /nologo
 CXX=		cl /nologo
-AR=		link /nologo
-LD=		link /nologo
+AR=		link 
+LD=		link 
 UMASK=		
 UMASK_VAL=	
 
@@ -89,8 +89,8 @@ OS_ABI_FLAGS=
 OS_CFLAGS=	
 OS_CXXFLAGS=	/GR /D_WIN32 /DWIN32 /D_CONSOLE /D__cplusplus
 OS_DEBUG_FLAGS=	/GX /Gm /ZI /MTd /Od /FD /GZ /W1
-OS_ARFLAGS= 	
-OS_LDFLAGS=	/lib
+OS_ARFLAGS= 	/lib /nologo
+OS_LDFLAGS=	/lib /nologo
 OS_INCLUDES=	
 OS_OPTIM_FLAGS=	/O2 /MT
 OS_SHLIB_FLAGS=	
