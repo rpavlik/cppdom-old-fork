@@ -135,20 +135,28 @@ protected:
 class XMLPP_API xmllocation
 {
 public:
-   //! ctor
-   xmllocation(){ reset(); }
+   /** Constructor */
+   xmllocation()
+   { reset(); }
 
-   //! returns current line
-   int get_line() const { return line; }
-   //! returns current position in a line
-   int get_pos() const { return pos; }
+   /** returns current line */
+   int get_line() const
+   { return line; }
 
-   //! advances a char
-   void step( int chars = 1 ){ pos+=chars; }
-   //! indicates entering a new line
-   void newline(){ line++; pos=1; }
-   //! reset location
-   void reset(){ line=pos=1; }
+   /** returns current position in a line */
+   int get_pos() const
+   { return pos; }
+
+   /** advances a char */
+   void step( int chars = 1 )
+   { pos+=chars; }
+   /** indicates entering a new line */
+   void newline()
+   { line++; pos=1; }
+
+   /** reset location */
+   void reset()
+   { line=pos=1; }
 
 protected:
    int line,pos;
@@ -213,7 +221,11 @@ public:
    /** @name event handling methods */
    //@{
    /** sets the event handler; enables handling events */
-   void set_eventhandler(xmleventhandlerptr ehptr);
+   void set_eventhandler(xmleventhandlerptr ehptr)
+   {
+      eventhandler=ehptr;
+      handleevents=true;
+   }
 
    /** returns the currently used eventhandler (per reference) */
    xmleventhandler &get_eventhandler()
@@ -266,10 +278,11 @@ class XMLPP_API xmlattributes: public std::map<xmlstring, xmlstring>
    friend class xmlparser;
 public:
    //! ctor
-   xmlattributes(){}
+   xmlattributes()
+   {}
 
    //! returns attribute value by name
-   xmlstring get( const xmlstring &key );
+   xmlstring get( const xmlstring &key ) const;
 
    //! sets new attribute value
    void set(const xmlstring &key, const xmlstring &value);
@@ -277,66 +290,80 @@ public:
 
 typedef xmlattributes XMLAttributes;
 
-//! xml node
+/** xml node */
 class XMLPP_API xmlnode
 {
    friend class xmlparser;
 protected:
-   //! ctor
-   xmlnode(){ nodetype = xml_nt_node; }
+   /** Default Constructor */
+   xmlnode()
+   { nodetype = xml_nt_node; }
 public:
-   //! ctor, takes xml context pointer
-   explicit xmlnode( xmlcontextptr pctx ){ nodetype=xml_nt_node; contextptr=pctx; }
-   //! dtor
+   /** ctor, takes xml context pointer */
+   explicit xmlnode( xmlcontextptr pctx )
+   { nodetype=xml_nt_node; contextptr=pctx; }
+   /** Destructor */
    ~xmlnode(){}
-   //! copy constructor
+   /** copy constructor */
    xmlnode( const xmlnode &node );
-   //! assign operator
+   /** assign operator */
    xmlnode &operator =( const xmlnode &node );
 
-   // access to node info
-
-   //! returns type of node
-   xmlnodetype get_type() const { return nodetype; }
-   //! returns the node name
+   /** @name access to node info */
+   //@{
+   /** returns type of node */
+   xmlnodetype get_type() const
+   { return nodetype; }
+   /** returns the node name */
    xmlstring name();
 
-   //! returns attribute map of the node
-   xmlattributes &get_attrmap(){ return attributes; }
-   //! returns attribute value for given attribute
-   xmlstring get_attribute( const xmlstring &attr ){ return attributes.get(attr); }
+   /** returns attribute map of the node */
+   xmlattributes &get_attrmap()
+   { return attributes; }
+   /** returns attribute value for given attribute */
+   xmlstring get_attribute( const xmlstring &attr ) const
+   { return attributes.get(attr); }
 
-   //! returns cdata string
-   const xmlstring &get_cdata(){ return cdata; }
+   /** returns cdata string */
+   const xmlstring &get_cdata()
+   { return mCdata; }
+   //@}
 
-   // node data manipulation
-
+   /** @name node data manipulation */
+   //@{
    //! sets new nodetype
-   void set_type( xmlnodetype ntype ){ nodetype=ntype; }
+   void set_type( xmlnodetype ntype )
+   { nodetype=ntype; }
    //! returns the node name
    void set_name( const xmlstring &nname );
    //! sets new cdata
-   void set_cdata( const xmlstring &ncdata ){ cdata=ncdata; }
+   void set_cdata( const xmlstring &ncdata )
+   { mCdata=ncdata; }
    //! sets new attribute value
-   void set_attribute( const xmlstring &attr, const xmlstring &value ){ attributes.set(attr,value); }
+   void set_attribute( const xmlstring &attr, const xmlstring &value )
+   { attributes.set(attr,value); }
    //! inserts a node into the subnodelist
-   void insert( xmlnode &node){ xmlnodeptr nodeptr(new xmlnode(node)); nodelist.push_back(nodeptr); }
+   void insert( xmlnode &node)
+   { xmlnodeptr nodeptr(new xmlnode(node)); nodelist.push_back(nodeptr); }
+   //@}
 
-   // navigation through the nodes
-
+   /** @name navigation through the nodes */
+   //@{
    //! returns subnode list
    xmlnodelist &children(){ return nodelist; }
    //! returns the first child with the given name
    xmlnodeptr firstchild( const xmlstring &childname );
    //! select some nodes and put it into a separate nodelist
    xmlnodelist select_nodes(const xmlstring &nodename);
+   //@}
 
-   // load/save functions
-
+   /** @name load/save functions */
+   //@{
    //! loads xml node from input stream
    void load( std::istream &instream, xmlcontextptr &ctxptr );
    //! saves node to xml output stream
    void save( std::ostream &outstream, int indent=0 );
+   //@}
 
 protected:
    //! handle to the real tag name
@@ -352,86 +379,89 @@ protected:
    xmlattributes attributes;
 
    //! char data
-   xmlstring cdata;
+   xmlstring mCdata;
 
    //! stl list with subnodes
    xmlnodelist nodelist;
 };
 
 
-//! xml document
+/** xml document */
 class XMLPP_API xmldocument: public xmlnode
 {
    friend class xmlparser;
 public:
-   //! ctor
+   /** constructor */
    xmldocument(){ nodetype = xml_nt_document; }
-   //! ctor, takes xml context pointer
-   explicit xmldocument( xmlcontextptr pctx ){ nodetype = xml_nt_document; contextptr=pctx; }
 
-   //! returns a list of processing instruction nodes
-   xmlnodelist &get_pi_list(){ return procinstructions; }
-   //! returns a list of document type definition rules to check the xml file
-   xmlnodelist &get_dtd_list(){ return dtdrules; }
+   /** constructor taking xml context pointer */
+   explicit xmldocument( xmlcontextptr pctx )
+   {
+      nodetype = xml_nt_document;
+      contextptr=pctx;
+   }
 
-   //! loads xml node from input stream
+   /** returns a list of processing instruction nodes */
+   xmlnodelist &get_pi_list()
+   { return procinstructions; }
+
+   /** returns a list of document type definition rules to check the xml file */
+   xmlnodelist &get_dtd_list()
+   { return dtdrules; }
+
+   /** loads xml Document (node) from input stream */
    void load( std::istream &instream, xmlcontextptr &ctxptr );
-   //! saves node to xml output stream
+
+   /** saves node to xml output stream */
    void save( std::ostream &outstream );
 
    void load_file( const std::string& st )
    {
-      istream.open( st.c_str(), std::ios::in );
-      this->load( istream, contextptr );
-      istream.close();
+      std::ifstream file_istream;
+      file_istream.open( st.c_str(), std::ios::in );
+      this->load( file_istream, contextptr );
+      file_istream.close();
    }
 
 protected:
-   //! node list of parsed processing instructions
+   /** node list of parsed processing instructions */
    xmlnodelist procinstructions;
-   //! node list of document type definition rules
+   /** node list of document type definition rules */
    xmlnodelist dtdrules;
-
-   std::ifstream istream;
 };
 
 typedef xmldocument XMLDocument;
 
 
-//! xml parsing event handler
+/** Interface for xml parsing event handler */
 class XMLPP_API xmleventhandler
 {
 public:
-   //! ctor
+   /** ctor */
    xmleventhandler(){}
-   //! virtual dtor
+
+   /** virtual dtor */
    virtual ~xmleventhandler(){}
 
-   //! called when parsing of an xml document starts
+   /** called when parsing of an xml document starts */
    virtual void start_document(){}
-   //! called when ended parsing a document
+
+   /** called when ended parsing a document */
    virtual void end_document(){}
 
-   //! called when parsing a processing instruction
+   /** called when parsing a processing instruction */
    virtual void processing_instruction( xmlnode &pinode ){}
 
-   //! called when start parsing a node
+   /** called when start parsing a node */
    virtual void start_node( const xmlstring &nodename ){}
-   //! called when an attribute list was parsed
+   /** called when an attribute list was parsed */
    virtual void parsed_attributes( xmlattributes &attr ){}
-   //! called when parsing of a node was finished
+   /** called when parsing of a node was finished */
    virtual void end_node( xmlnode &node ){}
 
-   //! called when a cdata section ended
+   /** called when a cdata section ended */
    virtual void got_cdata( const xmlstring &cdata ){}
 };
-
-
-//! sets the eventhandler class
-inline void xmlcontext::set_eventhandler(xmleventhandlerptr ehptr)
-{
-   eventhandler=ehptr; handleevents=true;
-}
 
 
 // namespace end
