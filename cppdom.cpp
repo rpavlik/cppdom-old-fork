@@ -740,7 +740,7 @@ namespace cppdom
    void Document::saveFile(std::string filename)
    {
       std::fstream out;
-      out.open(filename.c_str(), std::fstream::in | std::fstream::out);
+      out.open(filename.c_str(), std::fstream::out);
       this->save(out);
       out.close();
    }
