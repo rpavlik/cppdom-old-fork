@@ -12,8 +12,11 @@ sources = Split("""
    TestCases/NodeTest.cpp
    TestCases/ParseTest.cpp
    TestCases/PredTest.cpp
-   TestCases/SpiritTest.cpp
 """)
+
+if baseEnv["BoostAvailable"]:
+   sources.append("TestCases/SpiritTest.cpp")
+
 
 env = baseEnv.Copy()
 env.Append(CPPPATH = ["#", "."],
