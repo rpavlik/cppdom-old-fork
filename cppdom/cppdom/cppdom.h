@@ -474,8 +474,6 @@ public:
    void addChild( XMLNodePtr& node )
    {
       node->mParent = this;      // Tell the child who their daddy is
-      std::cout << "node '" << node->getName() << "' is a child of '"
-                << node->mParent->getName() << "'" << std::endl;
       mNodelist.push_back( node );
    }
 
