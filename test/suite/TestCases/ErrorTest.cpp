@@ -53,6 +53,6 @@ namespace cppdomtest
       CPPUNIT_ASSERT(error.getError() == cppdom::xml_instream_error);
       CPPUNIT_ASSERT(error.getStrError() == "error in the infile stream");
       CPPUNIT_ASSERT(error.getString() == "error in the infile stream: Blah");
-      CPPUNIT_ASSERT(error.getInfo() == "test/suite/ErrorTest.cpp:52");
+      CPPUNIT_ASSERT(error.getInfo() == "test/suite/TestCases/ErrorTest.cpp:52");
    }
 }
