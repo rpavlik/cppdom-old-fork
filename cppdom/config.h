@@ -45,44 +45,25 @@
 #ifndef CPPDOM_CONFIG_H
 #define CPPDOM_CONFIG_H
 
-// needed includes
-
 // -----------------------------------
 // win32 configuration
 #ifdef WIN32
 
-/*
-// define's for the boost::shared_ptr
-# define BOOST_NO_MEMBER_TEMPLATES
-# define BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-*/
-
 // switch some warnings off
-# pragma warning( disable: 4786 4275 4251 )
+#  pragma warning( disable: 4786 4275 4251 )
 
 // export/import #define's for building a win32 dll
-# ifdef CPPDOM_EXPORTS
-#  define CPPDOM_API __declspec(dllexport)
-# else
-#  define CPPDOM_API __declspec(dllimport)
-# endif
+#  ifdef CPPDOM_EXPORTS
+#     define CPPDOM_EXPORT(ret)  __declspec(dllexport) ret __stdcall
+#     define CPPDOM_CLASS        __declspec(dllexport)
+#  else
+#     define CPPDOM_EXPORT(ret)  __declspec(dllimport) ret __stdcall
+#     define CPPDOM_CLASS        __declspec(dllimport)
+#  endif
 
-#endif
-
-// -----------------------------------
-// linux configuration
-#ifdef LINUX
-
-/*
-// defines for the boost library
-# define BOOST_NO_MEMBER_TEMPLATE_FRIENDS
-*/
-
-#endif
-
-// if not under windows, then this will need to be defined.
-#ifndef CPPDOM_API
-# define CPPDOM_API
+#else
+#  define CPPDOM_EXPORT(ret) ret
+#  define CPPDOM_CLASS
 #endif
 
 #ifdef _DEBUG

@@ -103,7 +103,7 @@ namespace cppdom
     * xml error class
     * contains an ErrorCode and is thrown while parsing xml input
     */
-   class CPPDOM_API Error
+   class CPPDOM_CLASS Error
    {
    public:
       /** constructor */
@@ -135,7 +135,7 @@ namespace cppdom
     * represents the position in the xml input stream; usable if load()
     *    throws an error on parsing xml content
     */
-   class CPPDOM_API Location
+   class CPPDOM_CLASS Location
    {
    public:
       /** Constructor */
@@ -180,7 +180,7 @@ namespace cppdom
     * the class is the parsing context for the parsed xml document.
     * the class has a tagname lookup table and an entity map
     */
-   class CPPDOM_API Context
+   class CPPDOM_CLASS Context
    {
    public:
       /** ctor */
@@ -250,7 +250,7 @@ namespace cppdom
     * XML attribute class.
     * Just wraps a string (this is really just and attribute VALUE)
     */
-   class CPPDOM_API Attribute
+   class CPPDOM_CLASS Attribute
    {
    public:
       Attribute();
@@ -327,7 +327,7 @@ namespace cppdom
     * XML tag attribute map.
     * Contains all attributes and values a tag has, represented in a map.
     */
-   class CPPDOM_API Attributes
+   class CPPDOM_CLASS Attributes
    {
       friend class Parser;
    public:
@@ -400,7 +400,7 @@ namespace cppdom
    * cdata - the cdata content if of type cdata
    *
    */
-   class CPPDOM_API Node
+   class CPPDOM_CLASS Node
    {
       friend class Parser;
    protected:
@@ -581,7 +581,7 @@ namespace cppdom
 
 
    /** xml document */
-   class CPPDOM_API Document: public Node
+   class CPPDOM_CLASS Document: public Node
    {
       friend class Parser;
    public:
@@ -631,7 +631,7 @@ namespace cppdom
 
 
    /** Interface for xml parsing event handler */
-   class CPPDOM_API EventHandler
+   class CPPDOM_CLASS EventHandler
    {
    public:
       /** ctor */
