@@ -54,84 +54,53 @@ XmlBuilder::XmlBuilder(cppdom::DocumentPtr doc, cppdom::ContextPtr context)
 }
 */
 
-// Prepare for parsing a new document
-void XmlBuilder::reinit(cppdom::Document* doc, cppdom::ContextPtr context)
+
+void Parser::parseDocument(cppdom::Document& doc, std::string& content)
 {
-   mDocRoot = doc;
-   mContext = doc->getContext();
-   if(mContext.get() == NULL)
+   mCharBuilder.reinit(&doc, doc.getContext());
+   XmlGrammar<XmlBuilder<const char*> > xml_grammar(&mCharBuilder);
+   parse_info<char const*> result;
+
+   result = bs::parse(content.c_str(), xml_grammar);
+   if(!result.full)
    {
-      throw CPPDOM_ERROR(xml_invalid_argument, "Attempted to use doc with no context.");
+      throw CPPDOM_ERROR(xml_invalid_operation, "Invalid format of XML.");
    }
-
-   mNodeStack.clear();
-   mNodeStack.push_back(mDocRoot);     // Doc is at base of stack
 }
 
-void XmlBuilder::finish()
+void Parser::parseDocument(cppdom::Document& doc, std::istream& instream)
 {
-   assert(mNodeStack.size() == 1);     // Should only have one node left now
-}
+    typedef char char_t;
+    typedef bs::multi_pass<std::istream_iterator<char_t> > iterator_t;
 
+    //typedef skip_parser_iteration_policy<space_parser> iter_policy_t;
+    //typedef scanner_policies<iter_policy_t> scanner_policies_t;
+    //typedef scanner<iterator_t, scanner_policies_t> scanner_t;
 
-void XmlBuilder::startElement(char const* first, char const* last)
-{
-   std::string elt_name(first,last);
-   std::cout << "Elt in: [" << elt_name << "]" << std::endl;
+    //typedef rule<scanner_t> rule_t;
 
-   // - Create node
-   // - Add to tree
-   // - Put on stack to get ready for more
-   NodePtr new_elt(new cppdom::Node(elt_name,mContext));
-   mNodeStack.back()->addChild(new_elt);
-   mNodeStack.push_back(new_elt.get());
-}
+    //iter_policy_t iter_policy(space_p);
+    //scanner_policies_t policies(iter_policy);
 
-void XmlBuilder::endElement(char const* first, char const* last)
-{
-   std::cout << "Elt exit: " << std::string(first,last) << std::endl;
-   // Should always have more then one on stack since doc root is
-   // on stack at all times and we need one more to pop
-   assert(mNodeStack.size() > 1);
-   mNodeStack.pop_back();
+    typedef  XmlBuilder<iterator_t> builder_t;
 
-#ifdef _DEBUG
-   mCurAttribute.clear();     // If debug version, clear attribute so we detect problems
-#endif
-}
+    builder_t local_builder;
+    local_builder.reinit(&doc, doc.getContext());
 
-void XmlBuilder::startAttribute(char const* first, char const* last)
-{
-   std::cout << "  attrib: " << std::string(first,last);
-   mCurAttribute = std::string(first,last);
-   assert(!mCurAttribute.empty());
-}
+    XmlGrammar<builder_t> xml_grammar(&local_builder);
+    bs::parse_info<iterator_t> result;
 
-void XmlBuilder::attribValue(char const* first, char const* last)
-{
-   std::cout << " [" << std::string(first,last) << "] " << std::endl;
-   assert(!mCurAttribute.empty());
-   std::string attrib_value(first,last);
-   if(cppdom::textContainsXmlEscaping(attrib_value))
-   {  attrib_value = removeXmlEscaping(attrib_value, false); }
-   mNodeStack.back()->getAttrMap().set(mCurAttribute, attrib_value);
-}
+    iterator_t first( bs::make_multi_pass( std::istream_iterator<char_t>(instream)));
+    iterator_t last( bs::make_multi_pass( std::istream_iterator<char_t>()));
 
-void XmlBuilder::elementText(char const* first, char const* last)
-{
-   std::string elem_text(first,last);
-   if(textContainsXmlEscaping(elem_text))
-   {  elem_text = removeXmlEscaping(elem_text, true); }
+    result = bs::parse(first, last, xml_grammar, bs::space_p);
+    if(!result.full)
+    {
+       throw CPPDOM_ERROR(xml_invalid_operation, "Invalid format of XML.");
+    }
 
-
-   std::cout << "   Text: [" << std::string(first,last) << "] " << std::endl;
-   if(!elem_text.empty())
-   {
-      cppdom::NodePtr cdata_node(new cppdom::Node("cdata",mContext));
-      cdata_node->setType(Node::xml_nt_cdata);
-      cdata_node->setCdata(elem_text);
-      mNodeStack.back()->addChild(cdata_node);
-   }
+    //std::string test(first,last);
+    //parseDocument(doc,test);
 }
 
 
