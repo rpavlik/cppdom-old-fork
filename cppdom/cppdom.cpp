@@ -217,26 +217,6 @@ xmlnodeptr xmlnode::getChild(const xmlstring &name)
    return xmlnodeptr(NULL);
 }
 
-/*! \note currently no path-like childname can be passed, like in e.g. msxml */
-xmlnodelist xmlnode::getChildren(const xmlstring& name)
-{
-   xmlnodelist nlist;
-
-   xmlnodelist::const_iterator iter;
-
-   // search for all occurances of nodename and insert them into the new list
-   for(iter = mNodelist.begin(); iter != mNodelist.end(); ++iter)
-   {
-      xmlnodeptr np = *(iter);
-      if (np->getName() == name)
-      {
-         nlist.push_back(np);
-      }
-   }
-
-   return nlist;
-}
-
 /*! \exception throws xmlpp::xmlerror when a streaming or parsing error occur */
 void xmlnode::load( std::istream &instream, xmlcontextptr &ctxptr )
 {
