@@ -14,7 +14,7 @@ namespace xmlpp
 
       bool operator()( const XMLNodePtr& node )
       {
-         return node->hasAttribute();
+         return node->hasAttribute( mName );
       }
    private:
       std::string mName;
@@ -32,7 +32,7 @@ namespace xmlpp
       bool operator()( const XMLNodePtr& node )
       {
          // if doesn't have the attribute, then were done.
-         if (!node->hasAttribute()) 
+         if (!node->hasAttribute( mName )) 
          {
             return false;
          }
