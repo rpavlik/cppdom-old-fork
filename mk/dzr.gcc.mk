@@ -87,6 +87,7 @@ OS_LIB_EXT=	.a
 OS_SHLIB_EXT=	.so
 OS_LIB_PREFIX= 	lib
 OS_SHLIB_PREFIX=	lib
+OS_EXE_EXT=	
 
 # Wrapper options for doing static linking of libraries.
 OS_STATIC_BEGIN= 	-Wl,-Bstatic
