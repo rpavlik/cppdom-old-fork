@@ -4,7 +4,7 @@ try:
 except:
    pass
    
-import os, string, sys
+import os, string, sys, re
 pj = os.path.join
 
 Default('.')
@@ -195,6 +195,46 @@ def SetupCppUnit(env):
    env.ParseConfig(cfg + ' --cflags --libs')
 Export('SetupCppUnit')
 
+def ValidateBoostOption(key, value, environ):
+   "Validate the boost option settings"
+   req_boost_version = 103100;
+   sys.stdout.write("checking for %s [%s]..." % (key, value));
+
+   if "BoostDir" == key:
+      # Get the boost version
+      boost_ver_filename = pj(value, 'include', 'boost', 'version.hpp');
+      if not os.path.isfile(boost_ver_filename):
+         sys.stdout.write("[%s] not found.\n" % boost_ver_filename);
+         Exit();
+         return False;
+      ver_file = file(boost_ver_filename);
+      ver_num = int(re.search("define\s+?BOOST_VERSION\s+?(\d*)", ver_file.read()).group(1));   # Matches 103000
+      sys.stdout.write("found version: %s\n" % ver_num);
+      if ver_num < req_boost_version:
+         print "   Boost version to old: required version:%s\n" % req_boost_version;
+         Exit();
+         return False;
+      
+      # Check on the libraries that I need to use
+#      boost_fs_lib_name = pj(value, 'lib', 'libboost_filesystem.a');
+#      if not os.path.isfile(boost_fs_lib_name):
+#         print "[%s] not found."%boost_fs_lib_name;
+#         Exit();
+#         return False;
+      # Add the boost stuff to the environment
+      environ.Append(BoostLIBPATH = [pj(value,'lib'),]);
+#      environ.Append(BoostLIBS = ['boost_filesystem',]);
+      environ.Append(BoostCPPPATH = [pj(value,'include'),]);
+        
+   else:
+      assert False, "Invalid boost key";
+
+def AddBoostOptions(opts):
+   opts.Add('BoostDir',
+           help = 'Boost installation directory (boost dir must exhist under this directory": default: BoostDir="/usr/local"',
+           finder = '/usr/local',
+           validator=ValidateBoostOption);
+
 #------------------------------------------------------------------------------
 # Grok the arguments to this build
 #------------------------------------------------------------------------------
@@ -236,19 +276,12 @@ opts.Add('WithCppUnit',
          '/usr/local',
          lambda k,v,env=None: WhereIs(pj(v, 'bin', 'cppunit-config')) != None
         )
+AddBoostOptions(opts)        
 opts.Add('prefix',
          'Installation prefix',
          '/usr/local')
 opts.Add('StaticOnly', 'If not "no" then build only static library', 'no')
-opts.Update(baseEnv)
-
-# Try to save the options if possible
-try:
-   opts.Save('config.cache', baseEnv);
-except LookupError, le:
-   pass
-   
-
+  
 help_text = """--- CppDom Build system ---
 Targets:
    install - Install this puppy
@@ -267,60 +300,73 @@ help_text = help_text + opts.GenerateHelpText(baseEnv)
 #help_text += "Options:\n" + opts.GenerateHelpText(baseEnv)
 Help(help_text)
 
-# Handle options
-PREFIX = baseEnv['prefix']
-PREFIX = os.path.abspath(PREFIX)
-Export('PREFIX')
+# If we are running the build
+if not SCons.Script.options.help_msg:  
+   opts.Update(baseEnv)
 
-tar_sources = Split("""
-		AUTHORS
-		ChangeLog
-		COPYING
-		README
-		cppdom-config.in
-		SConstruct
-		doc/cppdom.doxy
-		doc/dox/examples_index.dox
-		doc/dox/mainpage.dox
-		tools/build/AutoDist.py
-		vc7/cppdom.sln
-		vc7/cppdom.vcproj
-		cppdom/
-		test/
-""")
-baseEnv.Append(TARFLAGS = '-z',)
-baseEnv.Tar('cppdom-' + '%i.%i.%i' % CPPDOM_VERSION + '.tar.gz', tar_sources)
+   # Try to save the options if possible
+   try:
+      opts.Save('config.cache', baseEnv);
+   except LookupError, le:
+      pass
 
-# Build in a build directory
-buildDir = "build." + GetPlatform()
-Export('buildDir')
+   # Handle options
+   PREFIX = baseEnv['prefix']
+   PREFIX = os.path.abspath(PREFIX)
+   Export('PREFIX')
 
-BuildDir(pj(buildDir, 'test'), 'test', duplicate=0)
-BuildDir(pj(buildDir, 'cppdom'), 'cppdom', duplicate = 0)
-# Process subdirectories
-subdirs = Split('cppdom test')
+   # Update environment for options   
+   baseEnv.Append(CPPPATH = baseEnv["BoostCPPPATH"]);
 
-for d in subdirs:
-   SConscript(pj(buildDir, d,'SConscript'))
+   tar_sources = Split("""
+	 	  AUTHORS
+                  ChangeLog
+		  COPYING
+		  README
+		  cppdom-config.in
+		  SConstruct
+		  doc/cppdom.doxy
+		  doc/dox/examples_index.dox
+		  doc/dox/mainpage.dox
+		  tools/build/AutoDist.py
+		  vc7/cppdom.sln
+		  vc7/cppdom.vcproj
+		  cppdom/
+		  test/
+   """)
+   baseEnv.Append(TARFLAGS = '-z',)
+   baseEnv.Tar('cppdom-' + '%i.%i.%i' % CPPDOM_VERSION + '.tar.gz', tar_sources)
 
-# Setup the builder for cppdom-config
-env = baseEnv.Copy(BUILDERS = builders)
-cppdom_config  = env.ConfigBuilder('cppdom-config', 'cppdom-config.in',
-   submap = {
-      '@prefix@'                    : PREFIX,
-      '@exec_prefix@'               : '${prefix}',
-      '@cppdom_cxxflags@'           : '',
-      '@includedir@'                : pj(PREFIX, 'include'),
-      '@cppdom_extra_cxxflags@'     : '',
-      '@cppdom_extra_include_dirs@' : '',
-      '@cppdom_libs@'               : '-lcppdom',
-      '@libdir@'                    : pj(PREFIX, 'lib'),
-      '@VERSION_MAJOR@'             : str(CPPDOM_VERSION[0]),
-      '@VERSION_MINOR@'             : str(CPPDOM_VERSION[1]),
-      '@VERSION_PATCH@'             : str(CPPDOM_VERSION[2]),
-   }
-)
+   # Build in a build directory
+   buildDir = "build." + GetPlatform()
+   Export('buildDir')
 
-env.Depends('cppdom-config', 'cppdom/version.h')
-env.Install(pj(PREFIX, 'bin'), cppdom_config)
-env.Alias('install', PREFIX)
+   BuildDir(pj(buildDir, 'test'), 'test', duplicate=0)
+   BuildDir(pj(buildDir, 'cppdom'), 'cppdom', duplicate = 0)
+   # Process subdirectories
+   subdirs = Split('cppdom test')
+
+   for d in subdirs:
+      SConscript(pj(buildDir, d,'SConscript'))
+
+   # Setup the builder for cppdom-config
+   env = baseEnv.Copy(BUILDERS = builders)
+   cppdom_config  = env.ConfigBuilder('cppdom-config', 'cppdom-config.in',
+      submap = {
+         '@prefix@'                    : PREFIX,
+         '@exec_prefix@'               : '${prefix}',
+         '@cppdom_cxxflags@'           : '',
+         '@includedir@'                : pj(PREFIX, 'include'),
+         '@cppdom_extra_cxxflags@'     : '',
+         '@cppdom_extra_include_dirs@' : '',
+         '@cppdom_libs@'               : '-lcppdom',
+         '@libdir@'                    : pj(PREFIX, 'lib'),
+         '@VERSION_MAJOR@'             : str(CPPDOM_VERSION[0]),
+         '@VERSION_MINOR@'             : str(CPPDOM_VERSION[1]),
+         '@VERSION_PATCH@'             : str(CPPDOM_VERSION[2]),
+      }
+   )
+
+   env.Depends('cppdom-config', 'cppdom/version.h')
+   env.Install(pj(PREFIX, 'bin'), cppdom_config)
+   env.Alias('install', PREFIX)
