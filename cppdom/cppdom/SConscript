@@ -1,7 +1,9 @@
+#!python
 import os
 pj = os.path.join
 
-Import('baseEnv PREFIX GetPlatform')
+Import('baseEnv PREFIX GetPlatform opts')
+boost_options = opts.GetOption('boost')
 
 headers = Split("""
    config.h
@@ -21,7 +23,8 @@ sources = Split("""
    version.cpp
 """)
 
-if baseEnv["BoostAvailable"]:
+# If boost is available then compile on the spirit addtion
+if boost_options.isAvailable():
    sources.append("SpiritParser.cpp")
 
 env = baseEnv.Copy()
