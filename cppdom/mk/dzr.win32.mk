@@ -94,6 +94,8 @@ OS_LDFLAGS=	/lib
 OS_INCLUDES=	
 OS_OPTIM_FLAGS=	/O2 /MT
 OS_SHLIB_FLAGS=	
+OS_LD_NAME_FLAG=     /OUT:
+OS_AR_NAME_FLAG=     /OUT:
 
 # File extensions.
 OS_LIB_EXT=	.lib

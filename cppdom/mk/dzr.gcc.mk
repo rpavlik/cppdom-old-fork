@@ -81,6 +81,8 @@ OS_LDFLAGS=
 OS_INCLUDES=	
 OS_OPTIM_FLAGS=	-O
 OS_SHLIB_FLAGS=	-shared
+OS_LD_NAME_FLAG=     -o 
+OS_AR_NAME_FLAG=
 
 # File extensions.
 OS_LIB_EXT=	.a
