@@ -69,9 +69,6 @@
 #  define CPPDOM_API __declspec(dllimport)
 # endif
 
-// includes building of the httpinstream class
-#define CPPDOM_WITH_CUSTOM_IOSTREAM
-
 #endif
 
 // -----------------------------------
