@@ -5,7 +5,16 @@ pj = os.path.join
 
 # Bring in the AutoDist build helper
 sys.path.append('tools/build')
-from AutoDist import *
+
+import SCons.Environment
+import SCons
+import SConsAddons.Options;   # Get the modular options stuff
+import SConsAddons.Options.VRJuggler.Vapor
+import SConsAddons.Options.CppDom
+import SConsAddons.Options.CppUnit
+import SConsAddons.Util       # Get the utils
+
+import SConsAddons.AutoDist as AutoDist
 
 #------------------------------------------------------------------------------
 # Define some generally useful functions
@@ -237,11 +246,11 @@ Help(help_text)
 # Handle options
 PREFIX = baseEnv['prefix']
 PREFIX = os.path.abspath(PREFIX)
-Prefix(PREFIX)
+AutoDist.Prefix(PREFIX)
 Export('PREFIX')
 
 # Create the CppDom package
-pkg = Package('cppdom', '%i.%i.%i' % CPPDOM_VERSION)
+pkg = AutoDist.Package('cppdom', '%i.%i.%i' % CPPDOM_VERSION)
 pkg.addExtraDist(Split("""
    AUTHORS
    ChangeLog
