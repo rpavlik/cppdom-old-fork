@@ -1,6 +1,8 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  --------------------------------------------------------
-2003-01-02 nonchocoboy  Removed xml_char_type and XWLString typedefs.
+2003-01-02 nonchocoboy  Moved implementation code out of the headers to make
+                        building as a shared library easier.
+2003-01-02 nonchocoboy  Removed xml_char_type and XMLString typedefs.
 2002-12-02 nonchocoboy  Specialization of XMLAttribute::getValue<T> for
                         std::string added so that more than the first word of
                         the attribute string can be retrieved.
