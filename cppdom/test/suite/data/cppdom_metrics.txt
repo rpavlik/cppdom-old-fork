@@ -1,6 +1,6 @@
 simba/Debug/Main/MetricTest                                        1221.75
-simba/Debug/ParseMetricTest/timeLoadSaveRandomDocs/large           632990
-simba/Debug/ParseMetricTest/timeLoadSaveRandomDocs/medium          49193.4
+simba/Debug/ParseMetricTest/timeLoadSaveRandomDocs/large           496517
+simba/Debug/ParseMetricTest/timeLoadSaveRandomDocs/medium          42442
 simba/Debug/ParseMetricTest/timeLoadSaveRandomDocs/small           7167.8
 simba/Debug/ParseMetricTest/timeLoadTestDocs/data/hamlet.xml       227764
 simba/Debug/ParseMetricTest/timeLoadTestDocs/data/rime10.xml       32883.7
