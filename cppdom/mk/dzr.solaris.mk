@@ -75,7 +75,7 @@ UMASK=		umask
 UMASK_VAL=	002
 
 OS_ABI?=	elf
-OS_ISA?=	i386
+OS_ISA?=	$(shell uname -p)
 OS_ABI_FLAGS=	
 
 # Basic compiler flags.
@@ -85,8 +85,8 @@ OS_SHLIB_FLAGS=	-G
 OS_CFLAGS+=		
 OS_CXXFLAGS+=		
 OS_DEBUG_FLAGS+=	
-OS_ARFLAGS+= 		
-OS_LDFLAGS+= 		
+OS_ARFLAGS+=		
+OS_LDFLAGS+=		
 OS_INCLUDES+=		
 OS_OPTIM_FLAGS+=	
 
@@ -96,7 +96,7 @@ OS_LIBS_BEGIN=
 OS_LIBS_END=	
 
 # Basic libraries needed by various types of applications.
-OS_SYS_LIBS= 	
+OS_SYS_LIBS=	
 
 # Extra library options.
 OS_LIBBITSUF=	

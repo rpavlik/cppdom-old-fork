@@ -47,6 +47,6 @@
 include $(DZR_BASE_DIR)/mk/dzr.hosttype.mk
 
 ifneq ($(HOSTTYPE), Win32)
-   MATH_LDFLAGS	?=
-   MATH_LIBS	?= -lm
+   MATH_LDFLAGS?=	
+   MATH_LIBS?=		-lm
 endif

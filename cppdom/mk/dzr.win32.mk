@@ -79,10 +79,10 @@
 # -----------------------------------------------------------------------------
 
 # Use Visual C++ as the compiler and linker.
-CC=		cl /nologo
-CXX=		cl /nologo
-AR=		link 
-LD=		link 
+CC?=		cl /nologo
+CXX?=		cl /nologo
+AR?=		link /nologo
+LD?=		link /nologo
 UMASK=		
 UMASK_VAL=	
 
@@ -100,7 +100,7 @@ OS_DEBUG_FLAGS=	/GX /Gm /ZI /MTd /Od /FD /GZ /W1
 OS_OPTIM_FLAGS=	/O2 /MT
 OS_DEBUG_LINK_FLAGS=/debug
 OS_OPTIM_LINK_FLAGS=
-OS_ARFLAGS= 	/nologo
+OS_ARFLAGS=	/nologo
 OS_LDFLAGS=	/nologo
 OS_INCLUDES=	
 
@@ -112,7 +112,7 @@ OS_AR_NAME_FLAG=	/OUT:
 # File extensions.
 OS_LIB_EXT=	.lib
 OS_SHLIB_EXT=	.dll
-OS_LIB_PREFIX= 	
+OS_LIB_PREFIX=	
 OS_SHLIB_PREFIX=	
 OS_EXE_EXT=	.exe
 OS_OBJ_EXT=	.obj
@@ -124,9 +124,9 @@ OS_LIBS_BEGIN=
 OS_LIBS_END=	
 
 # Wrapper options for doing static linking of libraries.
-OS_STATIC_BEGIN= 	
+OS_STATIC_BEGIN=	
 OS_STATIC_END=		
 
 # Extra library options.
 OS_LIBBITSUF=	
-OS_DEPENDFLAGS = -D_M_IX86 -D_WIN32 -DWIN32 -D__cplusplus
+OS_DEPENDFLAGS=	-D_M_IX86 -D_WIN32 -DWIN32 -D__cplusplus

@@ -80,7 +80,7 @@ OS_ABI_FLAGS=
 OS_CFLAGS+=		
 OS_CXXFLAGS+=		
 OS_DEBUG_FLAGS+=	
-OS_ARFLAGS+= 		
+OS_ARFLAGS+=		
 OS_LDFLAGS+=		
 OS_INCLUDES+=		
 OS_OPTIM_FLAGS+=	
@@ -91,7 +91,7 @@ OS_LIBS_BEGIN=
 OS_LIBS_END=	
 
 # Basic libraries needed by various types of applications.
-OS_SYS_LIBS= 	
+OS_SYS_LIBS=	
 
 # Extra library options.
 OS_LIBBITSUF=	

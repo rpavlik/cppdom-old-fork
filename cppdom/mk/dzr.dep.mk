@@ -66,7 +66,6 @@ DEPDIR?=	.
 DEP_GEN_FLAG=	-M
 DEPEND_FILES=	$(addprefix $(DEPDIR)/, $(BASIC_OBJS:$(OBJ_EXT)=.d))
 
-
 # These expressions reformat the output from the dependency text to be of the
 # form:
 #
@@ -83,8 +82,8 @@ _MKDEP_SED_EXP=	'\''s|.*\($*\)\$(OBJ_EXT)[ :]*|$$(OBJDIR)/\1$(OBJ_EXT) $@: |g'\'
 # the compiler is cl (Windows only), use makedepend(1).  Otherwise, we can use
 # the compiler itself to do the job.
 ifdef USE_MAKEDEPEND
-   DEPENDFLAGS=	${INCLUDES} ${EXTRA_DEPENDFLAGS} ${OS_DEPENDFLAGS}
-   DEPEND_EXTRAS=${DEFS}
+   DEPENDFLAGS=		$(INCLUDES) $(EXTRA_DEPENDFLAGS) $(OS_DEPENDFLAGS)
+   DEPEND_EXTRAS=	$(DEFS)
    _C_DEPGEN=	$(SHELL) -ec 'makedepend -f- -o$(OBJ_EXT)		\
 		   $(DEPENDFLAGS) -- $(DEPEND_EXTRAS) -- $< |		\
 		   sed $(_MKDEP_SED_EXP) > $@ ; [ -s $@ ] || rm -f $@'
@@ -138,5 +137,7 @@ $(DEPDIR)/%.d: %.cxx
 # these files, but I do not know of a good way to do the conditional include
 # besides nested, gross conditional statements.
 ifndef DO_CLEANDEPEND
+ifneq ($(NO_DEPEND), YES)
    -include $(DEPEND_FILES)
+endif
 endif
