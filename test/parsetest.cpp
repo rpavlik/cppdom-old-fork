@@ -112,19 +112,28 @@ void process_xml( std::string filename )
 
       // print out line where the error occured
       ifstream errfile( filename.c_str() );
+      if(!errfile)
+      {
+         std::cerr << "Can't open file [" << filename << "] to output error" << std::endl;
+      }
+
       int linenr = where.get_line();
       char linebuffer[1024];
-      for(int i=0;i<linenr&&!errfile.eof();i++)
+      for(int i=0; i<linenr && !errfile.eof(); i++)
          errfile.getline(linebuffer,1024);
 
       int pos = where.get_pos();
-      if (pos>=80) pos%=80;
+      if (pos>=80)
+         pos %= 80;
 
-      std::string line( linebuffer + (where.get_pos()-pos) );
-      if (line.length()>=79) line.erase(79);
-      cout << line.c_str() << endl;
+      std::string err_line( linebuffer + (where.get_pos()-pos) );
+      if (err_line.length()>=79)
+         err_line.erase(79);
+      cout << err_line << std::flush;
+      cout << err_line.c_str() << std::endl;
+      cout << linebuffer << std::endl;
       for(int j=2;j<pos;j++)
-         cout << ' ';
+         std::cout << " ";
       cout << '^' << endl;
    }
 }
