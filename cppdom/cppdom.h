@@ -370,6 +370,9 @@ namespace cppdom
       /** constructor, takes xml context pointer */
       explicit Node(ContextPtr pctx);
 
+      /** Construct a node with a given name */
+      explicit Node::Node(std::string nodeName, ContextPtr ctx);
+
       Node(const Node& node);
       ~Node();
 
@@ -508,6 +511,9 @@ namespace cppdom
 
       /** constructor taking xml context pointer */
       explicit Document(ContextPtr context);
+
+      /** constructor taking xml context pointer */
+      explicit Document(std::string docName, ContextPtr context);
 
       /** returns a list of processing instruction nodes */
       NodeList& getPiList();
