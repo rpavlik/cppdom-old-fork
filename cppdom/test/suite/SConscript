@@ -1,4 +1,4 @@
-Import('pkg baseEnv')
+Import('baseEnv')
 Import('GetPlatform SetupCppUnit')
 
 sources = Split("""
@@ -13,7 +13,7 @@ env.Append(CPPPATH = Split('#'),
            LIBS    = ['cppdom'])
 SetupCppUnit(env)
 
-# Win32 doesn' have libdl
+# Win32 doesn't have libdl
 if GetPlatform() != 'win32':
    env.Append(LIBS = Split('dl'))
 
