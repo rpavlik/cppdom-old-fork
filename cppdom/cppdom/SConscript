@@ -19,8 +19,10 @@ sources = Split("""
    xmlparser.cpp
    xmltokenizer.cpp
    version.cpp
-   SpiritParser.cpp
 """)
+
+if baseEnv["BoostAvailable"]:
+   sources.append("SpiritParser.cpp")
 
 env = baseEnv.Copy()
 env.Append(CPPPATH = ['#'])
