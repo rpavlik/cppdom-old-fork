@@ -35,8 +35,8 @@
 */
 
 // prevent multiple includes
-#ifndef BOOST_SMART_PTR_HPP
-#define BOOST_SMART_PTR_HPP
+#ifndef XMLPP_BOOST_SMART_PTR_HPP
+#define XMLPP_BOOST_SMART_PTR_HPP
 
 //  Boost smart_ptr.hpp header file  -----------------------------------------//
 
@@ -53,7 +53,7 @@
 #include <functional>         // for std::less
 
 //! namespace of the boost library
-namespace boost {
+namespace xmlpp_boost {
 
 // shared_ptr --------------------------------------------------------------//
 
@@ -212,7 +212,7 @@ namespace std {
 // a temporary and uses assignment.
 
 template<typename T>
-  inline void swap(boost::shared_ptr<T>& a, boost::shared_ptr<T>& b)
+  inline void swap(xmlpp_boost::shared_ptr<T>& a, xmlpp_boost::shared_ptr<T>& b)
     { a.swap(b); }
 
 // Specialize std::less so we can use shared pointers and arrays as keys in
@@ -222,11 +222,11 @@ template<typename T>
 // a full range of comparison operators (<, >, <=, >=).
 
 template<typename T>
-  struct less< boost::shared_ptr<T> >
-    : binary_function<boost::shared_ptr<T>, boost::shared_ptr<T>, bool>
+  struct less< xmlpp_boost::shared_ptr<T> >
+    : binary_function<xmlpp_boost::shared_ptr<T>, xmlpp_boost::shared_ptr<T>, bool>
   {
-    bool operator()(const boost::shared_ptr<T>& a,
-        const boost::shared_ptr<T>& b) const
+    bool operator()(const xmlpp_boost::shared_ptr<T>& a,
+        const xmlpp_boost::shared_ptr<T>& b) const
       { return less<T*>()(a.get(),b.get()); }
   };
 

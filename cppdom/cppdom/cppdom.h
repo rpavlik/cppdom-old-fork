@@ -58,7 +58,7 @@ typedef char xml_char_type;
 //! string class typedef
 typedef std::basic_string<xml_char_type> xmlstring;
 //! string smart pointer
-typedef boost::shared_ptr<xmlstring> xmlstringptr;
+typedef xmlpp_boost::shared_ptr<xmlstring> xmlstringptr;
 
 
 //! xml parsing error codes enumeration
@@ -163,9 +163,9 @@ typedef std::map<xmltagnamehandle,xmlstring> xmltagnamemap;
 //! maps an entity to a string representation
 typedef std::map<xmlstring,xmlstring> xmlentitymap;
 //! smart pointer for xmlcontext
-typedef boost::shared_ptr<class xmlcontext> xmlcontextptr;
+typedef xmlpp_boost::shared_ptr<class xmlcontext> xmlcontextptr;
 //! smart pointer to the event handler
-typedef boost::shared_ptr<class xmleventhandler> xmleventhandlerptr;
+typedef xmlpp_boost::shared_ptr<class xmleventhandler> xmleventhandlerptr;
 
 typedef xmltagnamehandle XMLTagNameHandle;
 //! maps the tagname string to a handle
@@ -249,7 +249,7 @@ enum xmlnodetype
 
 // typedefs
 //! smart pointer to node
-typedef boost::shared_ptr<class xmlnode> xmlnodeptr;
+typedef xmlpp_boost::shared_ptr<class xmlnode> xmlnodeptr;
 //! list of node smart pointer
 typedef std::list<xmlnodeptr> xmlnodelist;
 typedef xmlnodelist XMLNodeList;
