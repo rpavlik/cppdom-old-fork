@@ -69,7 +69,7 @@ namespace cppdom
    typedef int TagNameHandle;
 }
 
-//#define CPPDOM_USE_HASH_MAP
+#define CPPDOM_USE_HASH_MAP 1
 
 // Use fastest map available
 #if defined(CPPDOM_USE_HASH_MAP) && defined(__GNUC__) && (__GNUC__ >= 3)
