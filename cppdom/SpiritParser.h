@@ -68,6 +68,7 @@ namespace spirit
 
 /** Class for building an xml node tree from a spirit parser.
  */
+template<typename IteratorType>
 class XmlBuilder
 {
 public:
@@ -75,16 +76,104 @@ public:
    //XmlBuilder(cppdom::DocumentPtr doc, cppdom::ContextPtr context=cppdom::ContextPtr());
 
    /** Prepare for parsing a new document. */
-   void reinit(cppdom::Document* doc, cppdom::ContextPtr context=cppdom::ContextPtr());
+   void reinit(cppdom::Document* doc, cppdom::ContextPtr context)
+   {
+      mDocRoot = doc;
+      mContext = doc->getContext();
+      if(mContext.get() == NULL)
+      {
+         throw CPPDOM_ERROR(xml_invalid_argument, "Attempted to use doc with no context.");
+      }
+
+      mNodeStack.clear();
+      mNodeStack.push_back(mDocRoot);     // Doc is at base of stack
+   }
 
    /** Call when parser is done. */
-   void finish();
+   void finish()
+   {
+      assert(mNodeStack.size() == 1);     // Should only have one node left now
+   }
 
-   void startElement(char const* first, char const* last);
-   void endElement(char const* first, char const* last);
-   void startAttribute(char const* first, char const* last);
-   void attribValue(char const* first, char const* last);
-   void elementText(char const* first, char const* last);
+   /** Called when element is found and starts. */
+   void startElement(IteratorType first, IteratorType last)
+   {
+      std::string elt_name(first, last);
+      std::cout << "Elt in: [" << elt_name << "]" << std::endl;
+
+      // - Create node
+      // - Add to tree
+      // - Put on stack to get ready for more
+      NodePtr new_elt(new cppdom::Node(elt_name,mContext));
+      mNodeStack.back()->addChild(new_elt);
+      mNodeStack.push_back(new_elt.get());
+   }
+
+   /** Called when element ends. */
+   void endElement(IteratorType first, IteratorType last)
+   {
+      std::string elt_name(first,last);
+      std::cout << "Elt exit: " << elt_name << std::endl;
+      // Should always have more then one on stack since doc root is
+      // on stack at all times and we need one more to pop
+      assert(mNodeStack.size() > 1);
+      mNodeStack.pop_back();
+
+   #ifdef _DEBUG
+      mCurAttribute.clear();     // If debug version, clear attribute so we detect problems
+   #endif
+   }
+
+      /** Called when element ends. */
+   void endElementQuick(IteratorType first, IteratorType last)
+   {
+      std::cout << "Elt exit quick.." << std::endl;
+      // Should always have more then one on stack since doc root is
+      // on stack at all times and we need one more to pop
+      assert(mNodeStack.size() > 1);
+      mNodeStack.pop_back();
+
+   #ifdef _DEBUG
+      mCurAttribute.clear();     // If debug version, clear attribute so we detect problems
+   #endif
+   }
+
+   /** Called at the start of an attribute. */
+   void startAttribute(IteratorType first, IteratorType last)
+   {
+      std::string attrib(first,last);
+      std::cout << "  attrib: " << attrib << std::endl;
+      mCurAttribute = attrib;
+      assert(!mCurAttribute.empty());
+   }
+
+   /** Called with value of attribute. */
+   void attribValue(IteratorType first, IteratorType last)
+   {
+      std::string attrib_value(first,last);
+      std::cout << " [" << attrib_value << "] " << std::endl;
+      assert(!mCurAttribute.empty());
+      if(cppdom::textContainsXmlEscaping(attrib_value))
+      {  attrib_value = removeXmlEscaping(attrib_value, false); }
+      mNodeStack.back()->getAttrMap().set(mCurAttribute, attrib_value);
+   }
+
+   /** Called with element content text. */
+   void elementText(IteratorType first, IteratorType last)
+   {
+      std::string elem_text(first,last);
+      if(textContainsXmlEscaping(elem_text))
+      {  elem_text = removeXmlEscaping(elem_text, true); }
+
+      std::cout << "   Text: [" << elem_text << "] " << std::endl;
+      if(!elem_text.empty())
+      {
+         cppdom::NodePtr cdata_node(new cppdom::Node("cdata",mContext));
+         cdata_node->setType(Node::xml_nt_cdata);
+         cdata_node->setCdata(elem_text);
+         mNodeStack.back()->addChild(cdata_node);
+      }
+   }
 
    cppdom::Document* getDocRoot()
    { return mDocRoot; }
@@ -103,7 +192,7 @@ public:
 *
 * type: BUILDER_T must implement the interface concept similar to XmlBuilder above.
 */
-template<typename BUILDER_T=XmlBuilder>
+template<typename BUILDER_T>
 struct XmlGrammar : public grammar<XmlGrammar<BUILDER_T> >
 {
    XmlGrammar(BUILDER_T* builder)
@@ -152,7 +241,7 @@ struct XmlGrammar : public grammar<XmlGrammar<BUILDER_T> >
          element = ch_p('<') >> name[boost::bind(&BUILDER_T::startElement,self.mBuilder,_1,_2)] >> *(ws >> attribute) >> *space_p
                    >> ( (ch_p('>') >> elem_content >> str_p("</")
                                    >> name[boost::bind(&BUILDER_T::endElement,self.mBuilder,_1,_2)] >> *space_p >> ch_p('>')) |
-                        (str_p("/>"))[boost::bind(&BUILDER_T::endElement,self.mBuilder,_1,_2)] );
+                        (str_p("/>"))[boost::bind(&BUILDER_T::endElementQuick,self.mBuilder,_1,_2)] );
 
          // elementText: eliminate extra space by consuming initial whitespace & only call when char_data matches
          elem_content = *space_p >> !(char_data[boost::bind(&BUILDER_T::elementText,self.mBuilder,_1,_2)])
@@ -219,59 +308,15 @@ struct XmlGrammar : public grammar<XmlGrammar<BUILDER_T> >
 class Parser
 {
 public:
-   void parseDocument(cppdom::Document& doc, std::string& content)
-   {
-      mBuilder.reinit(&doc, doc.getContext());
-      XmlGrammar<XmlBuilder> xml_grammar(&mBuilder);
-      parse_info<char const*> result;
+   /** Parse document coming in from string. */
+   void parseDocument(cppdom::Document& doc, std::string& content);
 
-      result = bs::parse(content.c_str(), xml_grammar);
-      if(!result.full)
-      {
-         throw CPPDOM_ERROR(xml_invalid_operation, "Invalid format of XML.");
-      }
-   }
-
-   void parseDocument(cppdom::Document& doc, std::istream& instream)
-   {
-
-       /*
-       typedef char char_t;
-       typedef multi_pass<istreambuf_iterator<char_t> > iterator_t;
-
-       typedef skip_parser_iteration_policy<space_parser> iter_policy_t;
-       typedef scanner_policies<iter_policy_t> scanner_policies_t;
-       typedef scanner<iterator_t, scanner_policies_t> scanner_t;
-
-       typedef rule<scanner_t> rule_t;
-
-       iter_policy_t iter_policy(space_p);
-       scanner_policies_t policies(iter_policy);
-       */
-      typedef bs::multi_pass<std::istreambuf_iterator<char> > iterator_t;
-
-      mBuilder.reinit(&doc,doc.getContext());
-
-      XmlGrammar<XmlBuilder> xml_grammar(&mBuilder);
-      parse_info<iterator_t> result;
-
-      std::istreambuf_iterator<char> first(instream);
-      std::istreambuf_iterator<char> last;
-
-      std::string test(first,last);
-      parseDocument(doc,test);
-
-      /*
-      result = bs::parse(bs::make_multi_pass(first), bs::make_multi_pass(last), xml_grammar);
-      if(!result.full)
-      {
-         throw CPPDOM_ERROR(xml_invalid_operation, "Invalid format of XML.");
-      }
-      */
-   }
+   /** Parse document from istream input. */
+   void parseDocument(cppdom::Document& doc, std::istream& instream);
 
 public:
-   XmlBuilder  mBuilder;   /**< The builder that we are using. */
+   XmlBuilder<const char*>  mCharBuilder;   /**< The builder that we are using. */
+   //XmlBuilder<const char*>  mCharBuilder;   /**< The builder that we are using. */
 
 };
 
