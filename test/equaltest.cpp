@@ -7,6 +7,7 @@
 #include <iostream>
 #include <assert.h>
 #include <cppdom/predicates.h>
+#include <testHelpers.h>
 
 const std::string id_token("id");
 const std::string equal_token("equal");
@@ -78,12 +79,21 @@ int main()
       }
 
       // Load children
-      cppdom::NodeList nl = cur_test->getChildrenPred( cppdom::IsNodeTypePredicate( cppdom::xml_nt_node ));
-      unsigned num_child_nodes = nl.size();
-      assert(num_child_nodes == 2);
-
-      child1 = nl[0];
-      child2 = nl[1];
+      // - Get the first two non-cdata nodes
+      cppdom::NodeList nl = cur_test->getChildren();
+      assert(nl.size() >= 2);
+      unsigned cur_child=0;
+      
+      while((nl[cur_child]->getType() != cppdom::xml_nt_node) &&
+            (nl[cur_child]->getType() != cppdom::xml_nt_leaf))
+      {  cur_child++; }
+      child1 = nl[cur_child];
+      cur_child++;                  // Goto next child
+      
+      while((nl[cur_child]->getType() != cppdom::xml_nt_node) &&
+            (nl[cur_child]->getType() != cppdom::xml_nt_leaf))
+      {  cur_child++; }
+      child2 = nl[cur_child];
 
       // Run test
       bool is_equal = child1->isEqual(child2, attrib_list, element_list);
@@ -98,7 +108,12 @@ int main()
          std::cout << "FAILED:\n";
          std::cout << "should be equal: " << should_be_equal << std::endl
                    << "has ignore: " << has_ignore_attrib << std::endl
-                   << "ignore: " << attrib_ignore << std::endl;
+                   << "ignore: " << attrib_ignore << std::endl
+                   << "-------- child1: ---------" << std::endl;
+         testHelpers::dump_node(*child1);
+         std::cout << "\n---------- child2: -------" << std::endl;
+         testHelpers::dump_node(*child2);
+         std::cout << std::endl;
       }
    }
 
