@@ -63,9 +63,7 @@
 // export/import #define's for building a win32 dll
 # ifdef CPPDOM_EXPORTS
 #  define CPPDOM_API __declspec(dllexport)
-# endif
-
-# ifdef CPPDOM_IMPORTS
+# else
 #  define CPPDOM_API __declspec(dllimport)
 # endif
 
