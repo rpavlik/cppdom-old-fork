@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "xmlpp.h"
+#include <xmlpp/xmlpp.h>
 
 bool configureInput( const std::string& filename ) 
 {
@@ -22,8 +22,11 @@ bool configureInput( const std::string& filename )
       if (e.get_error() != xmlpp::xml_filename_invalid &&
           e.get_error() != xmlpp::xml_file_access) 
       {
+/*
          e.show_error( ctx );
          e.show_line( ctx, filename );
+*/
+         std::cout << "Error: (need to impl the show functions)" << std::endl;
       }
       return false;
    }
@@ -54,7 +57,8 @@ bool configureInput( const std::string& filename )
    return true;
 }
 
-void main()
+int main()
 {
    configureInput( "hamlet.xml" );
+   return 1;
 }

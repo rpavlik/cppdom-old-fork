@@ -8,7 +8,7 @@ DEFS		=
 EXTRA_CFLAGS	=  $(DEBUG_CFLAGS)
 DEBUG_CFLAGS	= -g -D_DEBUG
 OPTIM_CFLAGS	= -O2 -fno-strict-aliasing -D_OPT
-INCLUDES	= -I$(srcdir) -I$(srcdir)/..
+INCLUDES	= -I$(srcdir) -I$(srcdir)/../..
 
 EXTRA_LFLAGS	=  $(DEBUG_LFLAGS)
 DEBUG_LFLAGS	= 
