@@ -524,6 +524,8 @@ protected:
 };
 
 typedef xmldocument XMLDocument;
+typedef xmlpp_boost::shared_ptr<class xmldocument> xmldocumentptr;
+typedef xmldocumentptr XMLDocumentPtr;
 
 
 /** Interface for xml parsing event handler */
