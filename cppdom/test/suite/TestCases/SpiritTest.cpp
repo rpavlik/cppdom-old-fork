@@ -70,6 +70,9 @@ public:
 
    void endElement(char const* first, char const* last)
    {  std::cout << "endElement: " << std::string(first,last) << std::endl; }
+   void endElementQuick(char const* first, char const* last)
+   {  std::cout << "endElement quick." << std::endl; }
+
 
    void startAttribute(char const* first, char const* last)
    {  std::cout << "startAttribute: " << std::string(first,last) << std::endl; }
@@ -217,18 +220,22 @@ void SpiritTest::testXmlParser()
 
    cppdom::spirit::Parser spirit_parser;
    cppdom::ContextPtr ctx(new cppdom::Context());
+
+   std::cout << "---------------------- Parsing document (char*) -----------" << std::endl;
    cppdom::DocumentPtr doc1(new cppdom::Document(ctx));
-
    spirit_parser.parseDocument(*doc1, xml_content1);
-   std::cout << "---------------------- Document (char*) -----------" << std::endl;
+   std::cout << "---------------------- Document output (char*) -----------" << std::endl;
    doc1->save(std::cout);
    std::cout << std::endl;
 
+   std::cout << "---------------------- Parsing document (istream) ---------" << std::endl;
+   cppdom::DocumentPtr doc2(new cppdom::Document(ctx));
    std::istringstream xml_content1_istream(xml_content1);
-   spirit_parser.parseDocument(*doc1, xml_content1_istream);
+   spirit_parser.parseDocument(*doc2, xml_content1_istream);
    std::cout << "---------------------- Document (istream) -----------" << std::endl;
-   doc1->save(std::cout);
+   doc2->save(std::cout);
    std::cout << std::endl;
+
 }
 
 
