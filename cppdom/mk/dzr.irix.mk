@@ -107,9 +107,13 @@ OS_DEBUG_FLAGS=		-w2 -g -gslim
 OS_OPTIM_FLAGS=		-O
 OS_DEBUG_LINK_FLAGS=	-w2 -g -gslim
 OS_OPTIM_LINK_FLAGS=	-O
-OS_ARFLAGS=		-LANG:std -J6 -ar -WR,-v -o
-OS_LDFLAGS=		-LANG:std -J6 -all
+OS_ARFLAGS=		-ruv
+ifeq ($(AR),CC)
+   OS_ARFLAGS=		$(OS_ABI_FLAGS) -LANG:std -J6 -ar -WR,-v -o
+endif
+OS_LDFLAGS=		$(OS_ABI_FLAGS) -LANG:std -J6 -all
 OS_INCLUDES=		
+OS_LIB_FLAGS=
 OS_SHLIB_FLAGS=		-shared
 OS_LD_NAME_FLAG=	-o
 OS_AR_NAME_FLAG=	
