@@ -1,5 +1,5 @@
-#ifndef XMLPP_PREDICATES
-#define XMLPP_PREDICATES
+#ifndef CPPDOM_PREDICATES
+#define CPPDOM_PREDICATES
 
 #include <string>
 #include <cppdom/cppdom.h>
