@@ -1,26 +1,26 @@
 #include <iostream>
 #include <string>
-#include <xmlpp/xmlpp.h>
+#include <cppdom/cppdom.h>
 
 bool configureInput( const std::string& filename )
 {
-   xmlpp::XMLContextPtr ctx( new xmlpp::XMLContext );
-   xmlpp::XMLDocument doc( ctx );
+   cppdom::XMLContextPtr ctx( new cppdom::XMLContext );
+   cppdom::XMLDocument doc( ctx );
 
    // load a xml document from a file
    try
    {
       doc.load_file( filename );
    }
-   catch (xmlpp::xmlerror e)
+   catch (cppdom::xmlerror e)
    {
       std::cerr << "Error: " << e.get_string() << std::endl;
       if (e.get_info().size())
       {
          std::cerr << "File: " << e.get_info() << std::endl;
       }
-      if (e.get_error() != xmlpp::xml_filename_invalid &&
-          e.get_error() != xmlpp::xml_file_access)
+      if (e.get_error() != cppdom::xml_filename_invalid &&
+          e.get_error() != cppdom::xml_file_access)
       {
 /*
          e.show_error( ctx );
@@ -33,19 +33,19 @@ bool configureInput( const std::string& filename )
 
    std::cerr << "succesfully loaded " << filename << std::endl;
 
-   xmlpp::XMLNodeList nl = doc.getChild( "gameinput" )->getChildren();
-   xmlpp::XMLNodeListIterator it = nl.begin();
+   cppdom::XMLNodeList nl = doc.getChild( "gameinput" )->getChildren();
+   cppdom::XMLNodeListIterator it = nl.begin();
    while (it != nl.end())
    {
       std::cerr << "in name: " << (*it)->getName() << std::endl;
       try
       {
-         xmlpp::XMLAttributes& attr = (*it)->get_attrmap();
+         cppdom::XMLAttributes& attr = (*it)->get_attrmap();
          std::cout << "attr: " << attr.get( "action" ) << "\n" << std::flush;
          std::cout << "attr: " << attr.get( "device" ) << "\n" << std::flush;
          std::cout << "attr: " << attr.get( "input" ) << "\n" << std::flush;
       }
-      catch (xmlpp::xmlerror e)
+      catch (cppdom::xmlerror e)
       {
          std::cerr << "Error: " << e.get_string() << std::endl;
          it++;
