@@ -73,6 +73,18 @@ void OptionRepositoryTest::testOptionAccess()
    str_val = opts.getOptionString("opt1/opt1_1/opt1_1_1/value");
    CPPUNIT_ASSERT(std::string("test") == str_val);
 
+   // Test testing for option existence
+   bool has_opt = opts.hasOption("option_1/intval");
+   CPPUNIT_ASSERT(has_opt);
+   has_opt = opts.hasOption("option_1/not_there_attrib");
+   CPPUNIT_ASSERT(!has_opt);
+   has_opt = opts.hasOption("option_1/not_elt/intval");
+   CPPUNIT_ASSERT(!has_opt);
+   has_opt = opts.hasOption("not/there/attrib");
+   CPPUNIT_ASSERT(!has_opt);
+   has_opt = opts.hasOption("opt1/opt1_1/opt1_1_1/value");
+   CPPUNIT_ASSERT(has_opt);
+
    // Test getting nodes manually
    cppdom::NodePtr filelist_node = opts.optionsNode()->getChild("filelist");
    cppdom::NodeList file_nodes = filelist_node->getChildren("file");
