@@ -10,12 +10,12 @@ namespace cppdom
    {
    public:
       /** set the attribute name to match. */
-      HasAttributeNamePredicate(std::string attrName)
+      HasAttributeNamePredicate(const std::string& attrName)
          : mName(attrName)
       {}
 
       /** set the attribute name to match. */
-      void setName(std::string attrName) { mName = attrName; }
+      void setName(const std::string& attrName) { mName = attrName; }
 
       bool operator()(const XMLNodePtr& node)
       {
@@ -33,15 +33,15 @@ namespace cppdom
        * set the attribute name to match.
        * set the attribute value to match.
        */
-      HasAttributeValuePredicate(std::string attrName, std::string val)
+      HasAttributeValuePredicate(const std::string& attrName, const std::string&  val)
          : mName(attrName), mValue(val)
       {}
 
       /** set the attribute name to match. */
-      void setName(std::string attrName) { mName = attrName; }
+      void setName(const std::string& attrName) { mName = attrName; }
 
       /** set the attribute value to match. */
-      void setValue(std::string val) { mValue = val; }
+      void setValue(const std::string& val) { mValue = val; }
 
       bool operator()(const XMLNodePtr& node)
       {
@@ -54,7 +54,8 @@ namespace cppdom
          return mValue == (std::string)node->getAttribute(mName);
       }
    private:
-      std::string mName, mValue;
+      std::string mName
+      std::string mValue;
    };
 }
 
