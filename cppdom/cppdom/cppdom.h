@@ -71,6 +71,9 @@
 //! namespace of the cppdom project
 namespace cppdom
 {
+
+   template <class T> inline void ignore_unused_variable_warning(const T&) { }
+
    //! xml parsing error codes enumeration
    enum ErrorCode
    {
@@ -647,17 +650,22 @@ namespace cppdom
       virtual void endDocument() {}
 
       /** called when parsing a processing instruction */
-      virtual void processingInstruction(Node& pinode) {}
+      virtual void processingInstruction(Node& pinode)
+      {  cppdom::ignore_unused_variable_warning(pinode);}
 
       /** called when start parsing a node */
-      virtual void startNode(const std::string& nodename) {}
+      virtual void startNode(const std::string& nodename)
+      { cppdom::ignore_unused_variable_warning(nodename); }
       /** called when an attribute list was parsed */
-      virtual void parsedAttributes(Attributes& attr) {}
+      virtual void parsedAttributes(Attributes& attr)
+      { cppdom::ignore_unused_variable_warning(attr); }
       /** called when parsing of a node was finished */
-      virtual void endNode(Node& node) {}
+      virtual void endNode(Node& node)
+      { cppdom::ignore_unused_variable_warning(node);}
 
       /** called when a cdata section ended */
-      virtual void gotCdata(const std::string& cdata) {}
+      virtual void gotCdata(const std::string& cdata)
+      { cppdom::ignore_unused_variable_warning(cdata); }
    };
 }
 
