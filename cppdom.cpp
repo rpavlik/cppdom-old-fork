@@ -172,7 +172,7 @@ xmlnode::xmlnode( const xmlnode &node )
    nodetype = node.nodetype;
    attributes = node.attributes;
    mCdata = node.mCdata;
-   nodelist = node.nodelist;
+   mNodelist = node.mNodelist;
 };
 
 xmlnode &xmlnode::operator =( const xmlnode &node )
@@ -182,7 +182,7 @@ xmlnode &xmlnode::operator =( const xmlnode &node )
    nodetype = node.nodetype;
    attributes = node.attributes;
    mCdata = node.mCdata;
-   nodelist = node.nodelist;
+   mNodelist = node.mNodelist;
    return *this;
 };
 
@@ -201,17 +201,17 @@ xmlnodeptr xmlnode::getChild(const xmlstring &name)
 {
    // possible speedup: first search if a handle to the childname is existing
 
-   xmlnodelist::const_iterator iter,stop;
-   iter = nodelist.begin();
-   stop = nodelist.end();
-
+   xmlnodelist::const_iterator iter;
+      
    // search for first occurance of node
-   while(iter!=stop)
+   for(iter = mNodelist.begin(); iter != mNodelist.end(); ++iter)
    {
-      xmlnodeptr np = *(iter++);
+      xmlnodeptr np = (*iter);
       if (np->name() == name)
+      {
          return np;
-   };
+      }
+   }
 
    // no valid child found
    return xmlnodeptr(NULL);
@@ -222,17 +222,17 @@ xmlnodelist xmlnode::getChildren(const xmlstring& name)
 {
    xmlnodelist nlist;
 
-   xmlnodelist::const_iterator iter,stop;
-   iter = nodelist.begin();
-   stop = nodelist.end();
-
+   xmlnodelist::const_iterator iter;
+      
    // search for all occurances of nodename and insert them into the new list
-   while(iter!=stop)
+   for(iter = mNodelist.begin(); iter != mNodelist.end(); ++iter)
    {
-      xmlnodeptr np = *(iter++);
+      xmlnodeptr np = *(iter);
       if (np->name() == name)
+      {
          nlist.push_back(np);
-   };
+      }
+   }
 
    return nlist;
 }
@@ -282,8 +282,8 @@ void xmlnode::save( std::ostream &outstream, int indent )
 
          // output all subnodes
          xmlnodelist::const_iterator iter,stop;
-         iter = nodelist.begin();
-         stop = nodelist.end();
+         iter = mNodelist.begin();
+         stop = mNodelist.end();
 
          for(;iter!=stop;iter++)
             (*iter)->save(outstream,indent+1);
@@ -355,7 +355,7 @@ void xmldocument::save( std::ostream &outstream )
 
 
    // call save() method of the first (and hopefully only) node in xmldocument
-   (*nodelist.begin())->save(outstream,0);
+   (*mNodelist.begin())->save(outstream,0);
 }
 
 // namespace end

@@ -69,7 +69,7 @@ bool xmlparser::parse_document( xmldocument &doc, xmlcontextptr &ctxptr )
    if (ret)
    {
       xmlnodeptr nodeptr( new xmlnode(subnode) );
-      doc.nodelist.push_back( nodeptr );
+      doc.mNodelist.push_back( nodeptr );
    }
 
    if (handle)
@@ -304,7 +304,7 @@ bool xmlparser::parse_node( xmlnode &node, xmlcontextptr &ctxptr )
       {
          // if successful, put node into nodelist
          xmlnodeptr nodeptr( new xmlnode(subnode) );
-         node.nodelist.push_back( nodeptr );
+         node.mNodelist.push_back( nodeptr );
       }
       else
          break;
