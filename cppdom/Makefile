@@ -88,7 +88,7 @@ SHARED_LIB_FILENAME=$(SHLIB_PREFIX)$(LIB_NAME)$(SHLIB_EXT)
 STATIC_LIB_FILENAME=$(LIB_PREFIX)$(LIB_NAME)$(LIB_EXT)
 all: $(SHARED_LIB_FILENAME) $(STATIC_LIB_FILENAME)
 
-test:
+tests:
 	-cd test && ${MAKE}
 
 # Target for the shared library to be built.
@@ -105,7 +105,7 @@ $(STATIC_LIB_FILENAME): $(OBJS)
 #        - prefix is your install path, edit it to specify the default
 prefix ?= installed
 INSTALLCMD=./install-sh
-install: all test
+install: all tests
 	-$(INSTALLCMD) -d $(prefix)/include
 	-$(INSTALLCMD) -d $(prefix)/include/$(LIB_NAME)
 	-$(INSTALLCMD) -d $(prefix)/lib$(LIBBITSUF)
