@@ -3,8 +3,8 @@
 	ProjectType="Visual C++"
 	Version="7.00"
 	Name="cppdom"
-	ProjectGUID="{4975C4F1-3CB5-4A62-A00D-BCC89BF1B1EE}"
-	Keyword="Win32Proj">
+	ProjectGUID="{B2999048-3E24-41EC-B0DD-B0F8607C5F00}"
+	Keyword="ExtStoredProcProj">
 	<Platforms>
 		<Platform
 			Name="Win32"/>
@@ -14,16 +14,16 @@
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
-			ConfigurationType="4"
+			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories=".."
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;CPPDOM_EXPORTS"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;CPPDOM_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
@@ -31,10 +31,16 @@
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/cppdom.lib"/>
+				Name="VCLinkerTool"
+				AdditionalDependencies="opends60.lib"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				SubSystem="2"
+				TargetMachine="1"/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="FALSE"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
@@ -42,15 +48,19 @@
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
-			ConfigurationType="4"
+			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
@@ -58,9 +68,9 @@
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
 				AdditionalIncludeDirectories=".."
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;CPPDOM_EXPORTS"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;CPPDOM_EXPORTS"
 				StringPooling="TRUE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -69,10 +79,18 @@
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/cppdom.lib"/>
+				Name="VCLinkerTool"
+				AdditionalDependencies="opends60.lib"
+				LinkIncremental="1"
+				GenerateDebugInformation="TRUE"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="FALSE"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
@@ -80,15 +98,35 @@
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
 		</Configuration>
 	</Configurations>
 	<Files>
 		<Filter
-			Name="Headers"
-			Filter=".h">
+			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;odl;idl;hpj;bat;asm">
+			<File
+				RelativePath="..\cppdom\cppdom.cpp">
+			</File>
+			<File
+				RelativePath="..\cppdom\version.cpp">
+			</File>
+			<File
+				RelativePath="..\cppdom\xmlparser.cpp">
+			</File>
+			<File
+				RelativePath="..\cppdom\xmltokenizer.cpp">
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc">
 			<File
 				RelativePath="..\cppdom\config.h">
 			</File>
@@ -109,22 +147,6 @@
 			</File>
 			<File
 				RelativePath="..\cppdom\xmltokenizer.h">
-			</File>
-		</Filter>
-		<Filter
-			Name="Sources"
-			Filter=".cpp">
-			<File
-				RelativePath="..\cppdom\cppdom.cpp">
-			</File>
-			<File
-				RelativePath="..\cppdom\version.cpp">
-			</File>
-			<File
-				RelativePath="..\cppdom\xmlparser.cpp">
-			</File>
-			<File
-				RelativePath="..\cppdom\xmltokenizer.cpp">
 			</File>
 		</Filter>
 	</Files>
