@@ -4,7 +4,7 @@ int main()
 {
    cppdom::XMLContextPtr ctx( new cppdom::XMLContext );
    cppdom::XMLDocument doc( ctx );
-   std::string filename = "hamlet.xml";
+   std::string filename = "game.xml";
    
    // load a xml document from a file
    try

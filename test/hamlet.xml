@@ -1,14 +1,6 @@
 <?xml version="1.0"?>
-
-<gameinput>
-   <bind action="Accelerate" device="Keyboard" input="KEY_UPARROW" />
-   <bind action="Backstep" device="Keyboard" input="KEY_DOWNARROW" />
-   <bind action="StraefLeft" device="Keyboard" input="KEY_LEFTARROW" />
-   <bind action="StraefRight" device="Keyboard" input="KEY_RIGHTARROW" />
-   <bind action="Jump" device="Keyboard" input="KEY_SPACE" />
-   <bind action="Crouch" device="Keyboard" input="KEY_Q" />
-   <bind action="Run" device="Keyboard" input="KEY_LSHIFT" />
-   <bind action="MouseLookX" device="Mouse" input="MOUSEAXIS_X" />
-   <bind action="MouseLookY" device="Mouse" input="MOUSEAXIS_Y" />
-   <bokbokbok noattrs="hi man" />
-</gameinput>
+<node1 value="true" visible="false">
+ <node4/>
+ <node2/>
+ <node3/>
+</node1>
