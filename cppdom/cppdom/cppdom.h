@@ -375,21 +375,28 @@ class CPPDOM_API XMLNode
    friend class XMLParser;
 protected:
    /** Default Constructor */
-   XMLNode()
+   XMLNode() : mParent(NULL)
    { 
       nodetype = xml_nt_node;
    }
 
 public:
    /** constructor, takes xml context pointer */
-   explicit XMLNode( XMLContextPtr pctx )
+   explicit XMLNode( XMLContextPtr pctx ) : mParent(NULL)
    { 
       nodetype = xml_nt_node; 
       contextptr = pctx;
    }
    
    /** Destructor */
-   ~XMLNode(){}
+   ~XMLNode()
+   {
+      // Disown our rotten children.  Even Brandine!
+      for ( XMLNodeList::iterator i = mNodelist.begin(); i != mNodelist.end(); ++i )
+      {
+         (*i)->mParent = NULL;
+      }
+   }
    
    /** copy constructor */
    XMLNode( const XMLNode &node );
@@ -466,6 +473,9 @@ public:
 
    void addChild( XMLNodePtr& node )
    {
+      node->mParent = this;      // Tell the child who their daddy is
+      std::cout << "node '" << node->getName() << "' is a child of '"
+                << node->mParent->getName() << "'" << std::endl;
       mNodelist.push_back( node );
    }
 
@@ -548,6 +558,16 @@ public:
       }
       return ret_nlist;
    }
+
+   /**
+    * Returns our parent.  The returned value could be NULL.
+    *
+    * @return Our parent, which may be NULL if we have no parent.
+    */
+   XMLNode* getParent () const
+   {
+      return mParent;
+   }
    
    //@}
 
@@ -572,6 +592,7 @@ protected:
    XMLAttributes     attributes;       /**< Attributes of the element */
    XMLString         mCdata;           /**< Character data (if there is any) */
    XMLNodeList       mNodelist;        /**< stl list with subnodes */
+   XMLNode*          mParent;          /**< Our parent */
 };
 
 
