@@ -57,7 +57,7 @@
 // The major/minor/patch version (up to 3 digits each).
 #define CPPDOM_VERSION_MAJOR     0
 #define CPPDOM_VERSION_MINOR     5
-#define CPPDOM_VERSION_PATCH     5
+#define CPPDOM_VERSION_PATCH     6
 
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
