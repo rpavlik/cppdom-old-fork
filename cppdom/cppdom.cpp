@@ -364,42 +364,62 @@ namespace cppdom
    * @param ignoreAttribs - Attributes to ignore in the comparison
    * @param ignoreElements - Elements to ignore in the comparison
    */
-   bool Node::isEqual(NodePtr otherNode, const std::vector<std::string>& ignoreAttribs, 
-                                         const std::vector<std::string>& ignoreElements)
+   bool Node::isEqual(NodePtr otherNode, const std::vector<std::string>& ignoreAttribs,
+                      const std::vector<std::string>& ignoreElements,
+                      bool dbgit, const unsigned debugIndent)
    {
-      //std::cout << "isEqual: me:" << getName() << "  other:" << otherNode->getName() << std::endl;
+      std::string indent(debugIndent, char(' '));     // Construct buffer of size debugIndent
+
+      if(dbgit) std::cout << indent << "isEqual: me:" << getName() << "  other:" << otherNode->getName() << std::endl;
       // Check current node's element type (ie. name)
       if(otherNode->getName() != getName())
-      { return false; }
+      {
+         if(dbgit) std::cout << indent << "Different elt types: not equal.\n";
+         return false;
+      }
 
       // Check attributes
       Attributes& other_attribs = otherNode->getAttrMap();
 
       if(other_attribs.size() !=  mAttributes.size())
-      { return false; }
-                  
+      {
+         if(dbgit) std::cout << indent << "Different number of attributes: not equal.\n";
+         return false;
+      }
+
       // Check attribute values
       for(Attributes::iterator cur_attrib = other_attribs.begin();
           cur_attrib != other_attribs.end(); cur_attrib++)
       {
          std::string attrib_name = (*cur_attrib).first;
          std::string attrib_value = (*cur_attrib).second;
-         //std::cout << "Comparing attribute: " << attrib_name << std::endl;
-         
+         if(dbgit) std::cout << indent << "Comparing attribute: " << attrib_name << std::endl;
+
          // If not in ignore list
-         if(std::find(ignoreAttribs.begin(), ignoreAttribs.end(), attrib_name) 
+         if(std::find(ignoreAttribs.begin(), ignoreAttribs.end(), attrib_name)
                         == ignoreAttribs.end())
          {
             // if (not have attribute) OR attrib != needed
-            if( !mAttributes.has(attrib_name) || 
+            if( !mAttributes.has(attrib_name) ||
                 (mAttributes.get(attrib_name) != attrib_value))
-            {  return false; }
+            {
+               if(dbgit) std::cout << indent << "Attributes [" << attrib_name << "] are different: not equal.\n";
+               return false;
+            }
+         }
+         else
+         {
+            if(dbgit) std::cout << indent << "Ignoring attribute: " << attrib_name << std::endl;
          }
       }
-      
+
+      if(dbgit) std::cout << indent << "Checking cdata.\n";
       // Check cdata
       if(otherNode->getFullCdata() != getFullCdata())
-      {  return false; }
+      {
+         if(dbgit) std::cout << indent << "Cdata different: not equal\n";
+         return false;
+      }
 
       // -- Check children -- //
       NodeList other_children = otherNode->getChildren();
@@ -409,17 +429,23 @@ namespace cppdom
       std::cout << "children: me:" << num_children << "  other:" << num_other_children << std::endl;
       */
       if(mNodeList.size() != other_children.size())
-      { return false; }
-      
+      {
+         if(dbgit) std::cout << indent << "Different number of children: not equal\n";
+         return false;
+      }
+
+      if(dbgit) std::cout << indent << "Comparing children:\n";
       // Recurse into each element
       NodeList::iterator my_child, other_child;
-      for(my_child = mNodeList.begin(), other_child = other_children.begin(); 
+      for(my_child = mNodeList.begin(), other_child = other_children.begin();
           my_child != mNodeList.end(), other_child != other_children.end();
           my_child++, other_child++)
       {
-         //std::cout << "Comparing some children:" << std::endl;
-         if(false == (*my_child)->isEqual((*other_child), ignoreAttribs, ignoreElements))
-         {  return false; }         
+         if(false == (*my_child)->isEqual((*other_child), ignoreAttribs, ignoreElements, dbgit, debugIndent+3))
+         {
+            if(dbgit) std::cout << indent << "Childrent different: not equal\n";
+            return false;
+         }
       }
 
       return true;
