@@ -2,6 +2,8 @@ DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
 NOTE: Odd numbered minor versions are development series (ex: 0.1, 0.9, etc)
 
+2004-04-14 allenb       Migrated build system to use AutoDist.
+                        VERSION: 0.5.2
 2004-04-13 allenb       Refactoring build system to use scons-addons
                         VERSION: 0.5.1
 2004-04-12 allenb       Moving into active development version again
