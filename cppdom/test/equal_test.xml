@@ -14,7 +14,7 @@
    
    <test id="Basic equality. different attrib order" equal="1">
    Test basic equality.
-      <node attribA="B" attribB="B"/>
+      <node attribA="A" attribB="B"/>
       <node attribB="B" attribA="A"/>   
    </test>
 
@@ -60,17 +60,33 @@
    
    <test id="Simple nested not equal" equal="0">
    Just a simple nest with an attrib not nodes equal
+      <node attrib="N">
+	     <sub attrib="A">
+		  </sub>		 
+	  </node>
+      <node attrib="N">
+	     <sub attrib="B">
+		  </sub>
+	  </node>
+   </test>
+
+   <test id="Simple multi-nested not equal" equal="0">
+   Just a simple nest with an attrib not nodes equal
       <node attrib="1">
-	     <othernode attrib="2">
-		 </othernode>
-		 <othernode attrib="7">
-		 </othernode>
+	     <nodeA attrib="A">
+           <sub attrib="X">
+		     </sub>
+		 </nodeA>
+       <nodeB attrib="B">
+       </nodeB>
 	  </node>
       <node attrib="1">
-	     <othernode attrib="2">
-		 </othernode>
-		 <othernode attrib="2">
-		 </othernode>
+	     <nodeA attrib="A">
+           <sub attrib="Y">
+		     </sub>
+		 </nodeA>
+       <nodeB attrib="B">
+       </nodeB>
 	  </node>
    </test>
    
