@@ -88,14 +88,14 @@ void process_xml( std::string filename )
 
    try
    {
-      clock_t tstart = ::clock();
+//      clock_t tstart = ::clock();
 
       node.load( istr, context );
 
-      clock_t tstop = ::clock();
-      cout << " needed " <<
-         (tstop-tstart)/static_cast<float>(CLOCKS_PER_SEC)
-         << " seconds." << endl;
+//      clock_t tstop = ::clock();
+//      cout << " needed " <<
+//         (tstop-tstart)/static_cast<float>(CLOCKS_PER_SEC)
+//         << " seconds." << endl;
 
       dump_node( node );
 
