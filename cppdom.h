@@ -608,10 +608,19 @@ public:
    /** saves node to xml output stream */
    void save( std::ostream &outstream );
 
-   void loadFile( const std::string& st )
+   /**
+    * \exception throws cppdom::XMLError when the file name is invalid.
+    */
+   void loadFile( const std::string& st ) throw(XMLError)
    {
       std::ifstream file_istream;
       file_istream.open( st.c_str(), std::ios::in );
+
+      if ( ! file_istream.good() )
+      {
+         throw XMLError(xml_filename_invalid);
+      }
+
       this->load( file_istream, contextptr );
       file_istream.close();
    }
