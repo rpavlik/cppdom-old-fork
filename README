@@ -1,0 +1,13 @@
+see COPYING for the license (LGPL)
+
+type 'make' to build cppdom shared and static libs.
+type 'make install prefix=/usr' to install on the system
+type 'make install prefix=$HOME/software' to install in your account
+
+
+the make system suports the following platforms:
+- linux        (gcc 2.96 and 3.0x, gnu make)
+- irix         (CC mips pro, gnu make)
+- Win32        (cl visual studio 6/7, gnu make, cygwin bash or tcsh)
+- solaris      (should work, not tested)
+- freebsd      (should work, not tested)
