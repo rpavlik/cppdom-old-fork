@@ -82,12 +82,14 @@ OBJS=		$(addprefix $(OBJDIR)/, $(BASIC_OBJS))
 C_COMPILE_LINE=		$(C_COMPILE) $(OBJ_NAME_FLAG) $(OBJ_BUILD_FLAG) $<
 CXX_COMPILE_LINE=	$(CXX_COMPILE) $(OBJ_NAME_FLAG) $(OBJ_BUILD_FLAG) $<
 
+MAKE_THE_OBJDIR=	@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR) ; fi
+
 # Pattern rule for compiling $(OBJ_EXT) files from .c files.
 $(OBJDIR)/%$(OBJ_EXT): %.c
 ifdef WARN_MSG
 	$(warning $(WARN_MSG))
 endif
-	@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR) ; fi
+	-$(MAKE_THE_OBJDIR)
 	$(C_COMPILE_LINE)
 
 # Pattern rule for compiling $(OBJ_EXT) files from .C files.
@@ -95,7 +97,7 @@ $(OBJDIR)/%$(OBJ_EXT): %.C
 ifdef WARN_MSG
 	$(warning $(WARN_MSG))
 endif
-	@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR) ; fi
+	-$(MAKE_THE_OBJDIR)
 	$(CXX_COMPILE_LINE)
 
 # Pattern rule for compiling $(OBJ_EXT) files from .CC files.
@@ -103,7 +105,7 @@ $(OBJDIR)/%$(OBJ_EXT): %.CC
 ifdef WARN_MSG
 	$(warning $(WARN_MSG))
 endif
-	@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR) ; fi
+	-$(MAKE_THE_OBJDIR)
 	$(CXX_COMPILE_LINE)
 
 # Pattern rule for compiling $(OBJ_EXT) files from .cc files.
@@ -111,7 +113,7 @@ $(OBJDIR)/%$(OBJ_EXT): %.cc
 ifdef WARN_MSG
 	$(warning $(WARN_MSG))
 endif
-	@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR) ; fi
+	-$(MAKE_THE_OBJDIR)
 	$(CXX_COMPILE_LINE)
 
 # Pattern rule for compiling $(OBJ_EXT) files from .cpp files.
@@ -119,7 +121,7 @@ $(OBJDIR)/%$(OBJ_EXT): %.cpp
 ifdef WARN_MSG
 	$(warning $(WARN_MSG))
 endif
-	@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR) ; fi
+	-$(MAKE_THE_OBJDIR)
 	$(CXX_COMPILE_LINE)
 
 # Pattern rule for compiling $(OBJ_EXT) files from .c++ files.
@@ -127,7 +129,7 @@ $(OBJDIR)/%$(OBJ_EXT): %.c++
 ifdef WARN_MSG
 	$(warning $(WARN_MSG))
 endif
-	@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR) ; fi
+	-$(MAKE_THE_OBJDIR)
 	$(CXX_COMPILE_LINE)
 
 # Pattern rule for compiling $(OBJ_EXT) files from .cxx files.
@@ -135,7 +137,7 @@ $(OBJDIR)/%$(OBJ_EXT): %.cxx
 ifdef WARN_MSG
 	$(warning $(WARN_MSG))
 endif
-	@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR) ; fi
+	-$(MAKE_THE_OBJDIR)
 	$(CXX_COMPILE_LINE)
 
 # Set up the vpath stuff for finding the source files.  The default is to

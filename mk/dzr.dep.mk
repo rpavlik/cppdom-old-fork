@@ -97,39 +97,41 @@ else
 		   sed $(_CC_SED_EXP) > $@ ; [ -s $@ ] || rm -f $@'
 endif
 
+MAKE_THE_DEPDIR=	-@if [ ! -d $(DEPDIR) ]; then mkdir $(DEPDIR) ; fi
+
 $(DEPDIR)/%.d: %.c
 	@echo "Updating dependency file $@ ..."
-	@if [ ! -d $(DEPDIR) ]; then mkdir $(DEPDIR) ; fi
+	-$(MAKE_THE_DEPDIR)
 	@$(_C_DEPGEN)
 
 $(DEPDIR)/%.d: %.C
 	@echo "Updating dependency file $@ ..."
-	@if [ ! -d $(DEPDIR) ]; then mkdir $(DEPDIR) ; fi
+	-$(MAKE_THE_DEPDIR)
 	@$(_CXX_DEPGEN)
 
 $(DEPDIR)/%.d: %.CC
 	@echo "Updating dependency file $@ ..."
-	@if [ ! -d $(DEPDIR) ]; then mkdir $(DEPDIR) ; fi
+	-$(MAKE_THE_DEPDIR)
 	@$(_CXX_DEPGEN)
 
 $(DEPDIR)/%.d: %.cc
 	@echo "Updating dependency file $@ ..."
-	@if [ ! -d $(DEPDIR) ]; then mkdir $(DEPDIR) ; fi
+	-$(MAKE_THE_DEPDIR)
 	@$(_CXX_DEPGEN)
 
 $(DEPDIR)/%.d: %.c++
 	@echo "Updating dependency file $@ ..."
-	@if [ ! -d $(DEPDIR) ]; then mkdir $(DEPDIR) ; fi
+	-$(MAKE_THE_DEPDIR)
 	@$(_CXX_DEPGEN)
 
 $(DEPDIR)/%.d: %.cpp
 	@echo "Updating dependency file $@ ..."
-	@if [ ! -d $(DEPDIR) ]; then mkdir $(DEPDIR) ; fi
+	-$(MAKE_THE_DEPDIR)
 	@$(_CXX_DEPGEN)
 
 $(DEPDIR)/%.d: %.cxx
 	@echo "Updating dependency file $@ ..."
-	@if [ ! -d $(DEPDIR) ]; then mkdir $(DEPDIR) ; fi
+	-$(MAKE_THE_DEPDIR)
 	@$(_CXX_DEPGEN)
 
 # Include all the files in $(DEPEND_FILES) unless we are cleaning up the
