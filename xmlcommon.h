@@ -2,7 +2,7 @@
    xmlpp - an xml parser and validator written in C++
    (c) 2000 Michael Fink
    (c) 2001 Karl Pitrich
-      
+
    $Id$
 */
 
@@ -18,9 +18,9 @@
 //! namespace of the xmlpp project
 namespace xmlpp {
 
-//! dummy define		  
+//! dummy define		
 #define XMLPP_API
-		  
+		
 //! handle to a tagname string in a tagname map
 typedef int xmltagnamehandle;
 //! maps the tagname string to a handle
@@ -28,7 +28,7 @@ typedef std::map<xmltagnamehandle,string> xmltagnamemap;
 //! maps an entity to a string representation
 typedef std::map<string,string> xmlentitymap;
 
-		  
+		
 //! xml parsing error codes enumeration
 enum xmlerrorcode {
 	//! unspecified or unknown error
@@ -67,18 +67,14 @@ enum xmlerrorcode {
 	xml_file_access	
 };
 
-//! node type enumeration
-enum xmlnodetype {
-	//! normal node, can contain subnodes
-	xml_nt_node,
-	//! a leaf node, which contains no further nodes, eg. <img/>
-	xml_nt_leaf,
-	//! document root node
-	xml_nt_document,
-	//! cdata node, which only contains char data
-	xml_nt_cdata,
-	//! dummy node type
-	xml_nt_dummy
+/** node type enumeration */
+enum xmlnodetype
+{
+	xml_nt_node,      /**< normal node, can contain subnodes */	
+	xml_nt_leaf,      /**< a leaf node, which contains no further nodes, eg. <img/> */	
+	xml_nt_document,  /**< document root node */	
+	xml_nt_cdata,     /**< cdata node, which only contains char data */	
+	xml_nt_dummy      /**< dummy node type */
 };
 
 

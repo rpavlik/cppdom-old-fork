@@ -90,7 +90,8 @@ xmlstring xmlcontext::get_entity( const xmlstring &entname )
 
 xmlstring xmlcontext::get_tagname( xmltagnamehandle handle )
 {
-   if (!init) init_context();
+   if (!init)
+      init_context();
    xmltagnamemap::const_iterator iter = tagnames.find( handle );
 
    xmlstring empty("");
@@ -99,7 +100,8 @@ xmlstring xmlcontext::get_tagname( xmltagnamehandle handle )
 
 xmltagnamehandle xmlcontext::insert_tagname( const xmlstring &tagname )
 {
-   if (!init) init_context();
+   if (!init)
+      init_context();
 
    // bugfix: first search, if the tagname is already in the list
    // since usually there are not much different tagnames, the search
@@ -109,10 +111,12 @@ xmltagnamehandle xmlcontext::insert_tagname( const xmlstring &tagname )
    stop = tagnames.end();
 
    for(;iter!=stop;iter++)
-   if ((*iter).second == tagname )
    {
-      return (*iter).first;
-   }   
+      if ((*iter).second == tagname )
+      {
+         return (*iter).first;
+      }
+   }
 
    // insert new tagname
    xmltagnamemap::value_type keyvaluepair(nexthandle,tagname);
@@ -124,14 +128,14 @@ xmltagnamehandle xmlcontext::insert_tagname( const xmlstring &tagname )
 
 // xmlattributes methods
 
-xmlstring xmlattributes::get(const xmlstring &key)
+xmlstring xmlattributes::get(const xmlstring &key) const
 {
    xmlattributes::const_iterator iter;
 
    // try to find the key in the map
    iter = find( key );
    xmlstring empty("");
-   return iter == end() ? empty : iter->second;
+   return ((iter == end()) ? empty : iter->second);
 }
 
 void xmlattributes::set(const xmlstring &key, const xmlstring &value)
@@ -159,7 +163,7 @@ xmlnode::xmlnode( const xmlnode &node )
    contextptr = node.contextptr;
    nodetype = node.nodetype;
    attributes = node.attributes;
-   cdata = node.cdata;
+   mCdata = node.mCdata;
    nodelist = node.nodelist;
 };
 
@@ -169,7 +173,7 @@ xmlnode &xmlnode::operator =( const xmlnode &node )
    contextptr = node.contextptr;
    nodetype = node.nodetype;
    attributes = node.attributes;
-   cdata = node.cdata;
+   mCdata = node.mCdata;
    nodelist = node.nodelist;
    return *this;
 };
@@ -242,7 +246,7 @@ void xmlnode::save( std::ostream &outstream, int indent )
    // output cdata
    if (nodetype == xml_nt_cdata)
    {
-      outstream << cdata.c_str() << std::endl;
+      outstream << mCdata.c_str() << std::endl;
       return;
    }
 
@@ -272,7 +276,7 @@ void xmlnode::save( std::ostream &outstream, int indent )
          xmlnodelist::const_iterator iter,stop;
          iter = nodelist.begin();
          stop = nodelist.end();
-         
+
          for(;iter!=stop;iter++)
             (*iter)->save(outstream,indent+1);
 
@@ -298,15 +302,16 @@ void xmlnode::save( std::ostream &outstream, int indent )
 
 // xmldocument methods
 
-/*! \exception throws xmlpp::xmlerror when a streaming or parsing error occur */
+/** \exception throws xmlpp::xmlerror when a streaming or parsing error occur */
 void xmldocument::load( std::istream &instream, xmlcontextptr &ctxptr )
 {
-   xmlparser parser(instream,ctxptr->get_location());
+   xmlparser parser(instream, ctxptr->get_location());
    parser.parse_document( *this, ctxptr );
 }
 
-//! \todo implement: print <!doctype> tag;
-/*! \exception throws xmlpp::xmlerror when a streaming or parsing error occur */
+/** \todo implement: print <!doctype> tag;
+* \exception throws xmlpp::xmlerror when a streaming or parsing error occur
+*/
 void xmldocument::save( std::ostream &outstream )
 {
    // output all processing instructions
@@ -317,7 +322,7 @@ void xmldocument::save( std::ostream &outstream )
    for(;iter!=stop;iter++)
    {
       xmlnodeptr np = *iter;
-      
+
       // output pi tag
       outstream << "<?" << np->name().c_str();
 
@@ -332,7 +337,7 @@ void xmldocument::save( std::ostream &outstream )
          outstream << ' ' << attr.first.c_str() << '='
             << '\"' << attr.second.c_str() << '\"';
       }
-      // output closing brace      
+      // output closing brace
       outstream << "?>" << std::endl;
    }
 
@@ -342,7 +347,7 @@ void xmldocument::save( std::ostream &outstream )
 
 
    // call save() method of the first (and hopefully only) node in xmldocument
-   (*nodelist.begin())->save(outstream,0);   
+   (*nodelist.begin())->save(outstream,0);
 }
 
 // namespace end
