@@ -88,6 +88,9 @@ SHARED_LIB_FILENAME=$(SHLIB_PREFIX)$(LIB_NAME)$(SHLIB_EXT)
 STATIC_LIB_FILENAME=$(LIB_PREFIX)$(LIB_NAME)$(LIB_EXT)
 all: $(SHARED_LIB_FILENAME) $(STATIC_LIB_FILENAME)
 
+test:
+	-cd test && ${MAKE}
+
 # Target for the shared library to be built.
 $(SHARED_LIB_FILENAME): $(OBJS)
 	$(SHARED_LINK) -o $@ $(OBJS)
@@ -102,7 +105,7 @@ $(STATIC_LIB_FILENAME): $(OBJS)
 #        - prefix is your install path, edit it to specify the default
 prefix ?= installed
 INSTALLCMD=./install-sh
-install: all
+install: all test
 	-$(INSTALLCMD) -d $(prefix)/include
 	-$(INSTALLCMD) -d $(prefix)/include/$(LIB_NAME)
 	-$(INSTALLCMD) -d $(prefix)/lib$(LIBBITSUF)
@@ -110,5 +113,6 @@ install: all
 	-$(INSTALLCMD) -d $(prefix)/bin
 	-cp $(LIB_NAME)/*.h $(prefix)/include/$(LIB_NAME)
 	-cp $(SHARED_LIB_FILENAME) $(STATIC_LIB_FILENAME) $(prefix)/lib$(LIBBITSUF)
+	-cp test/predtest test/nodetest test/parsetest test/*.xml $(prefix)/share/$(LIB_NAME)
 
 CLOBBER_FILES += $(SHARED_LIB_FILENAME) $(STATIC_LIB_FILENAME)
