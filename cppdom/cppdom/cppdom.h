@@ -235,17 +235,9 @@ namespace cppdom
    class CPPDOM_API XMLAttribute
    {
    public:
-      XMLAttribute() : mData("") {}
-
-      XMLAttribute(const XMLAttribute& r)
-      {
-         mData = r.mData;
-      }
-
-      XMLAttribute(const std::string& str_val)
-      {
-         mData = str_val;
-      }
+      XMLAttribute();
+      XMLAttribute(const XMLAttribute& attr);
+      XMLAttribute(const std::string& val);
 
 #ifndef CPPDOM_NO_MEMBER_TEMPLATES
       template<class T>
@@ -255,15 +247,13 @@ namespace cppdom
       }
 #endif // ! CPPDOM_NO_MEMBER_TEMPLATES
 
-      std::string getString() const
-      {
-         return mData;
-      }
+      const std::string& getString() const;
 
 #ifndef CPPDOM_NO_MEMBER_TEMPLATES
-      /** Set mData to the string value of val
-      * @note Requires a stream operation of type T
-      */
+      /**
+       * Set mData to the string value of val
+       * @note Requires a stream operation of type T
+       */
       template<class T>
       void setValue(const T& val)
       {
@@ -299,10 +289,7 @@ namespace cppdom
 #endif // ! CPPDOM_NO_MEMBER_TEMPLATES
 
       /** Autoconversion to string (so old code should work) */
-      operator std::string() const
-      {
-         return mData;
-      }
+      operator std::string() const;
 
    protected:
       std::string mData;
