@@ -50,13 +50,13 @@ bool XMLParser::parseDocument( XMLDocument &doc, XMLContextPtr &ctxptr )
    // set root nodename
    doc.contextptr = ctxptr;
    XMLString rootstr("root");
-   doc.nodenamehandle = ctxptr->insert_tagname( rootstr );
+   doc.nodenamehandle = ctxptr->insertTagname( rootstr );
 
-   bool handle = ctxptr->handle_events();
+   bool handle = ctxptr->handleEvents();
 
    // start parsing
    if (handle)
-      ctxptr->get_eventhandler().startDocument();
+      ctxptr->getEventhandler().startDocument();
 
    parseHeader( doc, ctxptr );
 
@@ -73,7 +73,7 @@ bool XMLParser::parseDocument( XMLDocument &doc, XMLContextPtr &ctxptr )
    }
 
    if (handle)
-      ctxptr->get_eventhandler().endDocument();
+      ctxptr->getEventhandler().endDocument();
 
    return ret;
 }
@@ -149,14 +149,14 @@ bool XMLParser::parseHeader( XMLDocument &doc, XMLContextPtr &ctxptr )
             XMLNode pinode( ctxptr );
 
             XMLString tagname( token3.get_generic() );
-            pinode.nodenamehandle = ctxptr->insert_tagname( tagname );
+            pinode.nodenamehandle = ctxptr->insertTagname( tagname );
 
             parseAttributes( pinode.attributes );
 
             XMLNodePtr nodeptr( new XMLNode(pinode) );
             doc.procinstructions.push_back( nodeptr );
 
-            if (ctxptr->handle_events()) ctxptr->get_eventhandler().processingInstruction(pinode);
+            if (ctxptr->handleEvents()) ctxptr->getEventhandler().processingInstruction(pinode);
 
             tokenizer++;
             if (*tokenizer != '?')
@@ -180,7 +180,7 @@ bool XMLParser::parseHeader( XMLDocument &doc, XMLContextPtr &ctxptr )
 bool XMLParser::parseNode( XMLNode &node, XMLContextPtr &ctxptr )
 {
    node.contextptr = ctxptr;
-   bool handle = ctxptr->handle_events();
+   bool handle = ctxptr->handleEvents();
 
    tokenizer++;
    xmltoken token1 = *tokenizer;
@@ -200,7 +200,7 @@ bool XMLParser::parseNode( XMLNode &node, XMLContextPtr &ctxptr )
       if (!token1.is_literal())
       {
          XMLString cdataname("cdata");
-         node.nodenamehandle = ctxptr->insert_tagname( cdataname );
+         node.nodenamehandle = ctxptr->insertTagname( cdataname );
 
          // parse cdata section(s) and return
          node.nodetype = xml_nt_cdata;
@@ -215,7 +215,7 @@ bool XMLParser::parseNode( XMLNode &node, XMLContextPtr &ctxptr )
          tokenizer.put_back();
 
          if (handle)
-            ctxptr->get_eventhandler().gotCdata( node.mCdata );
+            ctxptr->getEventhandler().gotCdata( node.mCdata );
 
          return true;
       }
@@ -260,17 +260,17 @@ bool XMLParser::parseNode( XMLNode &node, XMLContextPtr &ctxptr )
 
    // insert tag name and set handle for it
    XMLString tagname( token2.get_generic() );
-   node.nodenamehandle = ctxptr->insert_tagname( tagname );
+   node.nodenamehandle = ctxptr->insertTagname( tagname );
 
    // notify event handler
    if (handle)
-      ctxptr->get_eventhandler().startNode( tagname );
+      ctxptr->getEventhandler().startNode( tagname );
 
    // parse attributes
    this->parseAttributes( node.attributes );
 
    if (handle)
-      ctxptr->get_eventhandler().parsedAttributes( node.attributes );
+      ctxptr->getEventhandler().parsedAttributes( node.attributes );
 
    // check for leaf
    tokenizer++;
@@ -329,7 +329,7 @@ bool XMLParser::parseNode( XMLNode &node, XMLContextPtr &ctxptr )
    if (*tokenizer != '>')
       throw XMLError(xml_opentag_expected);
 
-   if (handle) ctxptr->get_eventhandler().endNode( node );
+   if (handle) ctxptr->getEventhandler().endNode( node );
 
    return true;
 }
