@@ -83,13 +83,13 @@ _MKDEP_SED_EXP=	'\''s|.*\($*\)\$(OBJ_EXT)[ :]*|$$(OBJDIR)/\1$(OBJ_EXT) $@: |g'\'
 # the compiler is cl (Windows only), use makedepend(1).  Otherwise, we can use
 # the compiler itself to do the job.
 ifdef USE_MAKEDEPEND
-   DEPENDFLAGS=	${INCLUDES} ${EXTRA_DEPENDFLAGS}
-   DEPEND_EXTRAS=	${DEFS}
+   DEPENDFLAGS=	${INCLUDES} ${EXTRA_DEPENDFLAGS} ${OS_DEPENDFLAGS}
+   DEPEND_EXTRAS=${DEFS}
    _C_DEPGEN=	$(SHELL) -ec 'makedepend -f- -o$(OBJ_EXT)		\
-		   $(DEPENDFLAGS) -- $(DEPEND_EXTRAS) ${CFLAGS} -- $< |		\
+		   $(DEPENDFLAGS) -- $(DEPEND_EXTRAS) -- $< |		\
 		   sed $(_MKDEP_SED_EXP) > $@ ; [ -s $@ ] || rm -f $@'
    _CXX_DEPGEN=	$(SHELL) -ec 'makedepend -f- -o$(OBJ_EXT)		\
-		   $(DEPENDFLAGS) -- $(DEPEND_EXTRAS) ${CXXFLAGS} -- $< |		\
+		   $(DEPENDFLAGS) -- $(DEPEND_EXTRAS) -- $< |		\
 		   sed $(_MKDEP_SED_EXP) > $@ ; [ -s $@ ] || rm -f $@'
 else
    _C_DEPGEN=	$(SHELL) -ec '$(C_COMPILE) $(DEP_GEN_FLAG) $< |		\
