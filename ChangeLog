@@ -1,5 +1,8 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  --------------------------------------------------------
+2003-01-06 allenb       Added general project documentation in the form of
+                        .dox files in the doc/dox directory.  Modified doxy
+						config file to parse these files for documentation.
 2003-01-03 nonchocoboy  Removed the XML prefix on the class names.
 2003-01-02 nonchocoboy  Brought the VC7 build up to date.
                         NEW VERSON: 0.1.0
