@@ -126,3 +126,4 @@ OS_STATIC_END=
 
 # Extra library options.
 OS_LIBBITSUF=	
+OS_DEPENDFLAGS = -D_M_IX86 -D__cplusplus -D_WIN32 -DWIN32
