@@ -1,5 +1,10 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
+2004-02-29 allenb       Moved the node type enum into Node as Node::Type. 
+                        This breaks all old code that used the type interface.
+                        To help avoid future breakage in the future, added
+                        an interface to Node to query for node type. (isLeaf(),
+                        isNode(), isCData(), isDocument()).
 2004-02-25 allenb       Modified build to take into account separate boost
                         include directory.
 2004-02-21 allenb       Started adding tests for boost spirit parsing.
