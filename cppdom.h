@@ -71,7 +71,7 @@
 namespace cppdom
 {
    //! xml parsing error codes enumeration
-   enum XMLErrorCode
+   enum ErrorCode
    {
       xml_unknown = 0,              /**< unspecified or unknown error */
       xml_instream_error,           /**< error in the infile stream */
@@ -98,16 +98,16 @@ namespace cppdom
 
    /**
     * xml error class
-    * contains an XMLErrorCode and is thrown while parsing xml input
+    * contains an ErrorCode and is thrown while parsing xml input
     */
-   class CPPDOM_API XMLError
+   class CPPDOM_API Error
    {
    public:
       /** constructor */
-      XMLError(XMLErrorCode code);
+      Error(ErrorCode code);
 
       /** returns the error code */
-      XMLErrorCode getError() const;
+      ErrorCode getError() const;
 
       /** returns the string representation of the error code */
       void getStrError(std::string& error) const;
@@ -118,7 +118,7 @@ namespace cppdom
       std::string getInfo() const;
 
    protected:
-      XMLErrorCode mErrorCode;
+      ErrorCode mErrorCode;
    };
 
 
@@ -127,11 +127,11 @@ namespace cppdom
     * represents the position in the xml input stream; usable if load()
     *    throws an error on parsing xml content
     */
-   class CPPDOM_API XMLLocation
+   class CPPDOM_API Location
    {
    public:
       /** Constructor */
-      XMLLocation();
+      Location();
 
       /** returns current line */
       int getLine() const;
@@ -157,40 +157,40 @@ namespace cppdom
    // typedefs
 
    /** handle to a tagname string in a tagname map */
-   typedef int XMLTagNameHandle;
+   typedef int TagNameHandle;
    /** maps the tagname string to a handle */
-   typedef std::map<XMLTagNameHandle,std::string> XMLTagNameMap;
+   typedef std::map<TagNameHandle,std::string> TagNameMap;
    /** maps an entity to a string representation */
-   typedef std::map<std::string,std::string> XMLEntityMap;
-   /** smart pointer for XMLContext */
-   typedef cppdom_boost::shared_ptr<class XMLContext> XMLContextPtr;
+   typedef std::map<std::string,std::string> EntityMap;
+   /** smart pointer for Context */
+   typedef cppdom_boost::shared_ptr<class Context> ContextPtr;
    /** smart pointer to the event handler */
-   typedef cppdom_boost::shared_ptr<class XMLEventHandler> XMLEventHandlerPtr;
+   typedef cppdom_boost::shared_ptr<class EventHandler> EventHandlerPtr;
 
    /**
     * xml parsing context class.
     * the class is the parsing context for the parsed xml document.
     * the class has a tagname lookup table and an entity map
     */
-   class CPPDOM_API XMLContext
+   class CPPDOM_API Context
    {
    public:
       /** ctor */
-      XMLContext();
+      Context();
       /** dtor */
-      virtual ~XMLContext();
+      virtual ~Context();
 
       /** returns the entity representation for the named entity */
       std::string getEntity(const std::string& entname);
 
       /** returns the tagname by the tagname handle */
-      std::string getTagname(XMLTagNameHandle handle);
+      std::string getTagname(TagNameHandle handle);
 
       /** inserts a tag name and returns a tag name handle to the string */
-      XMLTagNameHandle insertTagname(const std::string& tagname);
+      TagNameHandle insertTagname(const std::string& tagname);
 
       /** returns the current location in the xml stream */
-      XMLLocation& getLocation();
+      Location& getLocation();
 
       /** called once when the context instance starts up; overwrite to customize
       * @note: The base member should always be called, to set init to true
@@ -200,10 +200,10 @@ namespace cppdom
       /** @name event handling methods */
       //@{
       /** sets the event handler; enables handling events */
-      void setEventHandler(XMLEventHandlerPtr ehptr);
+      void setEventHandler(EventHandlerPtr ehptr);
 
       /** returns the currently used eventhandler (per reference) */
-      XMLEventHandler& getEventHandler();
+      EventHandler& getEventHandler();
 
       /** returns if a valid event handler is set */
       bool handleEvents() const;
@@ -212,15 +212,15 @@ namespace cppdom
    protected:
       bool           mInit;               /**< indicates if init_context() was already called */
       int            mNextHandle;         /**< next available tagname handle */
-      XMLTagNameMap  mTagNames;           /**< matches XMLTagNameHandles to the real std::string's */
-      XMLEntityMap   mEntities;           /**< Contains entity codes and their string representations */
-      XMLLocation    mLocation;           /**< location of the xml input stream */
+      TagNameMap  mTagNames;           /**< matches TagNameHandles to the real std::string's */
+      EntityMap   mEntities;           /**< Contains entity codes and their string representations */
+      Location    mLocation;           /**< location of the xml input stream */
       bool           mHandleEvents;       /**< indicates if the event handler is used */
-      XMLEventHandlerPtr mEventHandler;   /**< current parsing event handler */
+      EventHandlerPtr mEventHandler;   /**< current parsing event handler */
    };
 
    /** node type enumeration */
-   enum XMLNodeType
+   enum NodeType
    {
       xml_nt_node,      /**< normal node, can contain subnodes */
       xml_nt_leaf,      /**< a leaf node, which contains no further nodes, eg. <img/> */
@@ -231,11 +231,11 @@ namespace cppdom
 
    // typedefs
    /** smart pointer to node */
-   typedef cppdom_boost::shared_ptr<class XMLNode> XMLNodePtr;
+   typedef cppdom_boost::shared_ptr<class Node> NodePtr;
 
    /** list of node smart pointer */
-   typedef std::list<XMLNodePtr> XMLNodeList;
-   typedef XMLNodeList::iterator XMLNodeListIterator;
+   typedef std::list<NodePtr> NodeList;
+   typedef NodeList::iterator NodeListIterator;
 
 
 
@@ -243,16 +243,16 @@ namespace cppdom
     * XML attribute class.
     * Just wraps a string (this is really just and attribute VALUE)
     */
-   class CPPDOM_API XMLAttribute
+   class CPPDOM_API Attribute
    {
    public:
-      XMLAttribute();
-      XMLAttribute(const XMLAttribute& attr);
-      XMLAttribute(const std::string& val);
+      Attribute();
+      Attribute(const Attribute& attr);
+      Attribute(const std::string& val);
 
 #ifndef CPPDOM_NO_MEMBER_TEMPLATES
       template<class T>
-      XMLAttribute(const T& val)
+      Attribute(const T& val)
       {
          setValue<T>(val);
       }
@@ -309,7 +309,7 @@ namespace cppdom
 #ifndef CPPDOM_NO_MEMBER_TEMPLATES
 #ifndef _MSC_VER
    template<>
-   inline std::string XMLAttribute::getValue<std::string>() const
+   inline std::string Attribute::getValue<std::string>() const
    {
       std::string value(mData);
       return value;
@@ -322,12 +322,12 @@ namespace cppdom
     * xml tag attribute map
     * contains all attributes and values a tag has, represented in a map
     */
-   class CPPDOM_API XMLAttributes: public std::map<std::string, std::string>
+   class CPPDOM_API Attributes: public std::map<std::string, std::string>
    {
-      friend class XMLParser;
+      friend class Parser;
    public:
       /** ctor */
-      XMLAttributes();
+      Attributes();
 
       /**
        * Get the named attribute
@@ -354,45 +354,45 @@ namespace cppdom
    /** xml node
    * A node has the following properties
    * name - The element name of the node
-   * type - The type of the node. see XMLNodeType
+   * type - The type of the node. see NodeType
    * children - Child elements of the node
    * cdata - the cdata content if of type cdata
    *
    */
-   class CPPDOM_API XMLNode
+   class CPPDOM_API Node
    {
-      friend class XMLParser;
+      friend class Parser;
    protected:
       /** Default Constructor */
-      XMLNode();
+      Node();
 
    public:
       /** constructor, takes xml context pointer */
-      explicit XMLNode(XMLContextPtr pctx);
+      explicit Node(ContextPtr pctx);
 
-      XMLNode(const XMLNode& node);
-      ~XMLNode();
+      Node(const Node& node);
+      ~Node();
 
       /** assign operator */
-      XMLNode& operator=(const XMLNode& node);
+      Node& operator=(const Node& node);
 
       /** @name access to node info */
       //@{
       /** returns type of node */
-      XMLNodeType getType() const;
+      NodeType getType() const;
 
       /** Returns the local name of the node (the element name) */
       std::string getName();
 
       /** returns attribute map of the node */
-      XMLAttributes& getAttrMap();
+      Attributes& getAttrMap();
 
       /**
        * Get the named attribute
        * @returns empty string ("") if not found, else the value
        * @post Object does not change.
        */
-      XMLAttribute getAttribute(const std::string& name) const;
+      Attribute getAttribute(const std::string& name) const;
 
       /** Check if the node has a given attribute */
       bool hasAttribute(const std::string& name) const;
@@ -408,7 +408,7 @@ namespace cppdom
       /** @name node data manipulation */
       //@{
       /** sets new nodetype */
-      void setType(XMLNodeType type);
+      void setType(NodeType type);
 
       /** set the node name */
       void setName(const std::string& name);
@@ -420,10 +420,10 @@ namespace cppdom
        * sets new attribute value
        * @post Element.attr is set to value.  If it didn't exist before, now it does.
        */
-      void setAttribute(const std::string& attr, const XMLAttribute& value);
+      void setAttribute(const std::string& attr, const Attribute& value);
 
-      void addChild(XMLNodePtr& node);
-      bool removeChild(XMLNodePtr& node);
+      void addChild(NodePtr& node);
+      bool removeChild(NodePtr& node);
       bool removeChild(std::string& childName);
       bool removeChildren(std::string& childName);
       //@}
@@ -432,31 +432,31 @@ namespace cppdom
       //@{
 
       /** returns a list of the nodes children */
-      XMLNodeList& getChildren();
+      NodeList& getChildren();
 
       /** Returns the first child of the given local name */
-      XMLNodePtr getChild(const std::string& name);
+      NodePtr getChild(const std::string& name);
 
       /**
        * Returns a list of all children (one level deep) with local name of childName
        * \note currently no path-like childname can be passed, like in e.g. msxml
        * If has standard compose() functions, could impl this by calling getChildren(pred)
        */
-      XMLNodeList getChildren(const std::string& name);
+      NodeList getChildren(const std::string& name);
 
       /**
        * Returns list of all children.
        * @see getChildren
        * @note Needed because of predicate template matching char*
        */
-      XMLNodeList getChildren(const char* name);
+      NodeList getChildren(const char* name);
 
       /** Return a list of children that pass the given STL predicate */
       template<class Predicate>
-      XMLNodeList getChildrenPred(Predicate pred)
+      NodeList getChildrenPred(Predicate pred)
       {
-         XMLNodeList result(0);
-         XMLNodeList::const_iterator iter;
+         NodeList result(0);
+         NodeList::const_iterator iter;
 
          // search for all occurances of nodename and insert them into the new list
          for(iter = mNodeList.begin(); iter != mNodeList.end(); ++iter)
@@ -474,81 +474,81 @@ namespace cppdom
        *
        * @return Our parent, which may be NULL if we have no parent.
        */
-      XMLNode* getParent() const;
+      Node* getParent() const;
       //@}
 
       /** @name load/save functions */
       //@{
       /** loads xml node from input stream */
-      void load(std::istream& in, XMLContextPtr& context);
+      void load(std::istream& in, ContextPtr& context);
 
       /** saves node to xml output stream */
       void save(std::ostream& out, int indent=0);
       //@}
 
-      XMLContextPtr getContext();
+      ContextPtr getContext();
 
    protected:
-      XMLTagNameHandle  mNodeNameHandle;  /**< handle to the real tag name */
-      XMLContextPtr     mContext;         /**< smart pointer to the context class */
-      XMLNodeType       mNodeType;        /**< The type of the node */
-      XMLAttributes     mAttributes;      /**< Attributes of the element */
-      std::string       mCdata;           /**< Character data (if there is any) */
-      XMLNodeList       mNodeList;        /**< stl list with subnodes */
-      XMLNode*          mParent;          /**< Our parent */
+      TagNameHandle  mNodeNameHandle;  /**< handle to the real tag name */
+      ContextPtr     mContext;         /**< smart pointer to the context class */
+      NodeType       mNodeType;        /**< The type of the node */
+      Attributes     mAttributes;      /**< Attributes of the element */
+      std::string    mCdata;           /**< Character data (if there is any) */
+      NodeList       mNodeList;        /**< stl list with subnodes */
+      Node*          mParent;          /**< Our parent */
    };
 
 
    /** xml document */
-   class CPPDOM_API XMLDocument: public XMLNode
+   class CPPDOM_API Document: public Node
    {
-      friend class XMLParser;
+      friend class Parser;
    public:
-      XMLDocument();
+      Document();
 
       /** constructor taking xml context pointer */
-      explicit XMLDocument(XMLContextPtr context);
+      explicit Document(ContextPtr context);
 
       /** returns a list of processing instruction nodes */
-      XMLNodeList& getPiList();
+      NodeList& getPiList();
 
       /** returns a list of document type definition rules to check the xml file */
-      XMLNodeList& getDtdList();
+      NodeList& getDtdList();
 
       /** loads xml Document (node) from input stream */
-      void load(std::istream& in, XMLContextPtr& context);
+      void load(std::istream& in, ContextPtr& context);
 
       /** saves node to xml output stream */
       void save(std::ostream& out);
 
       /**
-       * \exception throws cppdom::XMLError when the file name is invalid.
+       * \exception throws cppdom::Error when the file name is invalid.
        */
-      void loadFile(const std::string& filename) throw(XMLError);
+      void loadFile(const std::string& filename) throw(Error);
 
       void saveFile(const std::string& filename);
 
 
    protected:
       /** node list of parsed processing instructions */
-      XMLNodeList mProcInstructions;
+      NodeList mProcInstructions;
 
       /** node list of document type definition rules */
-      XMLNodeList mDtdRules;
+      NodeList mDtdRules;
    };
 
-   typedef cppdom_boost::shared_ptr<class XMLDocument> XMLDocumentPtr;
+   typedef cppdom_boost::shared_ptr<class Document> DocumentPtr;
 
 
    /** Interface for xml parsing event handler */
-   class CPPDOM_API XMLEventHandler
+   class CPPDOM_API EventHandler
    {
    public:
       /** ctor */
-      XMLEventHandler() {}
+      EventHandler() {}
 
       /** virtual dtor */
-      virtual ~XMLEventHandler() {}
+      virtual ~EventHandler() {}
 
       /** called when parsing of an xml document starts */
       virtual void startDocument() {}
@@ -557,14 +557,14 @@ namespace cppdom
       virtual void endDocument() {}
 
       /** called when parsing a processing instruction */
-      virtual void processingInstruction(XMLNode& pinode) {}
+      virtual void processingInstruction(Node& pinode) {}
 
       /** called when start parsing a node */
       virtual void startNode(const std::string& nodename) {}
       /** called when an attribute list was parsed */
-      virtual void parsedAttributes(XMLAttributes& attr) {}
+      virtual void parsedAttributes(Attributes& attr) {}
       /** called when parsing of a node was finished */
-      virtual void endNode(XMLNode& node) {}
+      virtual void endNode(Node& node) {}
 
       /** called when a cdata section ended */
       virtual void gotCdata(const std::string& cdata) {}
