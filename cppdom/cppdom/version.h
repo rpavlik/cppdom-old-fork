@@ -39,11 +39,11 @@
 #ifndef CPPDOM_VERSION_H
 #define CPPDOM_VERSION_H
 
-/**
+/** @file version.h
  * This file contains two useful items.
- *    1. The preprocessor friendly CPPDOM_VERSION "string". It is in the form
+ *   - 1. The preprocessor friendly CPPDOM_VERSION "string". It is in the form
  *       <major><minor><patch> where each part has exactly 3 digits.
- *    2. The C++ friendly variable, version, that contains the version as a
+ *   - 2. The C++ friendly variable, version, that contains the version as a
  *       string. It is in the form of <major>.<minor>.<patch> where each part
  *       has anywhere from 1 to 3 digits.
  */
