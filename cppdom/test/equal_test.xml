@@ -162,7 +162,7 @@
 		    <subsub attrib="2">
 			</subsub>
 		 </sub>
-		 <sub attrib="BC">
+		 <sub attrib="BC"/>
 	  </node>
    </test>  
    
@@ -181,7 +181,7 @@
 		    <subsub attrib="2" data="Y">
 			</subsub>
 		 </sub>
-		 <sub attrib="BC">
+		 <sub attrib="BC"/>
 	  </node>
    </test> 
 
