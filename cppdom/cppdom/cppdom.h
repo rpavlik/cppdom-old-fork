@@ -59,14 +59,6 @@
 //! namespace of the cppdom project
 namespace cppdom
 {
-   /** basic char type */
-   typedef char xml_char_type;
-   /** string class typedef */
-   typedef std::basic_string<xml_char_type> XMLString;
-   /** string smart pointer */
-   typedef cppdom_boost::shared_ptr<XMLString> XMLStringPtr;
-
-
    //! xml parsing error codes enumeration
    enum XMLErrorCode
    {
@@ -107,17 +99,17 @@ namespace cppdom
       XMLErrorCode getError() const { return errorcode; }
 
       /** returns the string representation of the error code */
-      void getStrError(XMLString& error) const;
+      void getStrError(std::string& error) const;
 
-      XMLString getString() const
+      std::string getString() const
       {
-         XMLString err;
+         std::string err;
          this->getStrError(err);
          return err;
       }
 
       /** return additional error info */
-      const XMLString getInfo() const { return "unknown error"; }
+      const std::string getInfo() const { return "unknown error"; }
 
    protected:
       XMLErrorCode errorcode;
@@ -179,9 +171,9 @@ namespace cppdom
    /** handle to a tagname string in a tagname map */
    typedef int XMLTagNameHandle;
    /** maps the tagname string to a handle */
-   typedef std::map<XMLTagNameHandle,XMLString> XMLTagNameMap;
+   typedef std::map<XMLTagNameHandle,std::string> XMLTagNameMap;
    /** maps an entity to a string representation */
-   typedef std::map<XMLString,XMLString> XMLEntityMap;
+   typedef std::map<std::string,std::string> XMLEntityMap;
    /** smart pointer for XMLContext */
    typedef cppdom_boost::shared_ptr<class XMLContext> XMLContextPtr;
    /** smart pointer to the event handler */
@@ -201,13 +193,13 @@ namespace cppdom
       virtual ~XMLContext();
 
       /** returns the entity representation for the named entity */
-      XMLString getEntity(const XMLString& entname);
+      std::string getEntity(const std::string& entname);
 
       /** returns the tagname by the tagname handle */
-      XMLString getTagname(XMLTagNameHandle handle);
+      std::string getTagname(XMLTagNameHandle handle);
 
       /** inserts a tag name and returns a tag name handle to the string */
-      XMLTagNameHandle insertTagname(const XMLString& tagname);
+      XMLTagNameHandle insertTagname(const std::string& tagname);
 
       /** returns the current location in the xml stream */
       XMLLocation& getLocation()
@@ -248,7 +240,7 @@ namespace cppdom
    protected:
       bool           init;                /**< indicates if init_context() was already called */
       int            nexthandle;          /**< next available tagname handle */
-      XMLTagNameMap  tagnames;            /**< matches XMLTagNameHandles to the real XMLString's */
+      XMLTagNameMap  tagnames;            /**< matches XMLTagNameHandles to the real std::string's */
       XMLEntityMap   entities;            /**< Contains entity codes and their string representations */
       XMLLocation    location;            /**< location of the xml input stream */
       bool           handleevents;        /**< indicates if the event handler is used */
@@ -302,7 +294,7 @@ namespace cppdom
       }
 #endif // ! CPPDOM_NO_MEMBER_TEMPLATES
 
-      XMLString getString() const
+      std::string getString() const
       {
          return mData;
       }
@@ -352,7 +344,7 @@ namespace cppdom
       }
 
    protected:
-      XMLString mData;
+      std::string mData;
    };
 
 #ifndef CPPDOM_NO_MEMBER_TEMPLATES
@@ -371,7 +363,7 @@ namespace cppdom
     * xml tag attribute map
     * contains all attributes and values a tag has, represented in a map
     */
-   class CPPDOM_API XMLAttributes: public std::map<XMLString, XMLString>
+   class CPPDOM_API XMLAttributes: public std::map<std::string, std::string>
    {
       friend class XMLParser;
    public:
@@ -383,19 +375,19 @@ namespace cppdom
        * Get the named attribute
        * @returns empty string "" if not found, else the value
        */
-      XMLString get(const XMLString& key) const;
+      std::string get(const std::string& key) const;
 
       /**
        * Sets new attribute value
        * If not found, then just insert the new attribute
        */
-      void set(const XMLString& key, const XMLString& value);
+      void set(const std::string& key, const std::string& value);
 
       /**
        * Check if the attribute map has the given attribute
        * @return false if not found
        */
-      bool has(const XMLString& key) const;
+      bool has(const std::string& key) const;
    };
 
 
@@ -452,7 +444,7 @@ namespace cppdom
       }
 
       /** Returns the local name of the node (the element name) */
-      XMLString getName();
+      std::string getName();
 
       /** returns attribute map of the node */
       XMLAttributes& getAttrMap()
@@ -465,13 +457,13 @@ namespace cppdom
        * @returns empty string ("") if not found, else the value
        * @post Object does not change.
        */
-      XMLAttribute getAttribute(const XMLString& name) const
+      XMLAttribute getAttribute(const std::string& name) const
       {
          return attributes.get(name);
       }
 
       /** Check if the node has a given attribute */
-      bool hasAttribute(const XMLString& name) const
+      bool hasAttribute(const std::string& name) const
       {
          return attributes.has(name);
       }
@@ -481,7 +473,7 @@ namespace cppdom
        * @note: This only returns data for nodes that are leaf nodes of type "cdata".
        *        Calling this on a node that has cdata as a child does nothing
        */
-      const XMLString& getCdata()
+      const std::string& getCdata()
       {
          return mCdata;
       }
@@ -496,10 +488,10 @@ namespace cppdom
       }
 
       /** set the node name */
-      void setName(const XMLString& nname);
+      void setName(const std::string& nname);
 
       /** sets new cdata */
-      void setCdata(const XMLString& ncdata)
+      void setCdata(const std::string& ncdata)
       {
          mCdata = ncdata;
       }
@@ -508,7 +500,7 @@ namespace cppdom
        * sets new attribute value
        * @post Element.attr is set to value.  If it didn't exist before, now it does.
        */
-      void setAttribute(const XMLString& attr, const XMLAttribute& value)
+      void setAttribute(const std::string& attr, const XMLAttribute& value)
       {
          attributes.set(attr, value.getString());
       }
@@ -525,13 +517,13 @@ namespace cppdom
          return false;
       }
 
-      bool removeChild(XMLString& childName)
+      bool removeChild(std::string& childName)
       {
          std::cout << "cppdom::XMLNode::removeChild:  not implemented\n";
          return false;
       }
 
-      bool removeChildren(XMLString& childName)
+      bool removeChildren(std::string& childName)
       {
          std::cout << "cppdom::XMLNode::removeChildren:  not implemented\n";
          return false;
@@ -548,14 +540,14 @@ namespace cppdom
       }
 
       /** Returns the first child of the given local name */
-      XMLNodePtr getChild(const XMLString& name);
+      XMLNodePtr getChild(const std::string& name);
 
       /**
        * Returns a list of all children (one level deep) with local name of childName
        * \note currently no path-like childname can be passed, like in e.g. msxml
        * If has standard compose() functions, could impl this by calling getChildren(pred)
        */
-      XMLNodeList getChildren(const XMLString& name)
+      XMLNodeList getChildren(const std::string& name)
       {
          XMLNodeList ret_nlist(0);
          XMLNodeList::const_iterator iter;
@@ -579,7 +571,7 @@ namespace cppdom
        */
       XMLNodeList getChildren(const char* name)
       {
-         return getChildren(XMLString(name));
+         return getChildren(std::string(name));
       }
 
       /** Return a list of children that pass the given STL predicate */
@@ -631,7 +623,7 @@ namespace cppdom
       XMLContextPtr     contextptr;       /**< smart pointer to the context class */
       XMLNodeType       nodetype;         /**< The type of the node */
       XMLAttributes     attributes;       /**< Attributes of the element */
-      XMLString         mCdata;           /**< Character data (if there is any) */
+      std::string         mCdata;           /**< Character data (if there is any) */
       XMLNodeList       mNodelist;        /**< stl list with subnodes */
       XMLNode*          mParent;          /**< Our parent */
    };
@@ -727,14 +719,14 @@ namespace cppdom
       virtual void processingInstruction(XMLNode& pinode){}
 
       /** called when start parsing a node */
-      virtual void startNode(const XMLString& nodename){}
+      virtual void startNode(const std::string& nodename){}
       /** called when an attribute list was parsed */
       virtual void parsedAttributes(XMLAttributes& attr){}
       /** called when parsing of a node was finished */
       virtual void endNode(XMLNode& node){}
 
       /** called when a cdata section ended */
-      virtual void gotCdata(const XMLString& cdata){}
+      virtual void gotCdata(const std::string& cdata){}
    };
 }
 
