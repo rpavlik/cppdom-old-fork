@@ -1,5 +1,10 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
+2004-02-25 allenb       Modified build to take into account separate boost
+                        include directory.
+2004-02-21 allenb       Started adding tests for boost spirit parsing.
+                        Added options for boost spirit
+                        NEW VERSION: 0.3.1
 2004-02-20 allenb       Added more extensive tests to test suite.  Added metric
                         tests for loading and parsing documents.
 2004-02-14 allenb       Restructure the test suite.  Added StaticOnly option

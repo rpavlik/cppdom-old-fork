@@ -200,9 +200,9 @@ def ValidateBoostOption(key, value, environ):
    req_boost_version = 103100;
    sys.stdout.write("checking for %s [%s]..." % (key, value));
 
-   if "BoostDir" == key:
+   if "BoostIncludeDir" == key:
       # Get the boost version
-      boost_ver_filename = pj(value, 'include', 'boost', 'version.hpp');
+      boost_ver_filename = pj(value, 'boost', 'version.hpp');
       if not os.path.isfile(boost_ver_filename):
          sys.stdout.write("[%s] not found.\n" % boost_ver_filename);
          Exit();
@@ -222,18 +222,23 @@ def ValidateBoostOption(key, value, environ):
 #         Exit();
 #         return False;
       # Add the boost stuff to the environment
-      environ.Append(BoostLIBPATH = [pj(value,'lib'),]);
-#      environ.Append(BoostLIBS = ['boost_filesystem',]);
-      environ.Append(BoostCPPPATH = [pj(value,'include'),]);
-        
+      environ.Append(BoostCPPPATH = [value,]);
+
+   elif "BoostLibDir" == key:
+      environ.Append(BoostLIBPATH = [value,])
+
    else:
       assert False, "Invalid boost key";
 
 def AddBoostOptions(opts):
-   opts.Add('BoostDir',
-           help = 'Boost installation directory (boost dir must exhist under this directory": default: BoostDir="/usr/local"',
+   opts.Add('BoostIncludeDir',
+           help = 'Boost installation directory (boost/version.hpp must exhist in this directory": default: BoostDir="/usr/local"',
            finder = '/usr/local',
            validator=ValidateBoostOption);
+#   opts.Add('BoostLibDir',
+#           help = 'Boost lib directory.": default: BoostDir="/usr/local/lib"',
+#           finder = '/usr/local/lib',
+#           validator=ValidateBoostOption);
 
 #------------------------------------------------------------------------------
 # Grok the arguments to this build
