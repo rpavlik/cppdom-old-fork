@@ -36,7 +36,7 @@
  * -----------------------------------------------------------------
  *
  ************************************************************ cppdom-cpr-end */
-/** \file XMLParser.cpp
+/** \file xmlparser.cpp
 
   member functions for the mTokenizer and parser classes
 
