@@ -398,7 +398,7 @@ namespace cppdom
          return mMap.end();
       }
 
-      unsigned size() const
+      attr_map_t::size_type size() const
       {
          return mMap.size();
       }
