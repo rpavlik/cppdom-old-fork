@@ -86,6 +86,7 @@ namespace cppdom
       xml_attr_value_expected,      /**< expected value after an '=' in attribute */
       xml_save_invalid_nodetype,    /**< invalid nodetype encountered while saving */
 
+      xml_invalid_operation,        /**< Attempted to execute an xml operation that would cause invalid structure */
    // added by kevin for 0.7 compatibility...
       xml_filename_invalid,
       xml_file_access,
