@@ -116,9 +116,9 @@ def BuildIRIXEnvironment():
 RequireSConsVersion(0.08)
 
 # Get command-line arguments
-optimize = ARGUMENTS.get('--optimize', 'no')
-profile = ARGUMENTS.get('--profile', 'no')
-PREFIX = ARGUMENTS.get('--prefix', '/usr/local')
+optimize = ARGUMENTS.get('optimize', 'no')
+profile = ARGUMENTS.get('profile', 'no')
+PREFIX = ARGUMENTS.get('prefix', '/usr/local')
 Export('PREFIX')
 
 # Create the extra builders
