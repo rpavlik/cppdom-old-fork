@@ -782,6 +782,11 @@ namespace cppdom
    {
       mNodeType = xml_nt_document;
    }
+   
+   Document::~Document()
+   {
+      ;
+   }
 
 
    NodeList& Document::getPiList()
