@@ -25,56 +25,54 @@
    Boston, MA  02111-1307  USA.
 
 */
-/*! \file XMLParser.hpp
+/** \file XMLParser.hpp
 
   definitions for the parsing classes
 
 */
 
 // prevent multiple includes
-#ifndef __XMLParser_hpp_
-#define __XMLParser_hpp_
+#ifndef CPPDOM_XML_PARSER_H
+#define CPPDOM_XML_PARSER_H
 
 // needed includes
 #include <cppdom/cppdom.h>
 #include <cppdom/xmltokenizer.h>
 
 // namespace declaration
-namespace cppdom {
-
-
-//! xml parser implementation class
-class XMLParser
+namespace cppdom
 {
-public:
-   //! ctor
-   XMLParser( std::istream &inputstream, XMLLocation &loc );
 
-   //! parses the node as the document root
-   bool parseDocument( XMLDocument &doc, XMLContextPtr &ctxptr );
-   
-   //! parses a node, without processing instructions
-   bool parseNode( XMLNode &node, XMLContextPtr &ctxptr );
+   /** xml parser implementation class */
+   class XMLParser
+   {
+   public:
+      /** ctor */
+      XMLParser(std::istream& inputstream, XMLLocation& loc);
 
-protected:
-   //! parses xml header, such as processing instructions, doctype etc.
-   bool parseHeader( XMLDocument &doc, XMLContextPtr &ctxptr );
+      /** parses the node as the document root */
+      bool parseDocument(XMLDocument& doc, XMLContextPtr& ctxptr);
 
-   //! parses an xml tag attribute list
-   bool parseAttributes( XMLAttributes &attr );
+      /** parses a node, without processing instructions */
+      bool parseNode(XMLNode& node, XMLContextPtr& ctxptr);
 
-   //! parses a <!-- --> comment 
-   void parseComment( XMLContextPtr &ctxptr );
+   protected:
+      /** parses xml header, such as processing instructions, doctype etc. */
+      bool parseHeader(XMLDocument& doc, XMLContextPtr& ctxptr);
 
-protected:
-   //! input stream
-   std::istream &instream;
+      /** parses an xml tag attribute list */
+      bool parseAttributes(XMLAttributes& attr);
 
-   //! stream iterator
-   xmlstream_iterator tokenizer;
-};
+      /** parses a <!-- --> comment */
+      void parseComment(XMLContextPtr& ctxptr);
 
-// namespace end
-};
+   protected:
+      /** input stream */
+      std::istream& instream;
+
+      /** stream iterator */
+      xmlstream_iterator tokenizer;
+   };
+}
 
 #endif
