@@ -106,6 +106,7 @@ LIB_EXT=		$(OS_LIB_EXT)
 SHLIB_EXT=	$(OS_SHLIB_EXT)
 LIB_PREFIX=	$(OS_LIB_PREFIX)
 SHLIB_PREFIX=	$(OS_SHLIB_PREFIX)
+EXE_EXT=		$(OS_EXE_EXT)
 
 include $(DZR_BASE_DIR)/mk/dzr.obj.mk
 include $(DZR_BASE_DIR)/mk/dzr.clean.mk

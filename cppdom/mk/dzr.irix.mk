@@ -107,6 +107,7 @@ OS_LIB_EXT= 	.a
 OS_SHLIB_EXT=	.so
 OS_LIB_PREFIX= 	lib
 OS_SHLIB_PREFIX=	lib
+OS_EXE_EXT=	
 
 # Wrapper options around the list of libraries needed at link time.  These
 # are to be put at the start and end of $(LIBS) respectively when it is set.
