@@ -56,7 +56,7 @@ bool XMLParser::parseDocument( XMLDocument &doc, XMLContextPtr &ctxptr )
 
    // start parsing
    if (handle)
-      ctxptr->getEventhandler().startDocument();
+      ctxptr->getEventHandler().startDocument();
 
    parseHeader( doc, ctxptr );
 
@@ -73,7 +73,7 @@ bool XMLParser::parseDocument( XMLDocument &doc, XMLContextPtr &ctxptr )
    }
 
    if (handle)
-      ctxptr->getEventhandler().endDocument();
+      ctxptr->getEventHandler().endDocument();
 
    return ret;
 }
@@ -156,7 +156,7 @@ bool XMLParser::parseHeader( XMLDocument &doc, XMLContextPtr &ctxptr )
             XMLNodePtr nodeptr( new XMLNode(pinode) );
             doc.procinstructions.push_back( nodeptr );
 
-            if (ctxptr->handleEvents()) ctxptr->getEventhandler().processingInstruction(pinode);
+            if (ctxptr->handleEvents()) ctxptr->getEventHandler().processingInstruction(pinode);
 
             tokenizer++;
             if (*tokenizer != '?')
@@ -215,7 +215,7 @@ bool XMLParser::parseNode( XMLNode &node, XMLContextPtr &ctxptr )
          tokenizer.put_back();
 
          if (handle)
-            ctxptr->getEventhandler().gotCdata( node.mCdata );
+            ctxptr->getEventHandler().gotCdata( node.mCdata );
 
          return true;
       }
@@ -264,13 +264,13 @@ bool XMLParser::parseNode( XMLNode &node, XMLContextPtr &ctxptr )
 
    // notify event handler
    if (handle)
-      ctxptr->getEventhandler().startNode( tagname );
+      ctxptr->getEventHandler().startNode( tagname );
 
    // parse attributes
    this->parseAttributes( node.attributes );
 
    if (handle)
-      ctxptr->getEventhandler().parsedAttributes( node.attributes );
+      ctxptr->getEventHandler().parsedAttributes( node.attributes );
 
    // check for leaf
    tokenizer++;
@@ -329,7 +329,7 @@ bool XMLParser::parseNode( XMLNode &node, XMLContextPtr &ctxptr )
    if (*tokenizer != '>')
       throw XMLError(xml_opentag_expected);
 
-   if (handle) ctxptr->getEventhandler().endNode( node );
+   if (handle) ctxptr->getEventHandler().endNode( node );
 
    return true;
 }
