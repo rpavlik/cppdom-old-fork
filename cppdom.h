@@ -76,10 +76,10 @@ namespace cppdom
 
    // True if there are characters references: ex: &amp;
    bool textContainsXmlEscaping(const std::string& data);
-      
+
    // True if there are chars needing escaping
    bool textNeedsXmlEscaping(const std::string& data, bool isCdata);
-   
+
     // Remove escaping from xml text
    std::string removeXmlEscaping(const std::string& data, bool isCdata);
 
@@ -242,16 +242,6 @@ namespace cppdom
       bool           mHandleEvents;       /**< indicates if the event handler is used */
       EventHandlerPtr mEventHandler;   /**< current parsing event handler */
    };
-
-   /** node type enumeration */
-   enum NodeType
-   {
-      xml_nt_node,      /**< normal node, can contain subnodes */
-      xml_nt_leaf,      /**< a leaf node, which contains no further nodes, eg. <img/> */
-      xml_nt_document,  /**< document root node */
-      xml_nt_cdata      /**< cdata node, which only contains char data */
-   };
-
 
    // typedefs
    /** smart pointer to node */
@@ -418,6 +408,17 @@ namespace cppdom
    */
    class CPPDOM_CLASS Node
    {
+   public:
+         /** node type enumeration */
+      enum Type
+      {
+         xml_nt_node,      /**< normal node, can contain subnodes */
+         xml_nt_leaf,      /**< a leaf node, which contains no further nodes, eg. <img/> */
+         xml_nt_document,  /**< document root node */
+         xml_nt_cdata      /**< cdata node, which only contains char data */
+      };
+
+
       friend class Parser;
    protected:
       /** Default Constructor */
@@ -453,7 +454,16 @@ namespace cppdom
       /** @name access to node info */
       //@{
       /** returns type of node */
-      NodeType getType() const;
+      Node::Type getType() const;
+
+      bool isNode()
+      { return getType() == xml_nt_node;}
+      bool isLeaf()
+      { return getType() == xml_nt_leaf;}
+      bool isDocument()
+      { return getType() == xml_nt_document;}
+      bool isCData()
+      { return getType() == xml_nt_cdata;}
 
       /** Returns the local name of the node (the element name) */
       std::string getName();
@@ -493,7 +503,7 @@ namespace cppdom
       /** @name node data manipulation */
       //@{
       /** sets new nodetype */
-      void setType(NodeType type);
+      void setType(Node::Type type);
 
       /** set the node name */
       void setName(const std::string& name);
@@ -588,7 +598,7 @@ namespace cppdom
       std::string    mNodeName_debug;  /**< The node name for debugging */
 #endif
       ContextPtr     mContext;         /**< smart pointer to the context class */
-      NodeType       mNodeType;        /**< The type of the node */
+      Node::Type     mNodeType;        /**< The type of the node */
       Attributes     mAttributes;      /**< Attributes of the element */
       std::string    mCdata;           /**< Character data (if there is any) */
       NodeList       mNodeList;        /**< stl list with subnodes */
@@ -596,13 +606,22 @@ namespace cppdom
    };
 
 
-   /** xml document */
+   /** XML document root node.
+    *
+    * Structure of a cppdom document
+    *
+    * Nested tree of nodes.  Each node has a type (Node::Type).
+    * Root node is of type document.  Standard nodes are type node.
+    * Under standard nodes there can be cdata nodes.  These nodes are nodes
+    * for containing the raw text inside an element.
+    *
+    */
    class CPPDOM_CLASS Document: public Node
    {
       friend class Parser;
    public:
       Document();
-      
+
       ~Document();
 
       /** constructor taking xml context pointer */

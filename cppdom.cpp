@@ -70,7 +70,7 @@ namespace cppdom
       if(isCdata)
          return (std::string::npos != data.find_first_of("&<>"));
       else
-         return (std::string::npos != data.find_first_of("&<>'\""));         
+         return (std::string::npos != data.find_first_of("&<>'\""));
    }
 
    // Remove escaping from xml text
@@ -118,7 +118,7 @@ namespace cppdom
       for(unsigned i=0;i<data.size(); ++i)
       {
          c = data[i];
-         
+
          if ('&' == c)
          { ret_str += "&amp;"; }
          else if ('<' == c)
@@ -129,7 +129,7 @@ namespace cppdom
          { ret_str += "&apos;"; }
          else if ((!isCdata) && ('"' == c))
          { ret_str += "&quot;"; }
-         else 
+         else
          {  ret_str += c; }
       }
 
@@ -542,7 +542,7 @@ namespace cppdom
    }
 
 
-   NodeType Node::getType() const
+   Node::Type Node::getType() const
    {
       return mNodeType;
    }
@@ -580,13 +580,13 @@ namespace cppdom
    {
       std::string ret_val;
 
-      if(getType() == cppdom::xml_nt_cdata)
+      if(getType() == xml_nt_cdata)
       {
          ret_val = mCdata;
       }
       else
       {
-         cppdom::NodeList nl = getChildrenPred( cppdom::IsNodeTypePredicate( cppdom::xml_nt_cdata ));
+         cppdom::NodeList nl = getChildrenPred( cppdom::IsNodeTypePredicate( Node::xml_nt_cdata ));
          if(!nl.empty())
          {
             ret_val = (*(nl.begin()))->getCdata();
@@ -601,13 +601,13 @@ namespace cppdom
    {
       std::string ret_val;
 
-      if(getType() == cppdom::xml_nt_cdata)
+      if(getType() == Node::xml_nt_cdata)
       {
          ret_val = mCdata;
       }
       else
       {
-         cppdom::NodeList nl = getChildrenPred( cppdom::IsNodeTypePredicate( cppdom::xml_nt_cdata ));
+         cppdom::NodeList nl = getChildrenPred( cppdom::IsNodeTypePredicate( Node::xml_nt_cdata ));
          for(cppdom::NodeList::iterator n=nl.begin(); n!=nl.end(); ++n)
          {
             ret_val += (*n)->getCdata();
@@ -617,7 +617,7 @@ namespace cppdom
    }
 
 
-   void Node::setType(NodeType type)
+   void Node::setType(Node::Type type)
    {
       mNodeType = type;
    }
@@ -636,13 +636,13 @@ namespace cppdom
    */
    void Node::setCdata(const std::string& cdata)
    {
-      if(getType() == cppdom::xml_nt_cdata)
+      if(getType() == Node::xml_nt_cdata)
       {
          mCdata = cdata;
       }
       else
       {
-         cppdom::NodeList nl = getChildrenPred( cppdom::IsNodeTypePredicate( cppdom::xml_nt_cdata ));
+         cppdom::NodeList nl = getChildrenPred( cppdom::IsNodeTypePredicate( Node::xml_nt_cdata ));
          if(!nl.empty())
          {
             (*(nl.begin()))->setCdata(cdata);
@@ -650,7 +650,7 @@ namespace cppdom
          else  // Create a child
          {
             cppdom::NodePtr new_cdata(new cppdom::Node("cdata", getContext()));
-            new_cdata->setType(cppdom::xml_nt_cdata);
+            new_cdata->setType(Node::xml_nt_cdata);
             new_cdata->setCdata(cdata);
             addChild(new_cdata);
          }
@@ -788,67 +788,68 @@ namespace cppdom
 
          if(doNewline)
             out << std::endl;
-         return;
       }
-
-      // output tag name
-      out << '<' << mContext->getTagname(mNodeNameHandle);
-
-      // output all attributes
-      Attributes::const_iterator iter, stop;
-      iter = mAttributes.begin();
-      stop = mAttributes.end();
-
-      for(; iter!=stop; ++iter)
+      else
       {
-         Attributes::value_type attr = *iter;
-         std::string attrib_text = attr.second;
-         if(textNeedsXmlEscaping(attrib_text, false))
-            attrib_text = addXmlEscaping(attrib_text, false);
-         out << ' ' << attr.first << '=' << '\"' << attrib_text << '\"';
-      }
+         // output tag name
+         out << '<' << mContext->getTagname(mNodeNameHandle);
 
-      // depending on the nodetype, do output
-      switch(mNodeType)
-      {
-      case xml_nt_node:
+         // output all attributes
+         Attributes::const_iterator iter, stop;
+         iter = mAttributes.begin();
+         stop = mAttributes.end();
+
+         for(; iter!=stop; ++iter)
          {
-            out << '>';
-            if(doNewline)
-               out << std::endl;
-
-            // output all subnodes
-            NodeList::const_iterator iter,stop;
-            iter = mNodeList.begin();
-            stop = mNodeList.end();
-
-            for(; iter!=stop; ++iter)
-            {
-               (*iter)->save(out, indent+1, doIndent, doNewline);
-            }
-
-            // output indendation spaces
-            if(doIndent)
-            {
-               for(int i=0;i<indent;i++)
-               { out << ' '; }
-            }
-
-            // output closing tag
-            out << '<' << '/' << mContext->getTagname(mNodeNameHandle) << '>';
-            if(doNewline)
-               out << std::endl;
+            Attributes::value_type attr = *iter;
+            std::string attrib_text = attr.second;
+            if(textNeedsXmlEscaping(attrib_text, false))
+               attrib_text = addXmlEscaping(attrib_text, false);
+            out << ' ' << attr.first << '=' << '\"' << attrib_text << '\"';
          }
-         break;
-      case xml_nt_leaf:
-         // a leaf has no subnodes
-         out << '/' << '>';
-         if(doNewline)
-            out << std::endl;
-         break;
-      default:
-         // unknown nodetype
-         throw CPPDOM_ERROR(xml_save_invalid_nodetype, "Tried to save an unknown node type");
+
+         // depending on the nodetype, do output
+         switch(mNodeType)
+         {
+         case xml_nt_node:
+            {
+               out << '>';
+               if(doNewline)
+                  out << std::endl;
+
+               // output all subnodes
+               NodeList::const_iterator iter,stop;
+               iter = mNodeList.begin();
+               stop = mNodeList.end();
+
+               for(; iter!=stop; ++iter)
+               {
+                  (*iter)->save(out, indent+1, doIndent, doNewline);
+               }
+
+               // output indendation spaces
+               if(doIndent)
+               {
+                  for(int i=0;i<indent;i++)
+                  { out << ' '; }
+               }
+
+               // output closing tag
+               out << '<' << '/' << mContext->getTagname(mNodeNameHandle) << '>';
+               if(doNewline)
+                  out << std::endl;
+            }
+            break;
+         case xml_nt_leaf:
+            // a leaf has no subnodes
+            out << '/' << '>';
+            if(doNewline)
+               out << std::endl;
+            break;
+         default:
+            // unknown nodetype
+            throw CPPDOM_ERROR(xml_save_invalid_nodetype, "Tried to save an unknown node type");
+         }
       }
    }
 
@@ -862,21 +863,21 @@ namespace cppdom
 
    Document::Document()
    {
-      mNodeType = xml_nt_document;
+      mNodeType = Node::xml_nt_document;
    }
 
    Document::Document(ContextPtr context)
       : Node(context)
    {
-      mNodeType = xml_nt_document;
+      mNodeType = Node::xml_nt_document;
    }
 
    Document::Document(std::string docName, ContextPtr context)
       : Node(docName, context)
    {
-      mNodeType = xml_nt_document;
+      mNodeType = Node::xml_nt_document;
    }
-   
+
    Document::~Document()
    {
       ;
