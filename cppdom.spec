@@ -11,18 +11,20 @@ Name: _SCONS_PACKAGE_NAME_
 Version: _SCONS_PACKAGE_VERSION_
 Release: _SCONS_PACKAGE_RELEASE_
 Copyright: LGLP
-Group: Libraries
+Group: Development/Libraries
 #Source0: none
 URL: http://www.sf.net/projects/xml-cppdom
 #Epoch: 1
-Vendor: xml-cppdom project
+Vendor: xml-cppdom Project
 Packager: Allen Bierbaum
 
 BuildRoot: /var/tmp/cppdom-root
 
 %description
-This is the xml-cppdom library for fast access to xml trees
-in a very STL natural way.
+CppDom is a C++ based XML loader and writer with an internal DOM representation.
+It is very lightweight and high-performance.  The goal of the project is to
+provide a lightweight C++ interface for XML programming that is similar to
+the API and functionality of JDOM.
 
 %files
 %defattr(-, root, root)
