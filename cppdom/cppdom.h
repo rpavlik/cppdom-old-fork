@@ -256,7 +256,6 @@ namespace cppdom
       Attribute();
       Attribute(const Attribute& attr);
       Attribute(const std::string& val);
-      ~Attribute() { mData.clear(); }
 
 #ifndef CPPDOM_NO_MEMBER_TEMPLATES
       template<class T>
