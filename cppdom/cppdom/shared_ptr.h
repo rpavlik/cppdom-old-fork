@@ -47,7 +47,7 @@
 // suitability for any purpose.
 
 // needed includes
-#include <cstddef>            // for std::size_t
+//#include <cstddef>            // for std::size_t
 #include <memory>             // for std::auto_ptr
 #include <algorithm>          // for std::swap
 #include <functional>         // for std::less
