@@ -216,6 +216,31 @@ namespace cppdom
    
 
    // XMLAttributes methods
+
+   XMLAttribute::XMLAttribute()
+      : mData("")
+   {}
+
+   XMLAttribute::XMLAttribute(const XMLAttribute& attr)
+      : mData(attr.mData)
+   {}
+
+   XMLAttribute::XMLAttribute(const std::string& val)
+      : mData(val)
+   {}
+
+   const std::string& XMLAttribute::getString() const
+   {
+      return mData;
+   }
+
+   XMLAttribute::operator std::string() const
+   {
+      return getString();
+   }
+
+   // XMLAttributes methods
+
    bool XMLAttributes::has(const std::string& key) const
    {
       XMLAttributes::const_iterator iter;
