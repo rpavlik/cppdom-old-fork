@@ -2,15 +2,13 @@
 try:
    import wing.wingdbstub;       # stuff for debugging
 except:
-   print '[WRN] Unable to load wing debugging extensions'
+   pass
+   
 import os, string, sys
 pj = os.path.join
 
 Default('.')
 
-"""
-The following is used if you have the SConsAddons Package
-"""
 # Bring in the AutoDist build helper
 sys.path.append('tools/build')
 
@@ -233,8 +231,6 @@ else:
 Export('baseEnv')
 
 # Do we have the super cool savable version
-have_cool_options = 'Save' in dir(Options)
-
 opts = Options('config.cache')
 opts.Add('WithCppUnit',
          'CppUnit installation directory',
@@ -245,8 +241,13 @@ opts.Add('prefix',
          'Installation prefix',
          '/usr/local')
 opts.Update(baseEnv)
-if have_cool_options:
+
+# Try to save the options if possible
+try:
    opts.Save('config.cache', baseEnv);
+except LookupError, le:
+   pass
+   
 
 help_text = """--- CppDom Build system ---
 Targets:
@@ -313,3 +314,4 @@ cppdom_config  = env.ConfigBuilder('cppdom-config', 'cppdom-config.in',
 
 env.Depends('cppdom-config', 'cppdom/version.h')
 env.Install(pj(PREFIX, 'bin'), cppdom_config)
+env.Alias('install', PREFIX)
