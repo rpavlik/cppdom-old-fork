@@ -1,4 +1,4 @@
-// this xmlpp was branched from the original LGPL'd xmlpp version 0.6
+// cppdom was branched from the original LGPL'd xmlpp version 0.6
 // this new branched xmlpp is under the same LGPL (of course) and
 // is being maintained by:
 //    kevin meinert <subatomic@users.sf.net>
@@ -25,15 +25,15 @@
    Boston, MA  02111-1307  USA.
 
 */
-/*! \file xmlconfig.hpp
+/*! \file config.hpp
 
   system dependent stuff
 
 */
 
 // prevent multiple includes
-#ifndef __xmlconfig_hpp_
-#define __xmlconfig_hpp_
+#ifndef __config_hpp_
+#define __config_hpp_
 
 // needed includes
 
@@ -50,11 +50,11 @@
 
 // export/import #define's for building a win32 dll
 # ifdef XMLPP_EXPORTS
-#  define XMLPP_API __declspec(dllexport)
+#  define CPPDOM_API __declspec(dllexport)
 # endif
 
 # ifdef XMLPP_IMPORTS
-#  define XMLPP_API __declspec(dllimport)
+#  define CPPDOM_API __declspec(dllimport)
 # endif
 
 // includes building of the httpinstream class
@@ -72,8 +72,8 @@
 #endif
 
 // if not under windows, then this will need to be defined.
-#ifndef XMLPP_API
-# define XMLPP_API
+#ifndef CPPDOM_API
+# define CPPDOM_API
 #endif
 
 // -----------------------------------

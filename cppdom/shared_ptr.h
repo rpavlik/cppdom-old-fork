@@ -1,4 +1,4 @@
-// this xmlpp was branched from the original LGPL'd xmlpp version 0.6
+// cppdom was branched from the original LGPL'd xmlpp version 0.6
 // this new branched xmlpp is under the same LGPL (of course) and
 // is being maintained by:
 //    kevin meinert <subatomic@users.sf.net>
@@ -53,7 +53,7 @@
 #include <functional>         // for std::less
 
 //! namespace of the boost library
-namespace xmlpp_boost {
+namespace cppdom_boost {
 
    template< typename T >
     inline void checked_delete(T * x)
@@ -253,7 +253,7 @@ namespace std {
 // a temporary and uses assignment.
 
 template<typename T>
-  inline void swap(xmlpp_boost::shared_ptr<T>& a, xmlpp_boost::shared_ptr<T>& b)
+  inline void swap(cppdom_boost::shared_ptr<T>& a, cppdom_boost::shared_ptr<T>& b)
     { a.swap(b); }
 
 // Specialize std::less so we can use shared pointers and arrays as keys in
@@ -263,11 +263,11 @@ template<typename T>
 // a full range of comparison operators (<, >, <=, >=).
 
 template<typename T>
-  struct less< xmlpp_boost::shared_ptr<T> >
-    : binary_function<xmlpp_boost::shared_ptr<T>, xmlpp_boost::shared_ptr<T>, bool>
+  struct less< cppdom_boost::shared_ptr<T> >
+    : binary_function<cppdom_boost::shared_ptr<T>, cppdom_boost::shared_ptr<T>, bool>
   {
-    bool operator()(const xmlpp_boost::shared_ptr<T>& a,
-        const xmlpp_boost::shared_ptr<T>& b) const
+    bool operator()(const cppdom_boost::shared_ptr<T>& a,
+        const cppdom_boost::shared_ptr<T>& b) const
       { return less<T*>()(a.get(),b.get()); }
   };
 

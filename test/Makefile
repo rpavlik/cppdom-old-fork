@@ -28,9 +28,9 @@ LINK		= c++ $(LINK_FLAGS)
 
 VPATH	= $(srcdir):$(srcdir)/..
 
-nodetest_OBJS	= nodetest.o xmlparser.o xmlpp.o xmltokenizer.o
-parsetest_OBJS	= parsetest.o xmlparser.o xmlpp.o xmltokenizer.o
-predtest_OBJS	= predtest.o xmlparser.o xmlpp.o xmltokenizer.o
+nodetest_OBJS	= nodetest.o xmlparser.o cppdom.o xmltokenizer.o
+parsetest_OBJS	= parsetest.o xmlparser.o cppdom.o xmltokenizer.o
+predtest_OBJS	= predtest.o xmlparser.o cppdom.o xmltokenizer.o
 
 # -----------------------------------------------------------------------------
 # Application build targets.

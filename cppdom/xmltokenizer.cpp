@@ -1,4 +1,4 @@
-// this xmlpp was branched from the original LGPL'd xmlpp version 0.6
+// cppdom was branched from the original LGPL'd xmlpp version 0.6
 // this new branched xmlpp is under the same LGPL (of course) and
 // is being maintained by:
 //    kevin meinert <subatomic@users.sf.net>
@@ -32,12 +32,12 @@
 */
 
 // needed includes
-#include <xmlpp/xmlpp.h>
-#include <xmlpp/xmltokenizer.h>
+#include <cppdom/cppdom.h>
+#include <cppdom/xmltokenizer.h>
 
 
 // namespace declaration
-namespace xmlpp {
+namespace cppdom {
 
 
 // xmlstream_iterator methods

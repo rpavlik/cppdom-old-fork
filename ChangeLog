@@ -4,3 +4,6 @@ May-05-2002 allenb    Added save_file method for document node.
 Apr-05-2002 allenb    Fix EOF and -1 chars on Irix.
 Apr-03-2002 allenb    Added Node::getChild(char*) to avoid matching templated
                       predicate version.
+Feb-19-2002 allenb    cppdom_boost::shared_ptr (no conflict with real boost)
+Feb-09-2002 subatomic const correctness, coding style
+Feb-08-2002 subatomic branched cppdom from 0.6 LGPL version of xmlpp

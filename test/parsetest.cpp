@@ -5,10 +5,10 @@
 #include <fstream>
 #include <iostream>
 #include <ctime>
-#include <xmlpp/xmlpp.h>
+#include <cppdom/cppdom.h>
 
 // namespace includes
-using namespace xmlpp;
+using namespace cppdom;
 using namespace std;
 
 

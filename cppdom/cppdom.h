@@ -1,4 +1,4 @@
-// this xmlpp was branched from the original LGPL'd xmlpp version 0.6
+// cppdom was branched from the original LGPL'd xmlpp version 0.6
 // this new branched xmlpp is under the same LGPL (of course) and
 // is being maintained by:
 //    kevin meinert <subatomic@users.sf.net>
@@ -25,14 +25,14 @@
    Boston, MA  02111-1307  USA.
 
 */
-/** @file xmlpp.hpp
+/** @file cppdom.h
 *
 *  the main declaration header
 */
 
 // prevent multiple includes
-#ifndef __xmlpp_hpp_
-#define __xmlpp_hpp_
+#ifndef CPPDOM_API_INCLUDED
+#define CPPDOM_API_INCLUDED
 
 #ifdef _MSC_VER
    // disable 'identifier was truncated to 255 characters in debug information' warning
@@ -48,11 +48,11 @@
 #include <iosfwd>
 #include <fstream>
 #include <iostream>
-#include <xmlpp/xmlconfig.h>
-#include <xmlpp/shared_ptr.h>   // the boost::shared_ptr class
+#include <cppdom/config.h>
+#include <cppdom/shared_ptr.h>   // the boost::shared_ptr class
 
-//! namespace of the xmlpp project
-namespace xmlpp {
+//! namespace of the cppdom project
+namespace cppdom {
 
 
 /** basic char type */
@@ -60,7 +60,7 @@ typedef char xml_char_type;
 /** string class typedef */
 typedef std::basic_string<xml_char_type> xmlstring;
 /** string smart pointer */
-typedef xmlpp_boost::shared_ptr<xmlstring> xmlstringptr;
+typedef cppdom_boost::shared_ptr<xmlstring> xmlstringptr;
 
 
 //! xml parsing error codes enumeration
@@ -92,7 +92,7 @@ enum xmlerrorcode
 /** xml error class
 *  contains an xmlerrorcode and is thrown while parsing xml input
 */
-class XMLPP_API xmlerror
+class CPPDOM_API xmlerror
 {
 public:
    /** constructor */
@@ -119,7 +119,7 @@ protected:
 * represents the position in the xml input stream; usable if load()
 *    throws an error on parsing xml content
 */
-class XMLPP_API xmllocation
+class CPPDOM_API xmllocation
 {
 public:
    /** Constructor */
@@ -159,9 +159,9 @@ typedef std::map<xmltagnamehandle,xmlstring> xmltagnamemap;
 /** maps an entity to a string representation */
 typedef std::map<xmlstring,xmlstring> xmlentitymap;
 /** smart pointer for xmlcontext */
-typedef xmlpp_boost::shared_ptr<class xmlcontext> xmlcontextptr;
+typedef cppdom_boost::shared_ptr<class xmlcontext> xmlcontextptr;
 /** smart pointer to the event handler */
-typedef xmlpp_boost::shared_ptr<class xmleventhandler> xmleventhandlerptr;
+typedef cppdom_boost::shared_ptr<class xmleventhandler> xmleventhandlerptr;
 
 typedef xmltagnamehandle XMLTagNameHandle;
 /** maps the tagname string to a handle */
@@ -178,7 +178,7 @@ typedef xmleventhandlerptr XMLEventHandlerPtr;
 * the class is the parsing context for the parsed xml document.
 * the class has a tagname lookup table and an entity map
 */
-class XMLPP_API xmlcontext
+class CPPDOM_API xmlcontext
 {
 public:
    /** ctor */
@@ -247,7 +247,7 @@ enum xmlnodetype
 
 // typedefs
 /** smart pointer to node */
-typedef xmlpp_boost::shared_ptr<class xmlnode> xmlnodeptr;
+typedef cppdom_boost::shared_ptr<class xmlnode> xmlnodeptr;
 /** list of node smart pointer */
 typedef std::list<xmlnodeptr> xmlnodelist;
 typedef xmlnodelist XMLNodeList;
@@ -259,7 +259,7 @@ typedef xmlnodeptr XMLNodePtr;
 /** XML attribute class.
 * Just wraps a string (this is really just and attribute VALUE)
 */
-class XMLPP_API xmlattribute
+class CPPDOM_API xmlattribute
 {
 public:
    xmlattribute()
@@ -320,7 +320,7 @@ protected:
 
 //! xml tag attribute map
 /*! contains all attributes and values a tag has, represented in a map */
-class XMLPP_API xmlattributes: public std::map<xmlstring, xmlstring>
+class CPPDOM_API xmlattributes: public std::map<xmlstring, xmlstring>
 {
    friend class xmlparser;
 public:
@@ -358,7 +358,7 @@ typedef xmlattributes XMLAttributes;
 * cdata - the cdata content if of type cdata
 *
 */
-class XMLPP_API xmlnode
+class CPPDOM_API xmlnode
 {
    friend class xmlparser;
 protected:
@@ -535,7 +535,7 @@ protected:
 
 
 /** xml document */
-class XMLPP_API xmldocument: public xmlnode
+class CPPDOM_API xmldocument: public xmlnode
 {
    friend class xmlparser;
 public:
@@ -588,12 +588,12 @@ protected:
 };
 
 typedef xmldocument XMLDocument;
-typedef xmlpp_boost::shared_ptr<class xmldocument> xmldocumentptr;
+typedef cppdom_boost::shared_ptr<class xmldocument> xmldocumentptr;
 typedef xmldocumentptr XMLDocumentPtr;
 
 
 /** Interface for xml parsing event handler */
-class XMLPP_API xmleventhandler
+class CPPDOM_API xmleventhandler
 {
 public:
    /** ctor */
