@@ -486,7 +486,7 @@ public:
 
    /** Return a list of children that pass the given STL predicate */
    template<class Predicate>
-   xmlnodelist getChildren(Predicate pred)
+   xmlnodelist getChildrenPred(Predicate pred)
    {
       xmlnodelist ret_nlist(0);
       xmlnodelist::const_iterator iter;
