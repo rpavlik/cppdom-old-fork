@@ -58,18 +58,21 @@ include $(DZR_BASE_DIR)/mk/dzr.hosttype.mk
 DEBUG_FLAGS?=	$(OS_DEBUG_FLAGS) $(EXTRA_DEBUG_FLAGS)
 OPTIM_FLAGS?=	$(OS_OPTIM_FLAGS) $(EXTRA_OPTIM_FLAGS)
 
+DEBUG_LINK_FLAGS?=	$(OS_DEBUG_LINK_FLAGS) $(EXTRA_DEBUG_LINK_FLAGS)
+OPTIM_LINK_FLAGS?=	$(OS_OPTIM_LINK_FLAGS) $(EXTRA_OPTIM_LINK_FLAGS)
+
 # Add debugging or optimizing flags to $(EXTRA_CFLAGS) and $(EXTRA_CXXFLAGS)
 # depending on whether this application is compiled as a debugging application
 # or an optimized application.
 ifeq ($(DEBUG_APP), TRUE)
    EXTRA_CFLAGS+=	$(DEBUG_FLAGS)
    EXTRA_CXXFLAGS+=	$(DEBUG_FLAGS)
-   EXTRA_LDFLAGS+=	$(DEBUG_FLAGS)
+   EXTRA_LDFLAGS+=	$(DEBUG_LINK_FLAGS)
 else
    ifeq ($(OPTIM_APP), TRUE)
      EXTRA_CFLAGS+=	$(OPTIM_FLAGS)
      EXTRA_CXXFLAGS+=	$(OPTIM_FLAGS)
-     EXTRA_LDFLAGS+=	$(OPTIM_FLAGS)
+     EXTRA_LDFLAGS+=	$(OPTIM_LINK_FLAGS)
    endif
 endif
 
