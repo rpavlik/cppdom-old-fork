@@ -33,7 +33,7 @@
 
 // needed includes
 #include <cppdom/cppdom.h>
-#include <cppdom/XMLTokenizer.h>
+#include <cppdom/xmltokenizer.h>
 
 
 // namespace declaration
