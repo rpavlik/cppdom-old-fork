@@ -43,7 +43,7 @@
 */
 
 // needed includes
-#include <cppdom/xmlparser.h>
+#include "xmlparser.h"
 
 // namespace declaration
 namespace cppdom

@@ -47,8 +47,8 @@
 #define CPPDOM_XML_PARSER_H
 
 // needed includes
-#include <cppdom/cppdom.h>
-#include <cppdom/xmltokenizer.h>
+#include "cppdom.h"
+#include "xmltokenizer.h"
 
 // namespace declaration
 namespace cppdom
