@@ -89,6 +89,39 @@ namespace cppdom
       return "unknown error";
    }
 
+   // XMLLocation methods
+
+   XMLLocation::XMLLocation()
+   {
+      reset();
+   }
+
+   int XMLLocation::getLine() const
+   {
+      return mLine;
+   }
+
+   int XMLLocation::getPos() const
+   {
+      return mPos;
+   }
+
+   void XMLLocation::step(int chars)
+   {
+      mPos += chars;
+   }
+
+   void XMLLocation::newline()
+   {
+      ++mLine;
+      mPos = 1;
+   }
+
+   void XMLLocation::reset()
+   {
+      mLine = mPos = 0;
+   }
+
    // XMLContext methods
 
    XMLContext::XMLContext()
