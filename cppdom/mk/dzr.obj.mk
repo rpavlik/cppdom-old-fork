@@ -65,9 +65,9 @@
 # compiler (Windows only) or to o for all other compilers.
 ifndef OBJ_EXT
   ifeq ($(CC), cl)
-     OBJ_EXT=	obj
+     OBJ_EXT=	.obj
   else
-     OBJ_EXT=	o
+     OBJ_EXT=	.o
   endif
 endif
 
@@ -82,7 +82,7 @@ _suffix_list=	c C CC cc cpp c++ cxx
 
 # Loop over the suffixes, translate them to $(OBJ_EXT) and store the
 # result in $(OBJS).
-makeobjs=	$(filter %.$(OBJ_EXT), $(foreach _suffix, $(_suffix_list), $(1:.$(_suffix)=.$(OBJ_EXT))))
+makeobjs=	$(filter %$(OBJ_EXT), $(foreach _suffix, $(_suffix_list), $(1:.$(_suffix)=$(OBJ_EXT))))
 
 # Construct $(OBJS) from $(SRCS) using the makeobjs function.
 BASIC_OBJS=	$(call makeobjs, $(SRCS))
@@ -91,56 +91,56 @@ OBJS=		$(addprefix $(OBJDIR)/, $(BASIC_OBJS))
 C_COMPILE_LINE=		$(C_COMPILE) $(OBJ_NAME_FLAG) $(OBJ_BUILD_FLAG) $<
 CXX_COMPILE_LINE=	$(CXX_COMPILE) $(OBJ_NAME_FLAG) $(OBJ_BUILD_FLAG) $<
 
-# Pattern rule for compiling .$(OBJ_EXT) files from .c files.
-$(OBJDIR)/%.$(OBJ_EXT): %.c
+# Pattern rule for compiling $(OBJ_EXT) files from .c files.
+$(OBJDIR)/%$(OBJ_EXT): %.c
 ifdef WARN_MSG
 	$(warning $(WARN_MSG))
 endif
 	@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR) ; fi
 	$(C_COMPILE_LINE)
 
-# Pattern rule for compiling .$(OBJ_EXT) files from .C files.
-$(OBJDIR)/%.$(OBJ_EXT): %.C
+# Pattern rule for compiling $(OBJ_EXT) files from .C files.
+$(OBJDIR)/%$(OBJ_EXT): %.C
 ifdef WARN_MSG
 	$(warning $(WARN_MSG))
 endif
 	@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR) ; fi
 	$(CXX_COMPILE_LINE)
 
-# Pattern rule for compiling .$(OBJ_EXT) files from .CC files.
-$(OBJDIR)/%.$(OBJ_EXT): %.CC
+# Pattern rule for compiling $(OBJ_EXT) files from .CC files.
+$(OBJDIR)/%$(OBJ_EXT): %.CC
 ifdef WARN_MSG
 	$(warning $(WARN_MSG))
 endif
 	@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR) ; fi
 	$(CXX_COMPILE_LINE)
 
-# Pattern rule for compiling .$(OBJ_EXT) files from .cc files.
-$(OBJDIR)/%.$(OBJ_EXT): %.cc
+# Pattern rule for compiling $(OBJ_EXT) files from .cc files.
+$(OBJDIR)/%$(OBJ_EXT): %.cc
 ifdef WARN_MSG
 	$(warning $(WARN_MSG))
 endif
 	@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR) ; fi
 	$(CXX_COMPILE_LINE)
 
-# Pattern rule for compiling .$(OBJ_EXT) files from .cpp files.
-$(OBJDIR)/%.$(OBJ_EXT): %.cpp
+# Pattern rule for compiling $(OBJ_EXT) files from .cpp files.
+$(OBJDIR)/%$(OBJ_EXT): %.cpp
 ifdef WARN_MSG
 	$(warning $(WARN_MSG))
 endif
 	@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR) ; fi
 	$(CXX_COMPILE_LINE)
 
-# Pattern rule for compiling .$(OBJ_EXT) files from .c++ files.
-$(OBJDIR)/%.$(OBJ_EXT): %.c++
+# Pattern rule for compiling $(OBJ_EXT) files from .c++ files.
+$(OBJDIR)/%$(OBJ_EXT): %.c++
 ifdef WARN_MSG
 	$(warning $(WARN_MSG))
 endif
 	@if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR) ; fi
 	$(CXX_COMPILE_LINE)
 
-# Pattern rule for compiling .$(OBJ_EXT) files from .cxx files.
-$(OBJDIR)/%.$(OBJ_EXT): %.cxx
+# Pattern rule for compiling $(OBJ_EXT) files from .cxx files.
+$(OBJDIR)/%$(OBJ_EXT): %.cxx
 ifdef WARN_MSG
 	$(warning $(WARN_MSG))
 endif
