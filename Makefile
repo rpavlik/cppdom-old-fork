@@ -10,8 +10,8 @@ DZR_BASE_DIR=	.
 
 # Nothing but comments should come before this line.
 default: all
-OBJDIR=objs.$(HOSTTYPE)
-DEPDIR=deps.$(HOSTTYPE)
+OBJDIR=objs.$(HOSTTYPE).$(CXX)
+DEPDIR=deps.$(HOSTTYPE).$(CXX)
 
 # -----------------------------------------------------------------------------
 # Application-specific variable settings.  It is safe to modify these.
@@ -82,7 +82,7 @@ $(STATIC_LIB_FILENAME): $(OBJS)
 #        - determine if you need all the dirs (bin, share, lib, include)
 #        - append cp or install commands for your .h, lib files...
 #        - prefix is your install path, edit it to specify the default
-prefix ?= installed.$(HOSTTYPE)
+prefix ?= installed.$(HOSTTYPE).$(CXX)
 INSTALLCMD=./install-sh
 install: all tests
 	-$(INSTALLCMD) -d $(prefix)/include
