@@ -262,8 +262,8 @@ if not SCons.Script.options.help_msg:
 		  cppdom/
 		  test/
    """)
-   baseEnv.Append(TARFLAGS = ['-z',])
-   baseEnv.Tar('cppdom-' + '%i.%i.%i' % CPPDOM_VERSION + '.tar.gz', tar_sources)
+   #baseEnv.Append(TARFLAGS = ['-z',])
+   #baseEnv.Tar('cppdom-' + '%i.%i.%i' % CPPDOM_VERSION + '.tar.gz', tar_sources)
 
    # Setup the builder for cppdom-config
    env = baseEnv.Copy(BUILDERS = builders)
