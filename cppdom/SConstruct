@@ -107,21 +107,7 @@ def BuildIRIXEnvironment():
       CXXFLAGS.extend(['-DNDEBUG', '-O2'])
    else:
       CXXFLAGS.extend(['-D_DEBUG', '-g', '-gslim'])
-   # IRIX sucks; no environment variable to specify additional header paths
-   CPPPATH = ''
-   if os.environ.has_key('CPLUS_INCLUDE_PATH'):
-      path = os.environ['CPLUS_INCLUDE_PATH']
-      CPPPATH = string.split(path, ':')
-      vjbasedir = os.environ['VJ_BASE_DIR']
-      CPPPATH.append(pj(vjbasedir, 'include', 'boost', 'compatibility', 'cpp_c_headers'))
-      return Environment( 
-         ENV = os.environ,
-         CXX = CXX,
-         CXXFLAGS = CXXFLAGS,
-         CPPPATH = CPPPATH,
-         LINK = LINK,
-         LINKFLAGS = LINKFLAGS
-       )
+
    return Environment(
       ENV         = os.environ,
       CXX         = CXX,
