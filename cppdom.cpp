@@ -72,7 +72,7 @@ namespace cppdom
       return mErrorCode;
    }
 
-   void Error::getStrError(std::string& error) const
+   std::string Error::getStrError() const
    {
    // macro for keeping the errorcode switch short and easy
 #define XMLERRORCODE(x,y)  case x: err = y; break;
@@ -100,16 +100,13 @@ namespace cppdom
 
          XMLERRORCODE(xml_dummy,"dummy error code (this error should never been seen)");
       }
-      error.assign(err);
 #undef XMLERRORCODE
+      return std::string(err);
    }
 
    std::string Error::getString() const
    {
-      std::string err;
-      getStrError(err);
-      err += ":" + mLocalDesc;
-      return err;
+      return getStrError() + std::string(": ") + mLocalDesc;
    }
 
    std::string Error::getInfo() const

@@ -116,7 +116,7 @@ namespace cppdom
       ErrorCode getError() const;
 
       /** returns the string representation of the error code */
-      void getStrError(std::string& error) const;
+      std::string getStrError() const;
 
       std::string getString() const;
 
