@@ -37,6 +37,7 @@
 #ifdef _MSC_VER
    // disable 'identifier was truncated to 255 characters in debug information' warning
 #  pragma warning(disable: 4786)
+#  define XMLPP_NO_MEMBER_TEMPLATES
 #endif
 
 // needed includes
@@ -46,6 +47,7 @@
 #include <map>
 #include <iosfwd>
 #include <fstream>
+#include <iostream>
 #include <xmlpp/xmlconfig.h>
 #include <xmlpp/shared_ptr.h>   // the boost::shared_ptr class
 
@@ -274,15 +276,18 @@ public:
       mData = str_val;
    }
 
+#ifndef XMLPP_NO_MEMBER_TEMPLATES
    template<class T>
    xmlattribute(const T& val)
    {
       setValue<T>(val);
    }
+#endif // ! XMLPP_NO_MEMBER_TEMPLATES
 
    xmlstring getString() const
    { return mData; }
 
+#ifndef XMLPP_NO_MEMBER_TEMPLATES
    /** Set mData to the string value of val
    * @note Requires a stream operation of type T
    */
@@ -302,6 +307,7 @@ public:
       iss >> t;
       return t;
    }
+#endif // ! XMLPP_NO_MEMBER_TEMPLATES
 
    /** Autoconversion to string (so old code should work) */
    operator std::string() const
