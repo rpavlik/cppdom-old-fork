@@ -1,5 +1,8 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  --------------------------------------------------------
+2003-01-10 allenb       Added an example that makes a tree from scratch.
+                        Added node and doc constructors that take the name
+                        of the new node.
 2003-01-06 allenb       Added general project documentation in the form of
                         .dox files in the doc/dox directory.  Modified doxy
 						config file to parse these files for documentation.
