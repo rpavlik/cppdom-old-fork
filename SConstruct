@@ -200,7 +200,7 @@ Export('SetupCppUnit')
 #------------------------------------------------------------------------------
 # Grok the arguments to this build
 #------------------------------------------------------------------------------
-EnsureSConsVersion(0,11)
+EnsureSConsVersion(0,94)
 
 # Figure out what vesion of CppDom we're using
 CPPDOM_VERSION = GetCppDomVersion()
@@ -219,7 +219,7 @@ builders = {
 # Create and export the base environment
 if GetPlatform() == 'irix':
    baseEnv = BuildIRIXEnvironment()
-elif GetPlatform() == 'linux':
+elif GetPlatform() == 'linux' or GetPlatform() == 'freebsd':
    baseEnv = BuildLinuxEnvironment()
 elif GetPlatform() == 'win32':
    baseEnv = BuildWin32Environment()
