@@ -35,8 +35,8 @@
 */
 
 // prevent multiple includes
-#ifndef CPPDOM_BOOST_SMART_PTR_HPP
-#define CPPDOM_BOOST_SMART_PTR_HPP
+#ifndef CPPDOM_SHARED_PTR_H
+#define CPPDOM_SHARED_PTR_H
 
 //  Boost smart_ptr.hpp header file  -----------------------------------------//
 
