@@ -46,8 +46,8 @@
 #include <map>
 #include <iosfwd>
 #include <fstream>
-#include <xml/xmlconfig.h>
-#include <xml/shared_ptr.h>   // the boost::shared_ptr class
+#include <xmlpp/xmlconfig.h>
+#include <xmlpp/shared_ptr.h>   // the boost::shared_ptr class
 
 //! namespace of the xmlpp project
 namespace xmlpp {
