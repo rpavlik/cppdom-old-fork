@@ -41,7 +41,7 @@
 
 #include <string>
 
-namespace cppdom { namespace test
+namespace cppdomtest
 {
    namespace Suites
    {
@@ -60,6 +60,6 @@ namespace cppdom { namespace test
         return "interactive";
       }
    }
-}}
+}
 
 #endif
