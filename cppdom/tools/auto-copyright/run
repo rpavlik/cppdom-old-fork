@@ -1,5 +1,5 @@
 #!/bin/sh
-dirs=../../src
+dirs=../../cppdom
 
 CPP_EXTS=java,h.in,h,cxx,cpp
 HASH_EXTS=in,pl,sh,py

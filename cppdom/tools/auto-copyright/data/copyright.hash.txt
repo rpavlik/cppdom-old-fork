@@ -8,7 +8,7 @@
 #
 # -----------------------------------------------------------------
 #
-# cppdom - an xml parser and validator written in C++
+# xmlpp - an xml parser and validator written in C++
 # copyright (c) 2000-2001 Michael Fink
 #
 # This library is free software; you can redistribute it and/or
