@@ -1,7 +1,7 @@
 /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil c-basic-offset: 3 -*- */
 // vim:cindent:ts=3:sw=3:et:tw=80:sta:
 /*************************************************************** cppdom-cpr beg
- * 
+ *
  * cppdom was forked from the original xmlpp version 0.6 under the LGPL. This
  * new, branched xmlpp is under the same LGPL (of course) and is being
  * maintained by:
@@ -99,7 +99,7 @@ namespace cppdom
          Token token1 = *mTokenizer;
          if (token1 != '<')
          {
-            throw Error(xml_opentag_expected);
+            throw CPPDOM_ERROR(xml_opentag_expected, "");
          }
 
          // token after opening < is a literal?
@@ -145,13 +145,13 @@ namespace cppdom
                      }
                      else
                      {
-                        throw Error(xml_unknown);
+                        throw CPPDOM_ERROR(xml_unknown, "");
                      }
                   }
                }
                else
                {
-                  throw Error(xml_pi_doctype_expected);
+                  throw CPPDOM_ERROR(xml_pi_doctype_expected, "");
                }
 
                break;
@@ -163,7 +163,7 @@ namespace cppdom
 
                if (token3.isLiteral())
                {
-                  throw Error(xml_pi_doctype_expected);
+                  throw CPPDOM_ERROR(xml_pi_doctype_expected, "");
                }
 
                // parse processing instruction
@@ -185,19 +185,19 @@ namespace cppdom
                ++mTokenizer;
                if (*mTokenizer != '?')
                {
-                  throw Error(xml_pi_doctype_expected);
+                  throw CPPDOM_ERROR(xml_pi_doctype_expected, "");
                }
 
                ++mTokenizer;
                if (*mTokenizer != '>')
                {
-                  throw Error(xml_closetag_expected);
+                  throw CPPDOM_ERROR(xml_closetag_expected, "");
                }
                break;
             }
          default:
             // unknown literal encountered
-            throw Error(xml_pi_doctype_expected);
+            throw CPPDOM_ERROR(xml_pi_doctype_expected, "");
 
          } // end switch
 
@@ -256,7 +256,7 @@ namespace cppdom
          // Must be a start of a node (ie. < literal)
          if (token1 != '<')
          {
-            throw Error(xml_opentag_cdata_expected);
+            throw CPPDOM_ERROR(xml_opentag_cdata_expected, "");
          }
 
          // get node name
@@ -287,7 +287,7 @@ namespace cppdom
                break;
 
             default:
-               throw Error(xml_tagname_expected);
+               throw CPPDOM_ERROR(xml_tagname_expected, "");
             }
          }
       } while (again);
@@ -320,7 +320,7 @@ namespace cppdom
          Token token4 = *mTokenizer;
          if (token4 != '>' )
          {
-            throw Error(xml_closetag_expected);
+            throw CPPDOM_ERROR(xml_closetag_expected, "");
          }
 
          node.mNodeType = xml_nt_leaf;
@@ -332,7 +332,7 @@ namespace cppdom
       // now a closing bracket must follow
       if (token3 != '>')
       {
-         throw Error(xml_closetag_expected);
+         throw CPPDOM_ERROR(xml_closetag_expected, "");
       }
 
       // loop to parse all subnodes
@@ -359,26 +359,26 @@ namespace cppdom
       ++mTokenizer;
       if (token5 != '<' && *mTokenizer != '/')
       {
-         throw Error(xml_opentag_expected);
+         throw CPPDOM_ERROR(xml_opentag_expected, "");
       }
 
       ++mTokenizer;
       token1 = *mTokenizer;
       if (token1.isLiteral())
       {
-         throw Error(xml_tagname_expected);
+         throw CPPDOM_ERROR(xml_tagname_expected, "");
       }
 
       // check if open and close tag names are identical
       if (token1.getGeneric() != token2.getGeneric())
       {
-         throw Error(xml_tagname_close_mismatch);
+         throw CPPDOM_ERROR(xml_tagname_close_mismatch, "");
       }
 
       ++mTokenizer;
       if (*mTokenizer != '>')
       {
-         throw Error(xml_opentag_expected);
+         throw CPPDOM_ERROR(xml_opentag_expected, "");
       }
 
       if (handle)
@@ -409,7 +409,7 @@ namespace cppdom
          ++mTokenizer;
          if (*mTokenizer != '=')
          {
-            throw Error(xml_attr_equal_expected);
+            throw CPPDOM_ERROR(xml_attr_equal_expected, "");
          }
 
          ++mTokenizer;
@@ -417,7 +417,7 @@ namespace cppdom
 
          if (token2.isLiteral())
          {
-            throw Error(xml_attr_value_expected);
+            throw CPPDOM_ERROR(xml_attr_value_expected, "");
          }
 
          // remove "" from attribute value
