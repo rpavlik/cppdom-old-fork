@@ -11,6 +11,7 @@ sources = Split("""
    TestCases/NodeTest.cpp
    TestCases/ParseTest.cpp
    TestCases/PredTest.cpp
+   TestCases/OptionRepositoryTest.cpp
 """)
 
 if boost_options.isAvailable():
