@@ -33,11 +33,11 @@ bool configureInput( const std::string& filename )
 
    std::cerr << "succesfully loaded " << filename << std::endl;
 
-   xmlpp::XMLNodeList nl = doc.firstchild( "gameinput" )->children();
+   xmlpp::XMLNodeList nl = doc.getChild( "gameinput" )->children();
    xmlpp::XMLNodeListIterator it = nl.begin();
    while (it != nl.end())
    {
-      std::cerr << "in name: " << (*it)->name() << std::endl;
+      std::cerr << "in name: " << (*it)->getName() << std::endl;
       try
       {
          xmlpp::XMLAttributes& attr = (*it)->get_attrmap();
