@@ -112,7 +112,7 @@ OS_SHLIB_EXT=	.dll
 OS_LIB_PREFIX= 	
 OS_SHLIB_PREFIX=	
 OS_EXE_EXT=	.exe
-OS_OBJ_EXT=.obj
+OS_OBJ_EXT=	.obj
 
 
 # Wrapper options around the list of libraries needed at link time.  These
