@@ -7,6 +7,9 @@
 # =============================================================================
 
 DZR_BASE_DIR=	..
+OBJDIR=objs
+DEPDIR=deps
+OBJ_EXT=.o
 
 # Nothing but comments should come before this line.
 default: all
@@ -52,7 +55,7 @@ EXTRA_LIBS=
 # Extend this as necessary to find source files that are not in the current
 # directory.  Set EXTRA_PATH_FOR_SOURCES to all the directories that you
 # have sources in. (current dir is already included by default)
-EXTRA_PATH_FOR_SOURCES=	../cppdom
+EXTRA_PATH_FOR_SOURCES=../cppdom
 
 # Additional files and directories besides the standard ones that need to be
 # removed by the 'clean' target.
