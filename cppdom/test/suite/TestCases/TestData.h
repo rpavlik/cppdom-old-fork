@@ -6,6 +6,7 @@ namespace cppdomtest
 
    const std::string game_xml_filename("data/game.xml");
    const std::string nodetest_xml_filename("data/nodetest.xml");
+   const std::string optionstest_xml_filename("data/options_test.xml");
    const std::string simple_nodes_xml_filename("data/simple_nodes.xml");
    const std::string equal_test_xml_filename("data/equal_test.xml");
 

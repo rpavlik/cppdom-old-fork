@@ -56,7 +56,7 @@ void NodeTest::testChildAccess()
 {
    cppdom::ContextPtr ctx( new cppdom::Context );
    cppdom::Document doc( ctx );
-   doc.loadFile(cppdomtest::nodetest_xml_filename);
+   doc.loadFileChecked(cppdomtest::nodetest_xml_filename);
 
    cppdom::NodePtr nodetest_root = doc.getChild("nodetest_root");      // Get the base node
    CPPUNIT_ASSERT(nodetest_root.get() != NULL);
@@ -70,7 +70,19 @@ void NodeTest::testChildAccess()
    CPPUNIT_ASSERT(test_node.get() != NULL);
    CPPUNIT_ASSERT(test_node->getChild("child_1_1").get() != NULL);
 
+   // Test getChildPath()
+   test_node = nodetest_root->getChildPath("child_1/child_1_2");
+   CPPUNIT_ASSERT(test_node.get() != NULL);
+   test_node = nodetest_root->getChildPath("gp/parent/has_no_daddy");
+   CPPUNIT_ASSERT(test_node.get() == NULL);
+
+   test_node = nodetest_root->getChildPath("gp/parent/child");
+   CPPUNIT_ASSERT(test_node.get() != NULL);
+   int int_val = test_node->getAttribute("val").getValue<int>();
+   CPPUNIT_ASSERT(21 == int_val);
+
    // Test getChildren()
+   test_node = nodetest_root->getChild("child_1");
    cppdom::NodeList kids = test_node->getChildren();
    CPPUNIT_ASSERT(kids.size() == 2);
    CPPUNIT_ASSERT(kids[0]->getName() == std::string("child_1_1"));
