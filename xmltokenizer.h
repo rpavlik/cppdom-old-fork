@@ -60,7 +60,7 @@ namespace cppdom
       }
 
       /// ctor with init
-      XMLToken(xml_char_type ch)
+      XMLToken(char ch)
       {
          isliteral = true;
          literal = ch;
@@ -68,7 +68,7 @@ namespace cppdom
       }
 
       /// ctor with init
-      XMLToken(XMLString& str)
+      XMLToken(std::string& str)
          : generic(str)
       {
          isliteral = false;
@@ -84,17 +84,17 @@ namespace cppdom
       /// returns if it is and end of xml stream token
       bool isEndOfStream()
       {
-         return isliteral && literal==char(EOF)/*XMLString::traits_type::eof()*/;
+         return isliteral && literal==char(EOF)/*std::string::traits_type::eof()*/;
       }
 
       /// returns literal char
-      xml_char_type getLiteral()
+      char getLiteral()
       {
          return literal;
       }
 
       /// returns generic string
-      XMLString& getGeneric()
+      std::string& getGeneric()
       {
          return generic;
       }
@@ -102,31 +102,31 @@ namespace cppdom
       // operators
 
       /// compare operator for literals
-      bool operator==(xml_char_type ch)
+      bool operator==(char ch)
       {
         return !isliteral ? false : ch == literal;
       }
 
       /// compare operator for literals
-      bool operator!=(xml_char_type ch)
+      bool operator!=(char ch)
       {
          return !isliteral ? true : ch != literal;
       }
 
       /// compare operator for a generic string
-      bool operator==(XMLString str)
+      bool operator==(std::string str)
       {
          return !isliteral ? str == generic : false;
       }
 
       /// compare operator for a generic string
-      bool operator!=(XMLString str)
+      bool operator!=(std::string str)
       {
          return !isliteral ? str != generic : true;
       }
 
       /// set generic string
-      XMLToken& operator=(XMLString& str)
+      XMLToken& operator=(std::string& str)
       {
          generic.assign(str);
          isliteral = false;
@@ -134,7 +134,7 @@ namespace cppdom
       }
 
       /// set literal char
-      XMLToken& operator=(xml_char_type ch)
+      XMLToken& operator=(char ch)
       {
          literal = ch;
          isliteral = true;
@@ -146,10 +146,10 @@ namespace cppdom
       bool isliteral;
 
       /// literal
-      xml_char_type literal;
+      char literal;
 
       /// pointer to string
-      XMLString generic;
+      std::string generic;
    };
 
 
@@ -246,16 +246,16 @@ namespace cppdom
       void getNext();
 
       // internally used to recognize chars in the stream
-      bool isLiteral(xml_char_type c);
-      bool isWhiteSpace(xml_char_type c);
-      bool isNewLine(xml_char_type c);
-      bool isStringDelimiter(xml_char_type c); // start-/endchar of a string
+      bool isLiteral(char c);
+      bool isWhiteSpace(char c);
+      bool isNewLine(char c);
+      bool isStringDelimiter(char c); // start-/endchar of a string
 
       /** cdata-mode doesn't care for whitespaces in generic strings */
       bool cdataMode;
 
       /** char which was put back internally */
-      xml_char_type putbackChar;
+      char putbackChar;
    };
 
    /**

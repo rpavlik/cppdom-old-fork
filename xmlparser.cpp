@@ -46,7 +46,7 @@ namespace cppdom
    {
       // set root nodename
       doc.contextptr = ctxptr;
-      XMLString rootstr("root");
+      std::string rootstr("root");
       doc.nodenamehandle = ctxptr->insertTagname(rootstr);
 
       bool handle = ctxptr->handleEvents();
@@ -122,7 +122,7 @@ namespace cppdom
                   }
                   else
                   {
-                     XMLString doctypestr(token3.getGeneric());
+                     std::string doctypestr(token3.getGeneric());
 
                      std::transform(doctypestr.begin(), doctypestr.end(), doctypestr.begin(), toupper);
 
@@ -159,7 +159,7 @@ namespace cppdom
                // parse processing instruction
                XMLNode pinode(ctxptr);
 
-               XMLString tagname(token3.getGeneric());
+               std::string tagname(token3.getGeneric());
                pinode.nodenamehandle = ctxptr->insertTagname(tagname);
 
                parseAttributes(pinode.attributes);
@@ -219,7 +219,7 @@ namespace cppdom
          // check if we have cdata
          if (!token1.isLiteral())
          {
-            XMLString cdataname("cdata");
+            std::string cdataname("cdata");
             node.nodenamehandle = ctxptr->insertTagname(cdataname);
 
             // parse cdata section(s) and return
@@ -283,7 +283,7 @@ namespace cppdom
       } while (again);
 
       // insert tag name and set handle for it
-      XMLString tagname(token2.getGeneric());
+      std::string tagname(token2.getGeneric());
       node.nodenamehandle = ctxptr->insertTagname(tagname);
 
       // notify event handler
@@ -394,7 +394,7 @@ namespace cppdom
          }
 
          // guru: get value name here
-         XMLString name = token1.getGeneric();
+         std::string name = token1.getGeneric();
 
          ++tokenizer;
          if (*tokenizer != '=')
@@ -411,7 +411,7 @@ namespace cppdom
          }
 
          // remove "" from attribute value
-         XMLString value(token2.getGeneric());
+         std::string value(token2.getGeneric());
          value.erase(0, 1);
          value.erase(value.length()-1, 1);
 

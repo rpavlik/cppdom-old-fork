@@ -63,10 +63,10 @@ namespace cppdom
 
       bool finished = false;
 
-      XMLString generic;
+      std::string generic;
 
       // get next char
-      xml_char_type c;
+      char c;
 
       do
       {
@@ -122,7 +122,7 @@ namespace cppdom
          if (isStringDelimiter(c) && !cdataMode)
          {
             generic = c;
-            xml_char_type delim = c;
+            char delim = c;
             do
             {
                c = instr.get();
@@ -176,7 +176,7 @@ namespace cppdom
    }
 
    // returns if we have a literal char
-   bool xmlstream_iterator::isLiteral(xml_char_type c)
+   bool xmlstream_iterator::isLiteral(char c)
    {
       switch(c)
       {
@@ -196,7 +196,7 @@ namespace cppdom
    }
 
    // returns if we have a white space char
-   bool xmlstream_iterator::isWhiteSpace(xml_char_type c)
+   bool xmlstream_iterator::isWhiteSpace(char c)
    {
       switch(c)
       {
@@ -208,7 +208,7 @@ namespace cppdom
    }
 
    // returns if we have a newline
-   bool xmlstream_iterator::isNewLine(xml_char_type c)
+   bool xmlstream_iterator::isNewLine(char c)
    {
       switch(c)
       {
@@ -221,7 +221,7 @@ namespace cppdom
    }
 
    // returns if we have a string delimiter (separating " and ')
-   bool xmlstream_iterator::isStringDelimiter(xml_char_type c)
+   bool xmlstream_iterator::isStringDelimiter(char c)
    {
       switch(c)
       {
