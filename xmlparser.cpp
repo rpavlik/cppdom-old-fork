@@ -61,15 +61,15 @@ bool XMLParser::parseDocument( XMLDocument &doc, XMLContextPtr &ctxptr )
    parseHeader( doc, ctxptr );
 
    // parse the only one subnode
-   XMLNode subnode( ctxptr );
+   XMLNodePtr new_subnode(new XMLNode(ctxptr));
 
-   bool ret = parseNode( subnode, ctxptr );
+   bool ret = parseNode( *new_subnode, ctxptr );
 
    // if successful, put node into nodelist
    if (ret)
    {
-      XMLNodePtr nodeptr( new XMLNode(subnode) );
-      doc.mNodelist.push_back( nodeptr );
+//      XMLNodePtr nodeptr( new XMLNode(subnode) );
+      doc.addChild( new_subnode );
    }
 
    if (handle)
@@ -297,14 +297,14 @@ bool XMLParser::parseNode( XMLNode &node, XMLContextPtr &ctxptr )
    while (1==1)
    {
       // create subnode
-      XMLNode subnode( ctxptr );
+      XMLNodePtr new_subnode(new XMLNode(ctxptr));
 
       // try to parse possible sub nodes
-      if (this->parseNode( subnode, ctxptr ))
+      if (this->parseNode( *new_subnode, ctxptr ))
       {
          // if successful, put node into nodelist
-         XMLNodePtr nodeptr( new XMLNode(subnode) );
-         node.mNodelist.push_back( nodeptr );
+//         XMLNodePtr nodeptr( new XMLNode(subnode) );
+         node.addChild( new_subnode );
       }
       else
          break;
