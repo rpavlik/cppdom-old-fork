@@ -5,6 +5,8 @@
 *
 * @ref nodetest.cpp
 *
+* @ref create_example
+*
 * @see nodetest.cpp
 */
 
@@ -12,5 +14,25 @@
 
 This is a simple example used to test the basic API.
 
+*/
+
+/** \example maketree.cpp
+
+This is an example of creating a cppdom tree from scratch.
+
+*/
+
+/** \page create_example Creating a cppdom tree from scratch
+
+This is an example of making a cppdom tree
+from scratch in code
+
+\dontinclude maketree.cpp
+This is how the program starts.
+\until main
+Add Stuff here
+\until doc.addChild
+\until doc.saveFile
+\until }
 */
 
