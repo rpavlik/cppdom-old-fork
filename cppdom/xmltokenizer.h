@@ -1,27 +1,49 @@
+// this xmlpp was branched from the original LGPL'd xmlpp version 0.6
+// this new branched xmlpp is under the same LGPL (of course) and
+// is being maintained by:
+//    kevin meinert <subatomic@users.sf.net>
+//    allen bierbaum <allenb@users.sf.net>
+//    ben scott <nonchocoboy@users.sf.net>
+/////////////////////////////////////////////////////////////////////
 /*
    xmlpp - an xml parser and validator written in C++
-   (c) 2000 Michael Fink
-   (c) Karl Pitrich
-      
-   $Id$
-*/
+   copyright (c) 2000-2001 Michael Fink
 
-/*! \file xmltokenizer.h
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Library General Public
+   License as published by the Free Software Foundation; either
+   version 2 of the License, or (at your option) any later version.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public
+   License along with this library; if not, write to the
+   Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+   Boston, MA  02111-1307  USA.
+
+*/
+/*! \file xmltokenizer.hpp
 
   the stream tokenizer class
 
 */
 
-#ifndef __xmltokenizer_h__
-#define __xmltokenizer_h__
+// prevent multiple includes
+#ifndef __xmltokenizer_hpp_
+#define __xmltokenizer_hpp_
 
+// needed includes
 #include <string>
 #include <stack>
 #include <iosfwd>
-#include "xmlhelpers.h"
+
 
 // namespace declaration
 namespace xmlpp {
+
 
 //! xml token
 /*! an xmltoken is a representation for a literal character or a 
@@ -33,43 +55,43 @@ public:
    //! ctor
    xmltoken(){ isliteral=true; literal=0; generic.empty(); }
    //! ctor with init
-   xmltoken( char ch ){ isliteral=true; literal=ch; generic.empty(); }
+   xmltoken( xml_char_type ch ){ isliteral=true; literal=ch; generic.empty(); }
    //! ctor with init
-   xmltoken( string &str ):generic(str){ isliteral=false; literal=0; }
+   xmltoken( xmlstring &str ):generic(str){ isliteral=false; literal=0; }
 
    //! returns if token is a literal
    bool is_literal(){ return isliteral; }
    //! returns if it is and end of xml stream token
    bool is_endofstream(){ return isliteral && literal==EOF/*xmlstring::traits_type::eof()*/; }
    //! returns literal char
-   char get_literal(){ return literal; }
+   xml_char_type get_literal(){ return literal; }
    //! returns generic string
-   string &get_generic(){ return generic; }
+   xmlstring &get_generic(){ return generic; }
 
    // operators
 
    //! compare operator for literals
-   bool operator ==(char ch){ return !isliteral?false:ch==literal; }
+   bool operator ==(xml_char_type ch){ return !isliteral?false:ch==literal; }
    //! compare operator for literals
-   bool operator !=(char ch){ return !isliteral?true:ch!=literal; }
+   bool operator !=(xml_char_type ch){ return !isliteral?true:ch!=literal; }
 
    //! compare operator for a generic string
-   bool operator ==(string str){ return !isliteral?str==generic:false; }
+   bool operator ==(xmlstring str){ return !isliteral?str==generic:false; }
    //! compare operator for a generic string
-   bool operator !=(string str){ return !isliteral?str!=generic:true; }
+   bool operator !=(xmlstring str){ return !isliteral?str!=generic:true; }
 
    //! set generic string
-   xmltoken &operator =(string &str){ generic.assign(str); isliteral=false; return *this; }
+   xmltoken &operator =(xmlstring &str){ generic.assign(str); isliteral=false; return *this; }
    //! set literal char
-   xmltoken &operator =(char ch){ literal=ch; isliteral=true; return *this; }
+   xmltoken &operator =(xml_char_type ch){ literal=ch; isliteral=true; return *this; }
 
 protected:
    //! indicates if token is a literal char
    bool isliteral;
    //! literal
-   char literal;
+   xml_char_type literal;
    //! pointer to string
-   string generic;
+   xmlstring generic;
 };
 
 
@@ -128,23 +150,20 @@ public:
    //! ctor
    xmlstream_iterator(std::istream &is,xmllocation &loc);
 
-   //! set to true to ignore parsing whitespace
-   void set_cdata_mode(bool to=false) { cdata_mode=to; }
-   
 protected:
    void get_next();
 
    // internally used to recognize chars in the stream
-   bool is_literal( char c );
-   bool is_whitespace( char c );
-   bool is_newline( char c );
-   bool is_stringdelimiter( char c ); // start-/endchar of a string
+   bool is_literal( xml_char_type c );
+   bool is_whitespace( xml_char_type c );
+   bool is_newline( xml_char_type c );
+   bool is_stringdelimiter( xml_char_type c ); // start-/endchar of a string
 
    //! cdata-mode doesn't care for whitespaces in generic strings
    bool cdata_mode;
 
    //! char which was put back internally
-   char putback_char;
+   xml_char_type putback_char;
 };
 
 //! dtd input stream iterator
@@ -160,7 +179,7 @@ protected:
 };
 
 
-}; // namespace end
+// namespace end
+};
 
 #endif
-/* vi: set ts=3: */
