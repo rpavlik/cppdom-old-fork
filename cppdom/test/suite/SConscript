@@ -7,10 +7,10 @@ import os
 pj = os.path.join
 
 sources = Split("""
-   runner
-   TestCases/ErrorTest
+   runner.cpp
+   TestCases/ErrorTest.cpp
+   TestCases/PredTest.cpp
 """)
-sources = map(lambda n: n + '.cpp', sources)
 
 env = baseEnv.Copy()
 env.Append(CPPPATH = ["#", "."],

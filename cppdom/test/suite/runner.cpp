@@ -76,7 +76,7 @@ int main(int argc, char** argv)
    std::cout << "                     prefix: " << metric_prefix << std::endl;
 
    metric_reg->setPrefix(metric_prefix);
-   metric_reg->setFilename("cppdom_metrics.txt");
+   metric_reg->setFilename("data/cppdom_metrics.txt");
    metric_reg->setMetric("Main/MetricTest", 1221.75f);
 
    //------------------------------------
