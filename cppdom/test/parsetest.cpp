@@ -13,11 +13,11 @@ using namespace std;
 
 
 // dumps the node
-void dump_node( xmlnode &node, int level = 0 )
+void dump_node( XMLNode &node, int level = 0 )
 {
-   xmlstring name = node.getName();
-   xmlnodetype type = node.getType();
-   xmlstring c_data;
+   XMLString name = node.getName();
+   XMLNodeType type = node.getType();
+   XMLString c_data;
 
    for(int i=0;i<level;i++) cout << " ";
 
@@ -35,7 +35,7 @@ void dump_node( xmlnode &node, int level = 0 )
       break;
    case xml_nt_cdata:
       c = '#';
-      c_data = node.get_cdata();
+      c_data = node.getCdata();
       break;
    }
 
@@ -44,10 +44,10 @@ void dump_node( xmlnode &node, int level = 0 )
    else
       cout << c << name.c_str() << endl;
 
-   xmlattributes attr = node.get_attrmap();
+   XMLAttributes attr = node.getAttrmap();
 
    // guru: added output of attributes
-   for (xmlattributes::iterator j = attr.begin(); j!=attr.end(); j++)
+   for (XMLAttributes::iterator j = attr.begin(); j!=attr.end(); j++)
    {
       for (int i=0; i<level; i++)
          cout << " ";
@@ -55,15 +55,15 @@ void dump_node( xmlnode &node, int level = 0 )
       cout << j->first << ": " << j->second << endl;
    }
 
-   xmlnodelist& nlist = node.getChildren();
+   XMLNodeList& nlist = node.getChildren();
 
-   xmlnodelist::const_iterator iter, stop;
+   XMLNodeList::const_iterator iter, stop;
    iter = nlist.begin();
    stop = nlist.end();
 
    while (iter != stop)
    {
-      xmlnodeptr node = *iter;
+      XMLNodePtr node = *iter;
 
       dump_node ( *node, level+1 );
 
@@ -75,8 +75,8 @@ void process_xml( std::string filename )
 {
    cout << "processing [" << filename << "] ..." << endl;
 
-   xmlcontextptr context( new xmlcontext );
-   xmldocument node( context );
+   XMLContextPtr context( new XMLContext );
+   XMLDocument node( context );
    ifstream istr( filename.c_str() );
 
    // Verify that file opened
@@ -106,13 +106,13 @@ void process_xml( std::string filename )
    }
    catch (xmlerror e)
    {
-      xmllocation where( context->get_location() );
-      xmlstring errmsg;
-      e.get_strerror(errmsg);
+      XMLLocation where( context->get_location() );
+      XMLString errmsg;
+      e.getStrError(errmsg);
 
       // print out where the error occured
-      cout << filename << ":" << where.get_line() << " ";
-      cout << "at position " << where.get_pos();
+      cout << filename << ":" << where.getLine() << " ";
+      cout << "at position " << where.getPos();
       cout << ": error: " << errmsg.c_str();
       cout << endl;
 
