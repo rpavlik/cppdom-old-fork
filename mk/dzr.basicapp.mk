@@ -40,8 +40,8 @@
 # $Id$
 # -----------------------------------------------------------------------------
 
-include $(DZR_BASE_DIR)/mk/dzr.obj.mk
 include $(DZR_BASE_DIR)/mk/dzr.app.mk
+include $(DZR_BASE_DIR)/mk/dzr.obj.mk
 
 LIBS=	$(LIBS_BEGIN) $(SYS_LIBS) $(LIBS_END)
 
