@@ -39,6 +39,8 @@
 #ifndef CPPDOM_VERSION_H
 #define CPPDOM_VERSION_H
 
+#include "config.h"
+
 /** @file version.h
  * This file contains two useful items.
  *   - 1. The preprocessor friendly CPPDOM_VERSION "string". It is in the form
@@ -126,7 +128,7 @@
 //--------------------------------------------------------------------------
 namespace cppdom
 {
-   extern const char* version;
+   CPPDOM_EXPORT(const char*) getVersion();
 }
 
 //--------------------------------------------------------------------------

@@ -59,7 +59,10 @@
 
 namespace cppdom
 {
-   const char* version = CPPDOM_XSTR(CPPDOM_VERSION_STRING);
+   CPPDOM_EXPORT(const char*) getVersion()
+   {
+      return CPPDOM_XSTR(CPPDOM_VERSION_STRING);
+   }
 }
 
 // Undef all the helper macros
