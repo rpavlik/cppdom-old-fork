@@ -49,12 +49,95 @@
 #include <cppdom/cppdom.h>
 #include <cppdom/xmlparser.h>
 #include <cppdom/predicates.h>
+#include <string>
 
 // namespace declaration
 namespace cppdom
 {
-   // Error methods
 
+   // True if there are characters references: ex: &amp;
+   bool textContainsXmlEscaping(const std::string& data)
+   {
+      if(std::string::npos != data.find("&"))
+         return true;
+      else
+         return false;
+   }
+
+   // True if there are chars needing escaping
+   bool textNeedsXmlEscaping(const std::string& data, bool isCdata)
+   {
+      if(isCdata)
+         return (std::string::npos != data.find_first_of("&<>"));
+      else
+         return (std::string::npos != data.find_first_of("&<>'\""));         
+   }
+
+   // Remove escaping from xml text
+   std::string removeXmlEscaping(const std::string& data, bool isCdata)
+   {
+      std::string ret_str;
+      for(unsigned i=0; i<data.size(); ++i)
+      {
+         if('&' == data[i])      // If we have escaping
+         {
+            ++i;                 // Goto next char
+            std::string::size_type semi_pos = data.find(';', i);     // Find the end tag
+            std::string tag = data.substr(i,(semi_pos-i));
+            if("amp" == tag)
+            {  ret_str += '&'; }
+            else if("lt" == tag)
+            {  ret_str += '<'; }
+            else if("gt" == tag)
+            {  ret_str += '>'; }
+            else if("apos" == tag)
+            {  ret_str += '\''; }
+            else if("quot" == tag)
+            {  ret_str += '"'; }
+            else
+            {
+               throw CPPDOM_ERROR(xml_escaping_failure, "");
+            }
+            i = semi_pos;     // Skip ahead
+         }
+         else
+         {
+            ret_str += data[i];     // Add on the standard characters
+         }
+      }
+
+      return ret_str;
+   }
+
+   // Add escaping to xml text
+   std::string addXmlEscaping(const std::string& data, bool isCdata)
+   {
+      // Go char by char looking for things to replace
+      std::string ret_str;
+      char c;
+      for(unsigned i=0;i<data.size(); ++i)
+      {
+         c = data[i];
+         
+         if ('&' == c)
+         { ret_str += "&amp;"; }
+         else if ('<' == c)
+         { ret_str += "&lt;"; }
+         else if ('>' == c)
+         { ret_str += "&gt;"; }
+         else if ((!isCdata) && ('\'' == c))
+         { ret_str += "&apos;"; }
+         else if ((!isCdata) && ('"' == c))
+         { ret_str += "&quot;"; }
+         else 
+         {  ret_str += c; }
+      }
+
+      return ret_str;
+   }
+
+
+   // Error methods
    Error::Error(ErrorCode code, std::string localDesc, std::string location)
       : mErrorCode(code), mLocalDesc(localDesc), mLocation(location)
    {}
@@ -97,6 +180,7 @@ namespace cppdom
 
          XMLERRORCODE(xml_invalid_operation, "attempted to execute command that would cause invalid structure");
          XMLERRORCODE(xml_invalid_argument,  "attempted to use an invalid argument");
+         XMLERRORCODE(xml_escaping_failure, "error with escaping in XML data");
 
          XMLERRORCODE(xml_dummy,"dummy error code (this error should never been seen)");
       }
@@ -694,7 +778,14 @@ namespace cppdom
       // output cdata
       if (mNodeType == xml_nt_cdata)
       {
-         out << mCdata.c_str();
+         if(textNeedsXmlEscaping(mCdata, true))
+         {
+            std::string out_text = addXmlEscaping(mCdata, true);
+            out << out_text;
+         }
+         else
+         {  out << mCdata; }
+
          if(doNewline)
             out << std::endl;
          return;
@@ -711,7 +802,10 @@ namespace cppdom
       for(; iter!=stop; ++iter)
       {
          Attributes::value_type attr = *iter;
-         out << ' ' << attr.first << '=' << '\"' << attr.second << '\"';
+         std::string attrib_text = attr.second;
+         if(textNeedsXmlEscaping(attrib_text, false))
+            attrib_text = addXmlEscaping(attrib_text, false);
+         out << ' ' << attr.first << '=' << '\"' << attrib_text << '\"';
       }
 
       // depending on the nodetype, do output

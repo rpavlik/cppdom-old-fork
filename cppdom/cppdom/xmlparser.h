@@ -75,7 +75,7 @@ namespace cppdom
       bool parseAttributes(Attributes& attr);
 
       /** parses a <!-- --> comment */
-      void parseComment(ContextPtr& context);
+      void parseComment(ContextPtr& context);   
 
    protected:
       /** input stream */

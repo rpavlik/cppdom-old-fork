@@ -71,8 +71,20 @@
 //! namespace of the cppdom project
 namespace cppdom
 {
-
+   // Helper methods
    template <class T> inline void ignore_unused_variable_warning(const T&) { }
+
+   // True if there are characters references: ex: &amp;
+   bool textContainsXmlEscaping(const std::string& data);
+      
+   // True if there are chars needing escaping
+   bool textNeedsXmlEscaping(const std::string& data, bool isCdata);
+   
+    // Remove escaping from xml text
+   std::string removeXmlEscaping(const std::string& data, bool isCdata);
+
+   // Add escaping to xml text
+   std::string addXmlEscaping(const std::string& data, bool isCdata);
 
    //! xml parsing error codes enumeration
    enum ErrorCode
@@ -95,6 +107,7 @@ namespace cppdom
    // added by kevin for 0.7 compatibility...
       xml_filename_invalid,
       xml_file_access,
+      xml_escaping_failure,         /**< Problem with escaping */
 
       xml_dummy                     /**< dummy error code */
    };
