@@ -224,12 +224,12 @@ public:
 
 protected:
 
-   bool init;        /**< indicates if init_context() was already called */
-   int nexthandle;   /**< next available tagname handle */
-   xmltagnamemap tagnames;    /**< matches xmltagnamehandles to the real xmlstring's */
-   xmlentitymap entities;     /**< Contains entity codes and their string representations */
-   xmllocation location;      /**< location of the xml input stream */
-   bool handleevents;         /**< indicates if the event handler is used */
+   bool           init;                /**< indicates if init_context() was already called */
+   int            nexthandle;          /**< next available tagname handle */
+   xmltagnamemap  tagnames;            /**< matches xmltagnamehandles to the real xmlstring's */
+   xmlentitymap   entities;            /**< Contains entity codes and their string representations */
+   xmllocation    location;            /**< location of the xml input stream */
+   bool           handleevents;        /**< indicates if the event handler is used */
    xmleventhandlerptr eventhandler;    /**< current parsing event handler */
 };
 
