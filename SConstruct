@@ -195,8 +195,6 @@ def SetupCppUnit(env):
    env.ParseConfig(cfg + ' --cflags --libs')
 Export('SetupCppUnit')
 
-
-
 #------------------------------------------------------------------------------
 # Grok the arguments to this build
 #------------------------------------------------------------------------------
@@ -227,7 +225,8 @@ elif GetPlatform() == 'sun':
    baseEnv = BuildSunEnvironment()
 else:
    print 'Unsupported build environment: ' + GetPlatform()
-   sys.exit(-1)
+   print 'Attempting to use standard SCons toolchains.'
+   baseEnv = Environment()
 Export('baseEnv')
 
 # Do we have the super cool savable version
