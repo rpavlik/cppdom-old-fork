@@ -92,8 +92,8 @@ def BuildIRIXEnvironment():
    "Builds a base environment for other modules to build on set up for IRIX"
    global optimize, profile, builders
 
-   CXX = 'CC'
-   LINK = CXX
+   #CXX = 'CC'
+   #LINK = CXX
    CXXFLAGS = ['-n32', '-mips3', '-LANG:std', '-w2']
    LINKFLAGS = CXXFLAGS
 
@@ -110,9 +110,9 @@ def BuildIRIXEnvironment():
 
    return Environment(
       ENV         = os.environ,
-      CXX         = CXX,
+      #CXX         = CXX,
       CXXFLAGS    = CXXFLAGS,
-      LINK        = LINK,
+      #LINK        = LINK,
       LINKFLAGS   = LINKFLAGS
    )
 
