@@ -49,7 +49,7 @@
 #include <fstream>
 #include <iostream>
 #include <cppdom/config.h>
-#include <boost/shared_ptr.hpp>   // the boost::shared_ptr class
+#include <cppdom/shared_ptr.h>   // the boost::shared_ptr class
 
 //! namespace of the cppdom project
 namespace cppdom {
@@ -60,7 +60,7 @@ typedef char xml_char_type;
 /** string class typedef */
 typedef std::basic_string<xml_char_type> XMLString;
 /** string smart pointer */
-typedef boost::shared_ptr<XMLString> XMLStringPtr;
+typedef cppdom_boost::shared_ptr<XMLString> XMLStringPtr;
 
 
 //! xml parsing error codes enumeration
@@ -177,9 +177,9 @@ typedef std::map<XMLTagNameHandle,XMLString> XMLTagNameMap;
 /** maps an entity to a string representation */
 typedef std::map<XMLString,XMLString> XMLEntityMap;
 /** smart pointer for XMLContext */
-typedef boost::shared_ptr<class XMLContext> XMLContextPtr;
+typedef cppdom_boost::shared_ptr<class XMLContext> XMLContextPtr;
 /** smart pointer to the event handler */
-typedef boost::shared_ptr<class XMLEventHandler> XMLEventHandlerPtr;
+typedef cppdom_boost::shared_ptr<class XMLEventHandler> XMLEventHandlerPtr;
 
 /** xml parsing context class.
 * the class is the parsing context for the parsed xml document.
@@ -260,7 +260,7 @@ enum XMLNodeType
 
 // typedefs
 /** smart pointer to node */
-typedef boost::shared_ptr<class XMLNode> XMLNodePtr;
+typedef cppdom_boost::shared_ptr<class XMLNode> XMLNodePtr;
 
 /** list of node smart pointer */
 typedef std::list<XMLNodePtr> XMLNodeList;
@@ -642,7 +642,7 @@ protected:
    XMLNodeList dtdrules;
 };
 
-typedef boost::shared_ptr<class XMLDocument> XMLDocumentPtr;
+typedef cppdom_boost::shared_ptr<class XMLDocument> XMLDocumentPtr;
 
 
 /** Interface for xml parsing event handler */
