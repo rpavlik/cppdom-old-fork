@@ -2,7 +2,7 @@
 Import('baseEnv')
 
 env = baseEnv.Copy()
-env.Append(CPPPATH = ['#'])
+env.Append(CPPPATH = ['#', '#test'])
 env.Append(LIBPATH = ['#cppdom'])
 env.Append(LIBS = ['cppdom'])
 
