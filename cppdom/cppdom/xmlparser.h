@@ -36,8 +36,8 @@
 #define __xmlparser_hpp_
 
 // needed includes
-#include "xml/xmlpp.h"
-#include "xml/xmltokenizer.h"
+#include <xmlpp/xmlpp.h>
+#include <xmlpp/xmltokenizer.h>
 
 // namespace declaration
 namespace xmlpp {
