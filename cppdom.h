@@ -426,7 +426,9 @@ namespace cppdom
       * @param ignoreAttribs - Attributes to ignore in the comparison
       * @param ignoreElements - Elements to ignore in the comparison
       */
-      bool isEqual(NodePtr otherNode, const std::vector<std::string>& ignoreAttribs, const std::vector<std::string>& ignoreElements);
+      bool isEqual(NodePtr otherNode, const std::vector<std::string>& ignoreAttribs,
+                   const std::vector<std::string>& ignoreElements,
+                   bool dbgit=false, const unsigned debugIndent=0);
 
       bool isEqual(NodePtr otherNode)
       {
