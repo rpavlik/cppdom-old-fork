@@ -1,7 +1,6 @@
-Import('baseEnv')
-Import('GetPlatform SetupCppUnit')
-Import('buildDir')
-Import('PREFIX')
+#!python
+Import('baseEnv', 'GetPlatform', 'buildDir', 'PREFIX')
+Import('cppunit_options', 'boost_options')
 
 import os
 pj = os.path.join
@@ -14,7 +13,7 @@ sources = Split("""
    TestCases/PredTest.cpp
 """)
 
-if baseEnv["BoostAvailable"]:
+if boost_options.isAvailable():
    sources.append("TestCases/SpiritTest.cpp")
 
 
@@ -22,7 +21,7 @@ env = baseEnv.Copy()
 env.Append(CPPPATH = ["#", "."],
            LIBPATH = [pj('#', buildDir, 'cppdom')],
            LIBS    = ['cppdom'])
-SetupCppUnit(env)
+cppunit_options.updateEnv(env)
 
 # Win32 doesn't have libdl
 if GetPlatform() != 'win32':

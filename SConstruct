@@ -25,8 +25,6 @@ import SConsAddons.Options.Boost
 #------------------------------------------------------------------------------
 def GetCppDomVersion():
    "Gets the CppDom version from cppdom/version.h"
-   import re
-
    contents = open('cppdom/version.h', 'r').read()
    major = re.compile('.*(#define *CPPDOM_VERSION_MAJOR *(\d+)).*', re.DOTALL).sub(r'\2', contents)
    minor = re.compile('.*(#define *CPPDOM_VERSION_MINOR *(\d+)).*', re.DOTALL).sub(r'\2', contents)
@@ -38,9 +36,9 @@ Export('GetPlatform')
 
 
 def CreateConfig(target, source, env):
-   "Creates the prefix-config file users use to compile against this library"
-   import re
-
+   """ Config script builder 
+      Creates the prefix-config file users use to compile against this library 
+   """
    targets = map(lambda x: str(x), target)
    sources = map(lambda x: str(x), source)
 
@@ -61,6 +59,7 @@ def CreateConfig(target, source, env):
       os.chmod(targets[0], 0755)
    return 0
 
+# --- Platform specific environment factory methods --- #
 def BuildLinuxEnvironment():
    "Builds a base environment for other modules to build on set up for linux"
    global optimize, profile, builders

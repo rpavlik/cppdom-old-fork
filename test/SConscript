@@ -1,8 +1,5 @@
-Import('baseEnv')
-Import('HasCppUnit')
-Import('GetPlatform')
-Import('buildDir')
-Import('PREFIX')
+#!python
+Import('baseEnv opts GetPlatform buildDir PREFIX cppunit_options')
 
 import os
 pj = os.path.join
@@ -22,7 +19,7 @@ for t in tests:
    env.Program(target = t, source = t+'.cpp')
 
 subdirs = []
-if HasCppUnit(baseEnv):
+if cppunit_options.isAvailable():
    subdirs.append('suite')
 SConscript(dirs = subdirs)
 #for d in subdirs:
