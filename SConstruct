@@ -53,7 +53,7 @@ def CreateConfig(target, source, env):
       # Go through the substitution dictionary and modify the contents read in
       # from the source file
       for key, value in submap.items():
-         contents = re.sub(re.escape(key), re.escape(value), contents)
+         contents = re.sub(re.escape(key), value, contents)
 
       # Write out the target file with the new contents
       open(targets[0], 'w').write(contents)
@@ -158,9 +158,6 @@ print 'Building CppDom Version: %i.%i.%i' % CPPDOM_VERSION
 # Get command-line arguments
 optimize = ARGUMENTS.get('optimize', 'no')
 profile = ARGUMENTS.get('profile', 'no')
-PREFIX = ARGUMENTS.get('prefix', '/usr/local')
-Prefix(PREFIX)
-Export('PREFIX')
 
 # Create the extra builders
 # Define a builder for the cppdom-config script
@@ -189,6 +186,9 @@ opts.Add('WithCppUnit',
          '/usr/local',
          lambda k,v,env=None: WhereIs(pj(v, 'bin', 'cppunit-config')) != None
         )
+opts.Add('prefix',
+         'Installation prefix',
+         '/usr/local')
 opts.Update(baseEnv)
 if have_cool_options:
    opts.Save('config.cache', baseEnv);
@@ -202,6 +202,12 @@ Targets:
 
 help_text += "Options:\n" + opts.GenerateHelpText(baseEnv)
 Help(help_text)
+
+# Handle options
+PREFIX = baseEnv['prefix']
+PREFIX = os.path.abspath(PREFIX)
+Prefix(PREFIX)
+Export('PREFIX')
 
 # Create the CppDom package
 pkg = Package('cppdom', '%i.%i.%i' % CPPDOM_VERSION)
