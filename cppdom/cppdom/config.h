@@ -32,8 +32,8 @@
 */
 
 // prevent multiple includes
-#ifndef __config_hpp_
-#define __config_hpp_
+#ifndef CPPDOM_CONFIG_H
+#define CPPDEM_CONFIG_H
 
 // needed includes
 

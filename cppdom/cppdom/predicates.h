@@ -10,16 +10,18 @@ namespace cppdom
    {
    public:
       /** set the attribute name to match. */
-      HasAttributeNamePredicate( std::string attrName ) : mName( attrName ) 
-      {;}
-   
-      /** set the attribute name to match. */
-      void setName( std::string attrName ) { mName = attrName; }
+      HasAttributeNamePredicate(std::string attrName)
+         : mName(attrName)
+      {}
 
-      bool operator()( const XMLNodePtr& node )
+      /** set the attribute name to match. */
+      void setName(std::string attrName) { mName = attrName; }
+
+      bool operator()(const XMLNodePtr& node)
       {
-         return node->hasAttribute( mName );
+         return node->hasAttribute(mName);
       }
+
    private:
       std::string mName;
    };
@@ -27,33 +29,33 @@ namespace cppdom
    class HasAttributeValuePredicate
    {
    public:
-      /** set the attribute name to match.
-       *  set the attribute value to match. 
+      /**
+       * set the attribute name to match.
+       * set the attribute value to match.
        */
-      HasAttributeValuePredicate( std::string attrName, std::string val ) : 
-         mName( attrName ), mValue( val ) 
-      {;}
+      HasAttributeValuePredicate(std::string attrName, std::string val)
+         : mName(attrName), mValue(val)
+      {}
 
       /** set the attribute name to match. */
-      void setName( std::string attrName ) { mName = attrName; }
+      void setName(std::string attrName) { mName = attrName; }
 
       /** set the attribute value to match. */
-      void setValue( std::string val ) { mValue = val; }
+      void setValue(std::string val) { mValue = val; }
 
-      bool operator()( const XMLNodePtr& node )
+      bool operator()(const XMLNodePtr& node)
       {
          // if doesn't have the attribute, then were done.
-         if (!node->hasAttribute( mName )) 
+         if (!node->hasAttribute(mName))
          {
             return false;
          }
 
-         return mValue == (std::string)node->getAttribute( mName );
-      }   
+         return mValue == (std::string)node->getAttribute(mName);
+      }
    private:
       std::string mName, mValue;
    };
-
-} // end cppdom namespace
+}
 
 #endif
