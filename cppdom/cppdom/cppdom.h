@@ -388,6 +388,11 @@ namespace cppdom
          return mMap.end();
       }
 
+      unsigned size() const
+      {
+         return mMap.size();
+      }
+
    private:
       attr_map_t mMap;
    };
@@ -421,6 +426,18 @@ namespace cppdom
       /** assign operator */
       Node& operator=(const Node& node);
 
+      /** Returns true if the nodes are equal
+      * @param ignoreAttribs - Attributes to ignore in the comparison
+      * @param ignoreElements - Elements to ignore in the comparison
+      */
+      bool isEqual(NodePtr otherNode, const std::vector<std::string>& ignoreAttribs, const std::vector<std::string>& ignoreElements);
+
+      bool isEqual(NodePtr otherNode)
+      {
+         std::vector<std::string> empty_strings;
+         return isEqual(otherNode, empty_strings, empty_strings );
+      }
+
       /** @name access to node info */
       //@{
       /** returns type of node */
@@ -431,6 +448,9 @@ namespace cppdom
 
       /** returns attribute map of the node */
       Attributes& getAttrMap();
+
+      /** returns attribute map of the node */
+      const Attributes& getAttrMap() const;
 
       /**
        * Get the named attribute
