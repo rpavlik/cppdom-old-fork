@@ -1,0 +1,188 @@
+<root>
+   This test works by providing an element per test.
+   Within each element there are two child nodes to compare.
+   The correct outcome of the equal test is specified in the
+   equal attribute of the test.  The ignore_attr attribute 
+   specifies an attribute to ignore when comparing.
+
+<!-- BASIC TESTS -->
+   <test id="Basic equality" equal="1">
+   Test basic equality.
+      <node attrib="1"/>
+      <node attrib="1"/>   
+   </test>
+   
+   <test id="Basic equality. different attrib order" equal="1">
+   Test basic equality.
+      <node attribA="B" attribB="B"/>
+      <node attribB="B" attribA="A"/>   
+   </test>
+
+   <test id="Basic equality with cdata" equal="1">
+   Test equality with some cdata
+      <node attrib="1">data</node>
+      <node attrib="1">data</node>   
+   </test>
+
+   <test id="Basic inequality" equal="0">
+   Test basic inequality.
+      <node attrib="1"/>
+      <node attrib="2"/>   
+   </test>
+
+   <test id="Basic not equal of cdata" equal="0">
+   Test non-equality with some cdata
+      <node attrib="1">data</node>
+      <node attrib="1">otherdata</node>   
+   </test>
+   
+   <test id="Basic not equal of structure" equal="0">
+   Test non-equality with structural changes
+      <nodeA attrib="1">data</nodeA>
+      <nodeB attrib="1">data</nodeB>   
+   </test>
+
+   <test id="Simple nested equal" equal="1">
+   Just a simple nest with all nodes equal
+      <node attrib="1">
+	     <othernode attrib="2">
+		 </othernode>
+		 <othernode attrib="2">
+		 </othernode>
+	  </node>
+      <node attrib="1">
+	     <othernode attrib="2">
+		 </othernode>
+		 <othernode attrib="2">
+		 </othernode>
+	  </node>
+   </test>
+   
+   <test id="Simple nested not equal" equal="0">
+   Just a simple nest with an attrib not nodes equal
+      <node attrib="1">
+	     <othernode attrib="2">
+		 </othernode>
+		 <othernode attrib="7">
+		 </othernode>
+	  </node>
+      <node attrib="1">
+	     <othernode attrib="2">
+		 </othernode>
+		 <othernode attrib="2">
+		 </othernode>
+	  </node>
+   </test>
+   
+   <test id="Simple nested equal with cdata" equal="1">
+   Just a simple nest with all nodes equal and some cdata
+      <node attrib="1">
+	     <othernode attrib="2">
+		 This is some data
+		 </othernode>
+		 <othernode attrib="2">
+		 This is more data
+		 </othernode>
+	  </node>
+      <node attrib="1">
+	     <othernode attrib="2">
+		 This is some data
+		 </othernode>
+		 <othernode attrib="2">
+		 This is more data
+		 </othernode>
+	  </node>
+   </test>
+   
+   <test id="Simple nested with cdata not equal" equal="0">
+   Just a simple nest with an attrib not nodes equal
+      <node attrib="1">
+	     <othernode attrib="2">
+		 This is some data
+		 </othernode>
+		 <othernode attrib="2">
+		 This is more data
+		 </othernode>
+	  </node>
+      <node attrib="1">
+	     <othernode attrib="2">
+		 This is some data
+		 </othernode>
+		 <othernode attrib="2">
+		 This is more data but is different
+		 </othernode>
+	  </node>
+   </test>
+   
+   <test id="Simple nested with structure different" equal="0">
+   Test where the structure of the nesting differs.
+      <node attrib="1">
+	     <othernode attrib="2">
+		    <sub data="X"/>
+	     </othernode>
+		 <othernode attrib="2">
+		    <sub data="X"/>
+		 </othernode>
+	  </node>
+      <node attrib="1">
+	     <othernode attrib="2">
+		    <sub data="X"/>
+	     </othernode>
+		 <othernode attrib="2">
+		    <sub data="X"/>
+			<diffelement/>
+		 </othernode>
+	  </node>
+   </test>
+   
+<!-- IGNORE ATTRIB tests -->
+   <test id="Basic equal ignoring attrib" equal="1" ignore_attr="attrib">
+   Test basic equality. where we are ignoring the differing attribute.
+      <node attrib="1" data="X"/>
+      <node attrib="2" data="X"/>   
+   </test>
+   
+   <test id="Basic not equal ignoring attrib" equal="0" ignore_attr="attrib">
+   Test basic inequality. where we are ignoring the differing attribute.
+      <node data="X" attrib="1"/>
+      <node attrib="2" data="Y"/>   
+   </test>
+   
+   <test id="Nested equal ignoring attribute" equal="1" ignore_attr="attrib">
+   Test basic equality. where we are ignoring the differing attribute.
+      <node attrib="1" data="X">
+	     <sub data="Y">
+		    <subsub attrib="1">
+			</subsub>
+		 </sub>
+		 <sub attrib="AB"/>
+	  </node>
+      <node attrib="2" data="X">
+	     <sub data="Y">
+		    <subsub attrib="2">
+			</subsub>
+		 </sub>
+		 <sub attrib="BC">
+	  </node>
+   </test>  
+   
+   
+   <test id="Nested unequal ignoring attribute" equal="0" ignore_attr="attrib">
+   Test basic equality. where we are ignoring the differing attribute.
+      <node attrib="1" data="X">
+	     <sub data="Y">
+		    <subsub attrib="1" data="X">
+			</subsub>
+		 </sub>
+		 <sub attrib="AB"/>
+	  </node>
+      <node attrib="2" data="X">
+	     <sub data="Y">
+		    <subsub attrib="2" data="Y">
+			</subsub>
+		 </sub>
+		 <sub attrib="BC">
+	  </node>
+   </test> 
+
+</root>
