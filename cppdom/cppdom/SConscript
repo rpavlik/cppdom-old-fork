@@ -8,6 +8,7 @@ headers = Split("""
    cppdom.h
    predicates.h
    shared_ptr.h
+   SpiritParser.h
    xmlparser.h
    xmltokenizer.h
    version.h
@@ -18,6 +19,7 @@ sources = Split("""
    xmlparser.cpp
    xmltokenizer.cpp
    version.cpp
+   SpiritParser.cpp
 """)
 
 env = baseEnv.Copy()
