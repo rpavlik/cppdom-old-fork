@@ -40,6 +40,7 @@
 #include <list>
 #include <map>
 #include <iosfwd>
+#include <fstream>
 #include <xml/xmlconfig.h>
 #include <xml/shared_ptr.h>   // the boost::shared_ptr class
 
@@ -87,6 +88,10 @@ enum xmlerrorcode
       //! invalid nodetype encountered while saving
    xml_save_invalid_nodetype,
 
+// added by kevin for 0.7 compatibility...
+   xml_filename_invalid,
+   xml_file_access,
+
       //! dummy error code
    xml_dummy
 };
@@ -105,6 +110,15 @@ public:
    xmlerrorcode get_error() const { return errorcode; }
    //! returns the string representation of the error code
    void get_strerror(xmlstring &error) const;
+   xmlstring get_string() const
+   {
+      xmlstring err;
+      this->get_strerror( err );
+      return err;
+   }
+   //! return additional error info
+   const xmlstring get_info() const { return "unknown error"; }
+
 protected:
    xmlerrorcode errorcode;
 };
@@ -149,6 +163,16 @@ typedef boost::shared_ptr<class xmlcontext> xmlcontextptr;
 //! smart pointer to the event handler
 typedef boost::shared_ptr<class xmleventhandler> xmleventhandlerptr;
 
+typedef xmltagnamehandle XMLTagNameHandle;
+//! maps the tagname string to a handle
+typedef xmltagnamemap XMLTagNameMap;
+//! maps an entity to a string representation
+typedef xmlentitymap XMLEntityMap;
+//! smart pointer for xmlcontext
+typedef xmlcontextptr XMLContextPtr;
+//! smart pointer to the event handler
+typedef xmleventhandlerptr XMLEventHandlerPtr;
+
 
 //! xml parsing context class
 /*! the class is the parsing context for the parsed xml document.
@@ -162,13 +186,13 @@ public:
    virtual ~xmlcontext();
 
    //! returns the entity representation for the named entity
-   xmlstring get_entity( xmlstring &entname );
+   xmlstring get_entity( const xmlstring &entname );
 
    //! returns the tagname by the tagname handle
    xmlstring get_tagname( xmltagnamehandle handle );
 
    //! inserts a tag name and returns a tag name handle to the string
-   xmltagnamehandle insert_tagname( xmlstring &tagname );
+   xmltagnamehandle insert_tagname( const xmlstring &tagname );
 
    //! returns the current location in the xml stream
    xmllocation &get_location(){ return location; }
@@ -203,6 +227,7 @@ protected:
    xmleventhandlerptr eventhandler;
 };
 
+typedef xmlcontext XMLContext;
 
 //! node type enumeration
 enum xmlnodetype 
@@ -223,7 +248,9 @@ enum xmlnodetype
 typedef boost::shared_ptr<class xmlnode> xmlnodeptr;
 //! list of node smart pointer
 typedef std::list<xmlnodeptr> xmlnodelist;
-
+typedef xmlnodelist XMLNodeList;
+typedef XMLNodeList::iterator XMLNodeListIterator;
+typedef xmlnodeptr XMLNodePtr;
 
 //! xml tag attribute map
 /*! contains all attributes and values a tag has, represented in a map */
@@ -235,11 +262,13 @@ public:
    xmlattributes(){}
 
    //! returns attribute value by name
-   xmlstring get(xmlstring &key);
+   xmlstring get( const xmlstring &key );
+   
    //! sets new attribute value
-   void set(xmlstring &key, xmlstring &value);
+   void set(const xmlstring &key, const xmlstring &value);
 };
 
+typedef xmlattributes XMLAttributes;
 
 //! xml node
 class XMLPP_API xmlnode
@@ -263,12 +292,12 @@ public:
    //! returns type of node
    xmlnodetype get_type() const { return nodetype; }
    //! returns the node name
-   xmlstring get_name();
+   xmlstring name();
 
    //! returns attribute map of the node
    xmlattributes &get_attrmap(){ return attributes; }
    //! returns attribute value for given attribute
-   xmlstring get_attribute( xmlstring &attr ){ return attributes.get(attr); }
+   xmlstring get_attribute( const xmlstring &attr ){ return attributes.get(attr); }
 
    //! returns cdata string
    const xmlstring &get_cdata(){ return cdata; }
@@ -278,22 +307,22 @@ public:
    //! sets new nodetype
    void set_type( xmlnodetype ntype ){ nodetype=ntype; }
    //! returns the node name
-   void set_name( xmlstring &nname );
+   void set_name( const xmlstring &nname );
    //! sets new cdata
-   void set_cdata( xmlstring &ncdata ){ cdata=ncdata; }
+   void set_cdata( const xmlstring &ncdata ){ cdata=ncdata; }
    //! sets new attribute value
-   void set_attribute( xmlstring &attr, xmlstring &value ){ attributes.set(attr,value); }
+   void set_attribute( const xmlstring &attr, const xmlstring &value ){ attributes.set(attr,value); }
    //! inserts a node into the subnodelist
    void insert( xmlnode &node){ xmlnodeptr nodeptr(new xmlnode(node)); nodelist.push_back(nodeptr); }
 
    // navigation through the nodes
 
    //! returns subnode list
-   xmlnodelist &get_nodelist(){ return nodelist; }
+   xmlnodelist &children(){ return nodelist; }
    //! returns the first child with the given name
-   xmlnodeptr get_firstchild(xmlstring &childname);
+   xmlnodeptr firstchild( const xmlstring &childname );
    //! select some nodes and put it into a separate nodelist
-   xmlnodelist select_nodes(xmlstring &nodename);
+   xmlnodelist select_nodes(const xmlstring &nodename);
 
    // load/save functions
 
@@ -342,13 +371,24 @@ public:
    void load( std::istream &instream, xmlcontextptr &ctxptr );
    //! saves node to xml output stream
    void save( std::ostream &outstream );
+   
+   void load_file( const std::string& st )
+   {
+      istream.open( st.c_str(), std::ios::in );
+      this->load( istream, contextptr );
+      istream.close();
+   }
 
 protected:
    //! node list of parsed processing instructions
    xmlnodelist procinstructions;
    //! node list of document type definition rules
    xmlnodelist dtdrules;
+   
+   std::ifstream istream;
 };
+
+typedef xmldocument XMLDocument;
 
 
 //! xml parsing event handler
@@ -369,14 +409,14 @@ public:
    virtual void processing_instruction( xmlnode &pinode ){}
 
    //! called when start parsing a node
-   virtual void start_node( xmlstring &nodename ){}
+   virtual void start_node( const xmlstring &nodename ){}
    //! called when an attribute list was parsed
    virtual void parsed_attributes( xmlattributes &attr ){}
    //! called when parsing of a node was finished
    virtual void end_node( xmlnode &node ){}
 
    //! called when a cdata section ended
-   virtual void got_cdata( xmlstring &cdata ){}
+   virtual void got_cdata( const xmlstring &cdata ){}
 };
 
 
