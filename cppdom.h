@@ -366,29 +366,7 @@ public:
    xmlnodetype getType() const
    { return nodetype; }
 
-   /** returns type of node
-   * @deprecated prefer getType() instead
-   */
-   xmlnodetype get_type() const
-   {
-      std::cout << "xmlnode::get_type(): deprecated. Use getType() instead.\n";
-      return getType();
-   }
-
-   /** returns the node name
-   * @deprecated
-   */
-   xmlstring name()
-   {
-      std::cout << "xmlnode::name(): deprecated. Use getName() instead.\n";
-      return getName();
-   }
-   /* @deprecated */
-   xmlstring get_name()
-   {
-      std::cout << "xmlnode::get_name(): deprecated. Use getName() instead.\n";
-      return getName();
-   }
+   
 
    /** Returns the local name of the node (the element name) */
    xmlstring getName();
@@ -406,15 +384,6 @@ public:
    /** Check if the node has a given attribute */
    bool hasAttribute( const xmlstring& name ) const
    { return attributes.has(name); }
-
-   /* get attribute
-   * @deprecated Prefer getAttribute instead
-   */
-   xmlstring get_attribute( const xmlstring &attr ) const
-   {
-      std::cout << "xmlnode::get_attribute: deprecated. Use getAttribute instead.\n";
-      return getAttribute(attr);
-   }
 
    /** returns cdata string
    * @note: This only returns data for nodes that are leaf nodes of type "cdata".
@@ -448,23 +417,6 @@ public:
       attributes.set(attr,value.getString());
    }
 
-   /** sets new attribute value
-   * @deprecated Prefer setAttribute instead
-   */
-   void set_attribute( const xmlstring &attr, const xmlstring &value )
-   {
-      std::cout << "xmlnode::set_attribute: deprecated. Use setAttribute instead.\n";
-      setAttribute(attr, value);
-   }
-
-   /** inserts a node into the subnodelist */
-   void insert( xmlnode &node)
-   {
-      std::cout << "xmlnode::insert: deprecated. Use addChild instead.\n";
-      xmlnodeptr nodeptr(new xmlnode(node));
-      addChild(nodeptr);
-   }
-
    void addChild(xmlnodeptr& node)
    {
       mNodelist.push_back(node);
@@ -492,13 +444,7 @@ public:
 
    /** @name navigation through the nodes */
    //@{
-   /** returns subnode list */
-   xmlnodelist& children()
-   {
-      std::cout << "xmlnode::children: Deprecated. Prefer getChildren().\n";
-      return getChildren();
-   }
-
+   
    /** returns a list of the nodes children */
    xmlnodelist& getChildren()
    { return mNodelist; }
@@ -509,23 +455,6 @@ public:
    /** Returns a list of all children (one level deep) with local name of childName */
    xmlnodelist getChildren(const xmlstring& name);
 
-   /** select some nodes and put it into a separate nodelist
-   * @deprecated Prefer getChildren instead
-   */
-   xmlnodelist select_nodes(const xmlstring &nodename)
-   {
-      std::cout << "xmlnode::select_nodes: deprecated. Use getChildren instead.\n";
-      return getChildren(nodename);
-   }
-
-   /** returns the first child with the given name
-   * @deprecated Prefer getChild instead
-   */
-   xmlnodeptr firstchild( const xmlstring &childname )
-   {
-      std::cout << "xmlnode::firstchild: deprecated. Use getChild instead.\n";
-      return getChild(childname);
-   }
    //@}
 
    /** @name load/save functions */
