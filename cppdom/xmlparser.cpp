@@ -48,12 +48,12 @@
 // namespace declaration
 namespace cppdom
 {
-   // XMLParser methods
-   XMLParser::XMLParser(std::istream& in, XMLLocation& loc)
+   // Parser methods
+   Parser::Parser(std::istream& in, Location& loc)
       : mInput(in), mTokenizer(in, loc)
    {}
 
-   bool XMLParser::parseDocument(XMLDocument& doc, XMLContextPtr& context)
+   bool Parser::parseDocument(Document& doc, ContextPtr& context)
    {
       // set root nodename
       doc.mContext = context;
@@ -71,7 +71,7 @@ namespace cppdom
       parseHeader(doc, context);
 
       // parse the only one subnode
-      XMLNodePtr new_subnode(new XMLNode(context));
+      NodePtr new_subnode(new Node(context));
 
       bool ret = parseNode(*new_subnode, context);
 
@@ -91,20 +91,20 @@ namespace cppdom
 
    // parses the header, ie processing instructions and doctype tag
    /// \todo parse <!doctype> tag
-   bool XMLParser::parseHeader(XMLDocument& doc, XMLContextPtr& context)
+   bool Parser::parseHeader(Document& doc, ContextPtr& context)
    {
       while(true)
       {
          ++mTokenizer;
-         XMLToken token1 = *mTokenizer;
+         Token token1 = *mTokenizer;
          if (token1 != '<')
          {
-            throw XMLError(xml_opentag_expected);
+            throw Error(xml_opentag_expected);
          }
 
          // token after opening < is a literal?
          mTokenizer++;
-         XMLToken token2 = *mTokenizer;
+         Token token2 = *mTokenizer;
          if (!token2.isLiteral())
          {
             // generic string encountered: assume no pi and doctype tags
@@ -120,7 +120,7 @@ namespace cppdom
          case '!':
             {
                ++mTokenizer;
-               XMLToken token3 = *mTokenizer;
+               Token token3 = *mTokenizer;
 
                if (!token3.isLiteral())
                {
@@ -145,13 +145,13 @@ namespace cppdom
                      }
                      else
                      {
-                        throw XMLError(xml_unknown);
+                        throw Error(xml_unknown);
                      }
                   }
                }
                else
                {
-                  throw XMLError(xml_pi_doctype_expected);
+                  throw Error(xml_pi_doctype_expected);
                }
 
                break;
@@ -159,22 +159,22 @@ namespace cppdom
          case '?':
             {
                ++mTokenizer;
-               XMLToken token3 = *mTokenizer;
+               Token token3 = *mTokenizer;
 
                if (token3.isLiteral())
                {
-                  throw XMLError(xml_pi_doctype_expected);
+                  throw Error(xml_pi_doctype_expected);
                }
 
                // parse processing instruction
-               XMLNode pinode(context);
+               Node pinode(context);
 
                std::string tagname(token3.getGeneric());
                pinode.mNodeNameHandle = context->insertTagname(tagname);
 
                parseAttributes(pinode.getAttrMap());
 
-               XMLNodePtr nodeptr(new XMLNode(pinode));
+               NodePtr nodeptr(new Node(pinode));
                doc.mProcInstructions.push_back(nodeptr);
 
                if (context->handleEvents())
@@ -185,19 +185,19 @@ namespace cppdom
                ++mTokenizer;
                if (*mTokenizer != '?')
                {
-                  throw XMLError(xml_pi_doctype_expected);
+                  throw Error(xml_pi_doctype_expected);
                }
 
                ++mTokenizer;
                if (*mTokenizer != '>')
                {
-                  throw XMLError(xml_closetag_expected);
+                  throw Error(xml_closetag_expected);
                }
                break;
             }
          default:
             // unknown literal encountered
-            throw XMLError(xml_pi_doctype_expected);
+            throw Error(xml_pi_doctype_expected);
 
          } // end switch
 
@@ -205,20 +205,20 @@ namespace cppdom
    }
 
    // parses the contents of the current node
-   bool XMLParser::parseNode(XMLNode& node, XMLContextPtr& context)
+   bool Parser::parseNode(Node& node, ContextPtr& context)
    {
       node.mContext = context;
       bool handle = context->handleEvents();
 
       ++mTokenizer;
-      XMLToken token1 = *mTokenizer;
+      Token token1 = *mTokenizer;
 
       if (token1.isEndOfStream())
       {
          return false;
       }
 
-      XMLToken token2;
+      Token token2;
 
       // loop when we encounter a comment
       bool again;
@@ -256,7 +256,7 @@ namespace cppdom
          // Must be a start of a node (ie. < literal)
          if (token1 != '<')
          {
-            throw XMLError(xml_opentag_cdata_expected);
+            throw Error(xml_opentag_cdata_expected);
          }
 
          // get node name
@@ -287,7 +287,7 @@ namespace cppdom
                break;
 
             default:
-               throw XMLError(xml_tagname_expected);
+               throw Error(xml_tagname_expected);
             }
          }
       } while (again);
@@ -312,15 +312,15 @@ namespace cppdom
 
       // check for leaf
       ++mTokenizer;
-      XMLToken token3 = *mTokenizer;
+      Token token3 = *mTokenizer;
       if (token3 == '/' )
       {
          // node has finished
          ++mTokenizer;
-         XMLToken token4 = *mTokenizer;
+         Token token4 = *mTokenizer;
          if (token4 != '>' )
          {
-            throw XMLError(xml_closetag_expected);
+            throw Error(xml_closetag_expected);
          }
 
          node.mNodeType = xml_nt_leaf;
@@ -332,20 +332,20 @@ namespace cppdom
       // now a closing bracket must follow
       if (token3 != '>')
       {
-         throw XMLError(xml_closetag_expected);
+         throw Error(xml_closetag_expected);
       }
 
       // loop to parse all subnodes
       while (true)
       {
          // create subnode
-         XMLNodePtr new_subnode(new XMLNode(context));
+         NodePtr new_subnode(new Node(context));
 
          // try to parse possible sub nodes
          if (this->parseNode(*new_subnode, context))
          {
             // if successful, put node into nodelist
-   //         XMLNodePtr nodeptr( new XMLNode(subnode) );
+   //         NodePtr nodeptr( new Node(subnode) );
             node.addChild(new_subnode);
          }
          else
@@ -355,30 +355,30 @@ namespace cppdom
       }
 
       // parse end tag
-      XMLToken token5 = *mTokenizer++;
+      Token token5 = *mTokenizer++;
       ++mTokenizer;
       if (token5 != '<' && *mTokenizer != '/')
       {
-         throw XMLError(xml_opentag_expected);
+         throw Error(xml_opentag_expected);
       }
 
       ++mTokenizer;
       token1 = *mTokenizer;
       if (token1.isLiteral())
       {
-         throw XMLError(xml_tagname_expected);
+         throw Error(xml_tagname_expected);
       }
 
       // check if open and close tag names are identical
       if (token1.getGeneric() != token2.getGeneric())
       {
-         throw XMLError(xml_tagname_close_mismatch);
+         throw Error(xml_tagname_close_mismatch);
       }
 
       ++mTokenizer;
       if (*mTokenizer != '>')
       {
-         throw XMLError(xml_opentag_expected);
+         throw Error(xml_opentag_expected);
       }
 
       if (handle)
@@ -390,12 +390,12 @@ namespace cppdom
    }
 
    // parses tag attributes
-   bool XMLParser::parseAttributes(XMLAttributes& attr)
+   bool Parser::parseAttributes(Attributes& attr)
    {
       while(true)
       {
          ++mTokenizer;
-         XMLToken token1 = *mTokenizer;
+         Token token1 = *mTokenizer;
 
          if (token1.isLiteral())
          {
@@ -409,15 +409,15 @@ namespace cppdom
          ++mTokenizer;
          if (*mTokenizer != '=')
          {
-            throw XMLError(xml_attr_equal_expected);
+            throw Error(xml_attr_equal_expected);
          }
 
          ++mTokenizer;
-         XMLToken token2 = *mTokenizer;
+         Token token2 = *mTokenizer;
 
          if (token2.isLiteral())
          {
-            throw XMLError(xml_attr_value_expected);
+            throw Error(xml_attr_value_expected);
          }
 
          // remove "" from attribute value
@@ -427,13 +427,13 @@ namespace cppdom
 
          // insert attribute into the map
          // guru: we got the name already
-         XMLAttributes::value_type attrpair(name, value);
+         Attributes::value_type attrpair(name, value);
          attr.insert(attrpair);
       }
       return true;
    }
 
-   void XMLParser::parseComment(XMLContextPtr& context)
+   void Parser::parseComment(ContextPtr& context)
    {
       // get tokens until comment is over
       while (true)

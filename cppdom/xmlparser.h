@@ -55,27 +55,27 @@ namespace cppdom
 {
 
    /** xml parser implementation class */
-   class XMLParser
+   class Parser
    {
    public:
       /** ctor */
-      XMLParser(std::istream& inputstream, XMLLocation& loc);
+      Parser(std::istream& inputstream, Location& loc);
 
       /** parses the node as the document root */
-      bool parseDocument(XMLDocument& doc, XMLContextPtr& context);
+      bool parseDocument(Document& doc, ContextPtr& context);
 
       /** parses a node, without processing instructions */
-      bool parseNode(XMLNode& node, XMLContextPtr& context);
+      bool parseNode(Node& node, ContextPtr& context);
 
    protected:
       /** parses xml header, such as processing instructions, doctype etc. */
-      bool parseHeader(XMLDocument& doc, XMLContextPtr& context);
+      bool parseHeader(Document& doc, ContextPtr& context);
 
       /** parses an xml tag attribute list */
-      bool parseAttributes(XMLAttributes& attr);
+      bool parseAttributes(Attributes& attr);
 
       /** parses a <!-- --> comment */
-      void parseComment(XMLContextPtr& context);
+      void parseComment(ContextPtr& context);
 
    protected:
       /** input stream */
