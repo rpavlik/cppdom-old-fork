@@ -128,29 +128,43 @@ class CPPDOM_API XMLLocation
 public:
    /** Constructor */
    XMLLocation()
-   { reset(); }
+   { 
+      reset(); 
+   }
 
    /** returns current line */
-   int get_line() const
-   { return line; }
+   int getLine() const
+   { 
+      return line; 
+   }
 
    /** returns current position in a line */
-   int get_pos() const
-   { return pos; }
+   int getPos() const
+   { 
+      return pos; 
+   }
 
    /** advances a char */
    void step( int chars = 1 )
-   { pos+=chars; }
+   { 
+      pos += chars; 
+   }
+   
    /** indicates entering a new line */
    void newline()
-   { line++; pos=1; }
+   { 
+      ++line; 
+      pos = 1; 
+   }
 
    /** reset location */
    void reset()
-   { line=pos=1; }
+   { 
+      line = pos = 1; 
+   }
 
 protected:
-   int line,pos;
+   int line, pos;
 };
 
 
