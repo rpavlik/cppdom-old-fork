@@ -347,6 +347,9 @@ public:
 
 typedef xmlattributes XMLAttributes;
 
+
+
+
 /** xml node */
 class XMLPP_API xmlnode
 {
@@ -497,7 +500,7 @@ public:
          if(pred(*iter))
          { ret_nlist.push_back(*iter); }
       }
-      return nlist;
+      return ret_nlist;
    }
    
    //@}
