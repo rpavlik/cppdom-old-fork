@@ -1,13 +1,17 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  --------------------------------------------------------
+2003-01-14 allenb       Added debug name member to the Node class.  This member
+                        stores the string rep of the Node name but only
+                        if CPPDOM_DEBUG is defined.  This member can REALLY
+                        help when looking at cppdom code in a debugger.
 2003-01-11 allenb       Refactoring exception class.
                         cppdom::Error now tracks a local description of the
-						error as well as the file and line number that the error
-						occured on.  There is a new macro that helps to
-						construct the Error class to throw.
-						Also fixed the attribute API to throw an exception when
-						passed an invalid attribute name.
-						NEW VERSION: 0.2.0
+                        error as well as the file and line number that the error
+                        occured on.  There is a new macro that helps to
+                        construct the Error class to throw.
+                        Also fixed the attribute API to throw an exception when
+                        passed an invalid attribute name.
+                        NEW VERSION: 0.2.0
 2003-01-11 allenb       Change NodeList type to std::vector instead of std::list
 2003-01-11 allenb       Added flags for disabling indentation and/or newlines
                         in node and document saving.
