@@ -1,5 +1,6 @@
 
 Import('pkg baseEnv')
+Import('HasCppUnit')
 
 env = baseEnv.Copy()
 env.Append(CPPPATH = Split('# #test'),
@@ -17,3 +18,8 @@ tests = Split("""
 for t in tests:
    prog = pkg.createProgram(t, env)
    prog.addSources([t+'.cpp'])
+
+subdirs = []
+if HasCppUnit(baseEnv):
+   subdirs.append('suite')
+SConscript(dirs = subdirs)
