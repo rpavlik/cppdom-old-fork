@@ -456,6 +456,22 @@ public:
    /** Returns the first child of the given local name */
    xmlnodeptr getChild( const xmlstring& name );
 
+   /** Return a list of children that have the pass the given STL predicate */
+   template<class Predicate>
+   xmlnodelist getChildren(Predicate pred)
+   {
+      xmlnodelist ret_nlist(0);
+      xmlnodelist::const_iterator iter;
+
+      // search for all occurances of nodename and insert them into the new list
+      for(iter = mNodelist.begin(); iter != mNodelist.end(); ++iter)
+      {
+         if(pred(*iter))
+         { ret_nlist.push_back(*iter); }
+      }
+      return nlist;
+   }
+
    /** Returns a list of all children (one level deep) with local name of childName
    * \note currently no path-like childname can be passed, like in e.g. msxml
    * If has standard compose() functions, could impl this by calling getChildren(pred)
@@ -475,22 +491,12 @@ public:
       return ret_nlist;
    }
 
-   /** Return a list of children that have the pass the given STL predicate */
-   template<class Predicate>
-   xmlnodelist getChildren(Predicate pred)
-   {
-      xmlnodelist ret_nlist(0);
-      xmlnodelist::const_iterator iter;
-
-      // search for all occurances of nodename and insert them into the new list
-      for(iter = mNodelist.begin(); iter != mNodelist.end(); ++iter)
-      {
-         if(pred(*iter))
-         { ret_nlist.push_back(*iter); }
-      }
-      return nlist;
+   /** Return child node list (one level deep).  see getChildren(string) */
+   xmlnodelist getChildren(const char* name)
+   { 
+      return getChildren( xmlstring(name) );
    }
-
+   
    //@}
 
    /** @name load/save functions */
