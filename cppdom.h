@@ -35,6 +35,11 @@
 #ifndef __xmlpp_hpp_
 #define __xmlpp_hpp_
 
+#ifdef _MSC_VER
+   // disable 'identifier was truncated to 255 characters in debug information' warning
+#  pragma warning(disable: 4786)
+#endif
+
 // needed includes
 #include <string>
 #include <list>
@@ -43,7 +48,6 @@
 #include <fstream>
 #include <xml/xmlconfig.h>
 #include <xml/shared_ptr.h>   // the boost::shared_ptr class
-
 
 //! namespace of the xmlpp project
 namespace xmlpp {
