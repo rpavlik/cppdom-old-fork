@@ -1,5 +1,8 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  --------------------------------------------------------
+2003-02-20 allenb       Added isEqual method to Node interface.
+                        Created test application to test combinations of
+                        isEqual comparisons.
 2003-02-07 nonchocoboy  Replaced Doozer-based build system with an SCons-based
                         build system.
 2003-01-14 allenb       Added debug name member to the Node class.  This member
