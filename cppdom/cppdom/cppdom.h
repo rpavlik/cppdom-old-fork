@@ -417,7 +417,7 @@ public:
    { mCdata=ncdata; }
 
    /** sets new attribute value
-   * @post Element.attr is set to value
+   * @post Element.attr is set to value.  If it didn't exist before, now it does.
    */
    void setAttribute( const xmlstring &attr, const xmlattribute& value )
    {
