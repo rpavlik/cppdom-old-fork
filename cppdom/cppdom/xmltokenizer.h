@@ -51,105 +51,51 @@ namespace cppdom
    {
       friend class xmlstream_iterator;
    public:
-      /// ctor
-      XMLToken()
-      {
-         isliteral = true;
-         literal = 0;
-         generic.empty();
-      }
-
-      /// ctor with init
-      XMLToken(char ch)
-      {
-         isliteral = true;
-         literal = ch;
-         generic.empty();
-      }
-
-      /// ctor with init
-      XMLToken(std::string& str)
-         : generic(str)
-      {
-         isliteral = false;
-         literal = 0;
-      }
+      XMLToken();
+      XMLToken(char ch);
+      XMLToken(const std::string& str);
 
       /// returns if token is a literal
-      bool isLiteral()
-      {
-         return isliteral;
-      }
+      bool isLiteral() const;
 
       /// returns if it is and end of xml stream token
-      bool isEndOfStream()
-      {
-         return isliteral && literal==char(EOF)/*std::string::traits_type::eof()*/;
-      }
+      bool isEndOfStream() const;
 
       /// returns literal char
-      char getLiteral()
-      {
-         return literal;
-      }
+      char getLiteral() const;
 
       /// returns generic string
-      std::string& getGeneric()
-      {
-         return generic;
-      }
+      const std::string& getGeneric() const;
 
       // operators
 
       /// compare operator for literals
-      bool operator==(char ch)
-      {
-        return !isliteral ? false : ch == literal;
-      }
+      bool operator==(char ch) const;
 
       /// compare operator for literals
-      bool operator!=(char ch)
-      {
-         return !isliteral ? true : ch != literal;
-      }
+      bool operator!=(char ch) const;
 
       /// compare operator for a generic string
-      bool operator==(const std::string& str)
-      {
-         return !isliteral ? str == generic : false;
-      }
+      bool operator==(const std::string& str) const;
 
       /// compare operator for a generic string
-      bool operator!=(const std::string& str)
-      {
-         return !isliteral ? str != generic : true;
-      }
+      bool operator!=(const std::string& str) const;
 
       /// set generic string
-      XMLToken& operator=(std::string& str)
-      {
-         generic.assign(str);
-         isliteral = false;
-         return *this;
-      }
+      XMLToken& operator=(const std::string& str);
 
       /// set literal char
-      XMLToken& operator=(char ch)
-      {
-         literal = ch;
-         isliteral = true;
-         return *this;
-      }
+      XMLToken& operator=(char ch);
 
    protected:
       /// indicates if token is a literal char
-      bool isliteral;
+      bool mIsLiteral;
 
       /// literal
-      char literal;
+      char mLiteral;
 
       /// pointer to string
-      std::string generic;
+      std::string mGeneric;
    };
 
 
@@ -159,77 +105,47 @@ namespace cppdom
    {
    public:
       /** constructor */
-      XMLTokenizer(std::istream& is, XMLLocation& loc)
-         : instr(is), location(loc)
-      {
-      }
-
-      virtual ~XMLTokenizer()
-      {
-      }
+      XMLTokenizer(std::istream& in, XMLLocation& loc);
+      virtual ~XMLTokenizer();
 
       /// dereference operator
-      XMLToken& operator*()
-      {
-         return curtoken;
-      }
+      XMLToken& operator*();
 
       /// pointer access operator
-      const XMLToken* operator->()
-      {
-         return &curtoken;
-      }
+      const XMLToken* operator->();
 
       /// advances in the xml stream
-      XMLTokenizer& operator++()
-      {
-         this->getNext();
-         return *this;
-      }
+      XMLTokenizer& operator++();
 
       /// advances in the xml stream
-      XMLTokenizer& operator++(int)
-      {
-         this->getNext();
-         return *this;
-      }
+      XMLTokenizer& operator++(int);
 
       /// returns current token
-      XMLToken& get()
-      {
-         return curtoken;
-      }
+      XMLToken& get();
 
       /// puts the token back into the stream
-      void putBack(XMLToken& token)
-      {
-         tokenstack.push(token);
-      }
+      void putBack(XMLToken& token);
 
       /// puts the last token back into the stream
-      void putBack()
-      {
-         tokenstack.push(curtoken);
-      }
+      void putBack();
 
    protected:
-
       /// internal: parses the next token
       virtual void getNext() = 0;
 
       // data members
 
       /** input stream */
-      std::istream& instr;
+      std::istream& mInput;
 
       /** location in the stream */
-      XMLLocation& location;
+      XMLLocation& mLocation;
 
       /** current token */
-      XMLToken curtoken;
+      XMLToken mCurToken;
 
       /** stack for put_back()'ed tokens */
-      std::stack<XMLToken> tokenstack;
+      std::stack<XMLToken> mTokenStack;
    };
 
    /**
@@ -240,7 +156,7 @@ namespace cppdom
    {
    public:
       /** ctor */
-      xmlstream_iterator(std::istream& is, XMLLocation& loc);
+      xmlstream_iterator(std::istream& in, XMLLocation& loc);
 
    protected:
       void getNext();
@@ -252,10 +168,10 @@ namespace cppdom
       bool isStringDelimiter(char c); // start-/endchar of a string
 
       /** cdata-mode doesn't care for whitespaces in generic strings */
-      bool cdataMode;
+      bool mCdataMode;
 
       /** char which was put back internally */
-      char putbackChar;
+      char mPutbackChar;
    };
 
    /**
@@ -266,7 +182,7 @@ namespace cppdom
    {
    public:
       /** ctor */
-      xmldtd_iterator(std::istream& is, XMLLocation& loc);
+      xmldtd_iterator(std::istream& in, XMLLocation& loc);
 
    protected:
       void getNext(){}

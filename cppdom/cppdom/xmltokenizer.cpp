@@ -39,24 +39,140 @@
 // namespace declaration
 namespace cppdom
 {
-   // xmlstream_iterator methods
-   xmlstream_iterator::xmlstream_iterator(std::istream& is, XMLLocation& loc)
-      : XMLTokenizer(is, loc)
+   // XMLToken methods
+   XMLToken::XMLToken()
+      : mIsLiteral(true)
+      , mLiteral(0)
+   {}
+
+   XMLToken::XMLToken(char ch)
+      : mIsLiteral(true)
+      , mLiteral(ch)
+   {}
+
+   XMLToken::XMLToken(const std::string& str)
+      : mIsLiteral(false)
+      , mLiteral(0)
+      , mGeneric(str)
+   {}
+
+   bool XMLToken::isLiteral() const
    {
-      putbackChar = char(-1);
-      cdataMode = false;
+      return mIsLiteral;
    }
+
+   bool XMLToken::isEndOfStream() const
+   {
+      return mIsLiteral && mLiteral == char(EOF);
+   }
+
+   char XMLToken::getLiteral() const
+   {
+      return mLiteral;
+   }
+
+   const std::string& XMLToken::getGeneric() const
+   {
+      return mGeneric;
+   }
+
+   bool XMLToken::operator==(char ch) const
+   {
+      return !isLiteral() ? false : ch == mLiteral;
+   }
+
+   bool XMLToken::operator!=(char ch) const
+   {
+      return ! operator==(ch);
+   }
+
+   bool XMLToken::operator==(const std::string& str) const
+   {
+      return !isLiteral() ? str == mGeneric : false;
+   }
+
+   bool XMLToken::operator!=(const std::string& str) const
+   {
+      return ! operator==(str);
+   }
+
+   XMLToken& XMLToken::operator=(const std::string& str)
+   {
+      mGeneric = str;
+      mIsLiteral = false;
+      return *this;
+   }
+
+   XMLToken& XMLToken::operator=(char ch)
+   {
+      mLiteral = ch;
+      mIsLiteral = true;
+      return *this;
+   }
+
+   // XMLTokenizer methods
+
+   XMLTokenizer::XMLTokenizer(std::istream& in, XMLLocation& loc)
+      : mInput(in), mLocation(loc)
+   {}
+
+   XMLTokenizer::~XMLTokenizer()
+   {}
+
+   XMLToken& XMLTokenizer::operator*()
+   {
+      return mCurToken;
+   }
+
+   const XMLToken* XMLTokenizer::operator->()
+   {
+      return &mCurToken;
+   }
+
+   XMLTokenizer& XMLTokenizer::operator++()
+   {
+      getNext();
+      return *this;
+   }
+
+   XMLTokenizer& XMLTokenizer::operator++(int)
+   {
+      getNext();
+      return *this;
+   }
+
+   XMLToken& XMLTokenizer::get()
+   {
+      return mCurToken;
+   }
+
+   void XMLTokenizer::putBack(XMLToken& token)
+   {
+      mTokenStack.push(token);
+   }
+
+   void XMLTokenizer::putBack()
+   {
+      mTokenStack.push(mCurToken);
+   }
+
+   // xmlstream_iterator methods
+   xmlstream_iterator::xmlstream_iterator(std::istream& in, XMLLocation& loc)
+      : XMLTokenizer(in, loc)
+      , mCdataMode(false)
+      , mPutbackChar(-1)
+   {}
 
    /** \todo check for instr.eof() */
    void xmlstream_iterator::getNext()
    {
       // first use the token stack if filled
-      if (tokenstack.size() != 0)
+      if (mTokenStack.size() != 0)
       {
          // get the token from the stack and return it
          XMLToken tok;
-         curtoken = tokenstack.top();
-         tokenstack.pop();
+         mCurToken = mTokenStack.top();
+         mTokenStack.pop();
 
          return;
       }
@@ -70,16 +186,16 @@ namespace cppdom
 
       do
       {
-         if (putbackChar == char(-1))
+         if (mPutbackChar == char(-1))
          {
-            c = instr.get();
-            location.step();
+            c = mInput.get();
+            mLocation.step();
          }
          else
          {
-            c = putbackChar;
-            putbackChar = char(-1);
-            location.step();
+            c = mPutbackChar;
+            mPutbackChar = char(-1);
+            mLocation.step();
          }
 
          // do we have an eof?
@@ -88,7 +204,7 @@ namespace cppdom
          {
             if (generic.length() != 0)
             {
-               curtoken = c;
+               mCurToken = c;
                return;
             }
             else
@@ -100,33 +216,33 @@ namespace cppdom
          // is it a literal?
          if (isLiteral(c))
          {
-            cdataMode = false;
+            mCdataMode = false;
             if (generic.length() == 0)
             {
-               curtoken = c;
+               mCurToken = c;
 
                // quick fix for removing set_cdataMode() functionality
                if (c == '>')
                {
-                  cdataMode = true;
+                  mCdataMode = true;
                }
 
                return;
             }
-            putbackChar = c;
-            location.step(-1);
+            mPutbackChar = c;
+            mLocation.step(-1);
             break;
          }
 
          // a string delimiter and not in cdata mode?
-         if (isStringDelimiter(c) && !cdataMode)
+         if (isStringDelimiter(c) && !mCdataMode)
          {
             generic = c;
             char delim = c;
             do
             {
-               c = instr.get();
-               location.step();
+               c = mInput.get();
+               mLocation.step();
                if (c == char(EOF))
                {
                   break;
@@ -146,7 +262,7 @@ namespace cppdom
             }
             else
             {
-               if (!cdataMode)
+               if (!mCdataMode)
                {
                   break;
                }
@@ -156,7 +272,7 @@ namespace cppdom
          // a newline char?
          if (isNewLine(c) )
          {
-            if (cdataMode && generic.length() != 0)
+            if (mCdataMode && generic.length() != 0)
             {
                c = ' ';
             }
@@ -172,7 +288,7 @@ namespace cppdom
       while (!finished);
 
       // set the generic string
-      curtoken = generic;
+      mCurToken = generic;
    }
 
    // returns if we have a literal char
@@ -184,7 +300,7 @@ namespace cppdom
       case '=':
       case '!':
       case '/':
-         if (cdataMode)
+         if (mCdataMode)
          {
             return false;
          }
@@ -213,7 +329,7 @@ namespace cppdom
       switch(c)
       {
       case '\n':
-         location.newline();
+         mLocation.newline();
       case '\r':
          return true;
       }
