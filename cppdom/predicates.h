@@ -1,7 +1,7 @@
 /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil c-basic-offset: 3 -*- */
 // vim:cindent:ts=3:sw=3:et:tw=80:sta:
 /*************************************************************** cppdom-cpr beg
- * 
+ *
  * cppdom was forked from the original xmlpp version 0.6 under the LGPL. This
  * new, branched xmlpp is under the same LGPL (of course) and is being
  * maintained by:
@@ -38,7 +38,7 @@
  ************************************************************ cppdom-cpr-end */
 /**
 * @file predicates.h
-* 
+*
 * Predicate objects for use with cppdom selection methods.
 *
 */
@@ -46,7 +46,7 @@
 #define CPPDOM_PREDICATES_H
 
 #include <string>
-#include "cppdom.h"
+#include <cppdom/cppdom.h>
 
 namespace cppdom
 {
@@ -100,6 +100,21 @@ namespace cppdom
    private:
       std::string mName;
       std::string mValue;
+   };
+
+   /** Predicate for matching a specific type of node */
+   class IsNodeTypePredicate
+   {
+   public:
+      IsNodeTypePredicate(const cppdom::NodeType nodeType)
+         : mNodeType(nodeType)
+      {}
+
+      bool operator()(const NodePtr& node)
+      {  return node->getType() == mNodeType; }
+
+   private:
+      cppdom::NodeType mNodeType;
    };
 }
 

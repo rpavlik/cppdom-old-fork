@@ -1,5 +1,8 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  --------------------------------------------------------
+2003-01-11 allenb       Added a simplified interface to cdata.  This new
+                        interface allows basic cdata manipulation from the
+						parent element of the actual cdata node.
 2003-01-10 allenb       Added an example that makes a tree from scratch.
                         Added node and doc constructors that take the name
                         of the new node.
