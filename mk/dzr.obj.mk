@@ -65,9 +65,9 @@
 # compiler (Windows only) or to o for all other compilers.
 ifndef OS_OBJ_EXT
   ifeq ($(CC), cl)
-     OS_OBJ_EXT=	.obj
+     OS_OBJ_EXT=.obj
   else
-     OS_OBJ_EXT=	.o
+     OS_OBJ_EXT=.o
   endif
 endif
 OBJ_EXT?=$(OS_OBJ_EXT)
