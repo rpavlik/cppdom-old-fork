@@ -39,7 +39,7 @@
 /**
  * @file cppdom.h
  *
- * the main declaration header
+ * The main declaration header for all of cppdom.
  */
 
 // prevent multiple includes

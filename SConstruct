@@ -188,6 +188,7 @@ opts.AddOption( cppunit_options )
 opts.AddOption( boost_options )
 opts.Add('prefix', 'Installation prefix', '/usr/local')
 opts.Add('StaticOnly', 'If not "no" then build only static library', 'no')
+opts.Add('MakeDist', 'If true, make the distribution packages as part of the build', 'no')
 Export('opts', 'cppunit_options', 'boost_options')
   
 help_text = """--- CppDom Build system ---
@@ -244,6 +245,9 @@ if not SCons.Script.options.help_msg:
    for d in ['cppdom', 'test']:
       SConscript(pj(d,'SConscript'), build_dir=pj(buildDir, d), duplicate=0)
 
+   if baseEnv['MakeDist'] != 'no':
+      cppdom_pkg.setDistDir( distDir )
+      cppdom_pkg.addPackager( SConsAddons.AutoDist.TarGzPackager() )
    cppdom_pkg.build()
 
    # Setup tar of source files
