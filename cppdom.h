@@ -257,7 +257,7 @@ typedef xmlnodeptr XMLNodePtr;
 
 
 /** XML attribute class.
-* Just wraps a string
+* Just wraps a string (this is really just and attribute VALUE)
 */
 class XMLPP_API xmlattribute
 {
