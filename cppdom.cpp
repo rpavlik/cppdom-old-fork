@@ -369,10 +369,18 @@ namespace cppdom
                       bool dbgit, const unsigned debugIndent)
    {
       std::string indent(debugIndent, char(' '));     // Construct buffer of size debugIndent
+      const std::string my_name(getName());           // Get element names
+      const std::string other_name(otherNode->getName());
 
-      if(dbgit) std::cout << indent << "isEqual: me:" << getName() << "  other:" << otherNode->getName() << std::endl;
+      if(dbgit) std::cout << indent << "isEqual: me:" << my_name << "  other:" << other_name << std::endl;
+
+      // If we are supposed to ignore this element type, then return immediately
+      if( (std::find(ignoreElements.begin(), ignoreElements.end(), my_name) != ignoreElements.end()) &&
+          (std::find(ignoreElements.begin(), ignoreElements.end(), other_name) != ignoreElements.end()))
+      { return true; }
+
       // Check current node's element type (ie. name)
-      if(otherNode->getName() != getName())
+      if(other_name != my_name)
       {
          if(dbgit) std::cout << indent << "Different elt types: not equal.\n";
          return false;
