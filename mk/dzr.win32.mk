@@ -68,6 +68,14 @@
 # OS_SYS_LIBS     - Any extra Win32-specific system libraries that are needed.
 # OS_LIBBITSUF    - The suffix on a library directory specifying the bit width
 #                   of the contained libraries.
+# OS_LD_NAME_FLAG - flag to name your outputfile for your linker
+# OS_AR_NAME_FLAG - flag to name your outputfile for your archiver
+# OS_LIB_EXT      - file extension (.ext) that your platform's libraries have
+# OS_SHLIB_EXT    - file extension that your platform's shared libraries have
+# OS_LIB_PREFIX   - file prefix (lib) that your platform's libraries have
+# OS_SHLIB_PREFIX - file prefix (lib) that your platform's shr libraries have
+# OS_EXE_EXT      - file extension that your platform's executables have
+# OS_OBJ_EXT      - file extension that your compiler's object files have
 # -----------------------------------------------------------------------------
 
 # Use Visual C++ as the compiler and linker.
@@ -104,6 +112,7 @@ OS_SHLIB_EXT=	.dll
 OS_LIB_PREFIX= 	
 OS_SHLIB_PREFIX=	
 OS_EXE_EXT=	.exe
+OS_OBJ_EXT=	.obj
 
 
 # Wrapper options around the list of libraries needed at link time.  These
