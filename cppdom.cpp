@@ -602,18 +602,21 @@ namespace cppdom
 
    bool Node::removeChild(NodePtr& node)
    {
+      cppdom::ignore_unused_variable_warning(node);
       std::cout << "cppdom::Node::removeChild:  not implemented\n";
       return false;
    }
 
    bool Node::removeChild(std::string& childName)
    {
+      cppdom::ignore_unused_variable_warning(childName);
       std::cout << "cppdom::Node::removeChild:  not implemented\n";
       return false;
    }
 
    bool Node::removeChildren(std::string& childName)
    {
+      cppdom::ignore_unused_variable_warning(childName);
       std::cout << "cppdom::Node::removeChildren:  not implemented\n";
       return false;
    }

@@ -448,6 +448,8 @@ namespace cppdom
 
    void Parser::parseComment(ContextPtr& context)
    {
+      cppdom::ignore_unused_variable_warning(context);
+
       // get tokens until comment is over
       while (true)
       {
