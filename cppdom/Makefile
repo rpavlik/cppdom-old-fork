@@ -12,6 +12,7 @@ DZR_BASE_DIR=	.
 default: all
 OBJDIR=objs.$(HOSTTYPE).$(CXX)
 DEPDIR=deps.$(HOSTTYPE).$(CXX)
+LIBDIR=libs.$(HOSTTYPE).$(CXX)
 
 # -----------------------------------------------------------------------------
 # Application-specific variable settings.  It is safe to modify these.
@@ -63,19 +64,22 @@ include $(DZR_BASE_DIR)/mk/dzr.lib.mk
 # -----------------------------------------------------------------------------
 # Targets.
 # -----------------------------------------------------------------------------
-SHARED_LIB_FILENAME=$(SHLIB_PREFIX)$(LIB_NAME)$(SHLIB_EXT) 
-STATIC_LIB_FILENAME=$(LIB_PREFIX)$(LIB_NAME)$(LIB_EXT)
+SHARED_LIB_FILENAME=$(LIBDIR)/$(SHLIB_PREFIX)$(LIB_NAME)$(SHLIB_EXT) 
+STATIC_LIB_FILENAME=$(LIBDIR)/$(LIB_PREFIX)$(LIB_NAME)$(LIB_EXT)
 all: $(SHARED_LIB_FILENAME) $(STATIC_LIB_FILENAME)
 
 tests:
 	-cd test && ${MAKE}
 
+MAKE_THE_LIBDIR=	@if [ ! -d $(LIBDIR) ]; then mkdir $(LIBDIR) ; fi
 # Target for the shared library to be built.
 $(SHARED_LIB_FILENAME): $(OBJS)
+	-$(MAKE_THE_LIBDIR)
 	$(SHARED_LINK) $(SHARED_OUT)$@ $(OBJS)
 
 # Target for the static library to be built.
 $(STATIC_LIB_FILENAME): $(OBJS)
+	-$(MAKE_THE_LIBDIR)
 	$(STATIC_LINK) $(STATIC_OUT)$@ $(OBJS)
 
 # TODO: edit this to install your files... 
