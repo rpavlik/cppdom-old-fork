@@ -175,6 +175,7 @@ XMLNode::XMLNode( const XMLNode &node )
    attributes = node.attributes;
    mCdata = node.mCdata;
    mNodelist = node.mNodelist;
+   mParent = node.mParent;
 };
 
 XMLNode &XMLNode::operator =( const XMLNode &node )
@@ -185,6 +186,7 @@ XMLNode &XMLNode::operator =( const XMLNode &node )
    attributes = node.attributes;
    mCdata = node.mCdata;
    mNodelist = node.mNodelist;
+   mParent = node.mParent;
    return *this;
 };
 
