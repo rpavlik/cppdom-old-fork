@@ -11,9 +11,9 @@
 	</Platforms>
 	<Configurations>
 		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			Name="Debug - DLL|Win32"
+			OutputDirectory="DebugDLL"
+			IntermediateDirectory="DebugDLL"
 			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
@@ -23,7 +23,7 @@
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;CPPDOM_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
@@ -57,9 +57,9 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
 		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			Name="Release - DLL|Win32"
+			OutputDirectory="ReleaseDLL"
+			IntermediateDirectory="ReleaseDLL"
 			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
@@ -70,7 +70,7 @@
 				AdditionalIncludeDirectories=".."
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;CPPDOM_EXPORTS"
 				StringPooling="TRUE"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -107,9 +107,9 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
 		<Configuration
-			Name="debug static|Win32"
-			OutputDirectory="debug static"
-			IntermediateDirectory="debug static"
+			Name="Debug|Win32"
+			OutputDirectory="Debug"
+			IntermediateDirectory="Debug"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -119,7 +119,7 @@
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;CPPDOM_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
@@ -147,9 +147,9 @@
 				Name="VCWebServiceProxyGeneratorTool"/>
 		</Configuration>
 		<Configuration
-			Name="release static|Win32"
-			OutputDirectory="release static"
-			IntermediateDirectory="release static"
+			Name="Release|Win32"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -160,7 +160,7 @@
 				AdditionalIncludeDirectories=".."
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;CPPDOM_EXPORTS"
 				StringPooling="TRUE"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
