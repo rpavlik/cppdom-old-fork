@@ -220,8 +220,8 @@ XMLNodePtr XMLNode::getChild(const XMLString &name)
 /*! \exception throws cppdom::XMLError when a streaming or parsing error occur */
 void XMLNode::load( std::istream &instream, XMLContextPtr &ctxptr )
 {
-   XMLParser parser(instream,ctxptr->get_location());
-   parser.parse_node( *this, ctxptr );
+   XMLParser parser( instream,ctxptr->get_location() );
+   parser.parseNode( *this, ctxptr );
 }
 
 /*! \exception throws cppdom::XMLError when a streaming or parsing error occur */
@@ -293,8 +293,8 @@ void XMLNode::save( std::ostream &outstream, int indent )
 /** \exception throws cppdom::XMLError when a streaming or parsing error occur */
 void XMLDocument::load( std::istream &instream, XMLContextPtr &ctxptr )
 {
-   XMLParser parser(instream, ctxptr->get_location());
-   parser.parse_document( *this, ctxptr );
+   XMLParser parser( instream, ctxptr->get_location() );
+   parser.parseDocument( *this, ctxptr );
 }
 
 /** \todo implement: print <!doctype> tag;

@@ -45,7 +45,7 @@ XMLParser::XMLParser( std::istream &inputstream, XMLLocation &loc )
 {
 }
 
-bool XMLParser::parse_document( XMLDocument &doc, XMLContextPtr &ctxptr )
+bool XMLParser::parseDocument( XMLDocument &doc, XMLContextPtr &ctxptr )
 {
    // set root nodename
    doc.contextptr = ctxptr;
@@ -58,12 +58,12 @@ bool XMLParser::parse_document( XMLDocument &doc, XMLContextPtr &ctxptr )
    if (handle)
       ctxptr->get_eventhandler().startDocument();
 
-   parse_header( doc, ctxptr );
+   parseHeader( doc, ctxptr );
 
    // parse the only one subnode
    XMLNode subnode( ctxptr );
 
-   bool ret = parse_node( subnode, ctxptr );
+   bool ret = parseNode( subnode, ctxptr );
 
    // if successful, put node into nodelist
    if (ret)
@@ -80,7 +80,7 @@ bool XMLParser::parse_document( XMLDocument &doc, XMLContextPtr &ctxptr )
 
 // parses the header, ie processing instructions and doctype tag
 //! \todo parse <!doctype> tag
-bool XMLParser::parse_header( XMLDocument &doc, XMLContextPtr &ctxptr )
+bool XMLParser::parseHeader( XMLDocument &doc, XMLContextPtr &ctxptr )
 {
    while(1==1)
    {
@@ -114,7 +114,7 @@ bool XMLParser::parse_header( XMLDocument &doc, XMLContextPtr &ctxptr )
                // now a doctype tag or a comment may follow
                if (token3.get_generic().at(0) == '-' &&
                    token3.get_generic().at(1) == '-')
-                   parse_comment(ctxptr);
+                   parseComment( ctxptr );
                else
                {
                   XMLString doctypestr(token3.get_generic());
@@ -151,7 +151,7 @@ bool XMLParser::parse_header( XMLDocument &doc, XMLContextPtr &ctxptr )
             XMLString tagname( token3.get_generic() );
             pinode.nodenamehandle = ctxptr->insert_tagname( tagname );
 
-            parse_attributes( pinode.attributes );
+            parseAttributes( pinode.attributes );
 
             XMLNodePtr nodeptr( new XMLNode(pinode) );
             doc.procinstructions.push_back( nodeptr );
@@ -177,7 +177,7 @@ bool XMLParser::parse_header( XMLDocument &doc, XMLContextPtr &ctxptr )
 }
 
 // parses the contents of the current node
-bool XMLParser::parse_node( XMLNode &node, XMLContextPtr &ctxptr )
+bool XMLParser::parseNode( XMLNode &node, XMLContextPtr &ctxptr )
 {
    node.contextptr = ctxptr;
    bool handle = ctxptr->handle_events();
@@ -242,7 +242,7 @@ bool XMLParser::parse_node( XMLNode &node, XMLContextPtr &ctxptr )
 
             // comment follows
          case '!':
-            parse_comment(ctxptr);
+            this->parseComment( ctxptr );
 
             // get next token
             tokenizer++;
@@ -267,7 +267,7 @@ bool XMLParser::parse_node( XMLNode &node, XMLContextPtr &ctxptr )
       ctxptr->get_eventhandler().startNode( tagname );
 
    // parse attributes
-   parse_attributes(node.attributes);
+   this->parseAttributes( node.attributes );
 
    if (handle)
       ctxptr->get_eventhandler().parsedAttributes( node.attributes );
@@ -300,7 +300,7 @@ bool XMLParser::parse_node( XMLNode &node, XMLContextPtr &ctxptr )
       XMLNode subnode( ctxptr );
 
       // try to parse possible sub nodes
-      if (parse_node( subnode, ctxptr ))
+      if (this->parseNode( subnode, ctxptr ))
       {
          // if successful, put node into nodelist
          XMLNodePtr nodeptr( new XMLNode(subnode) );
@@ -335,7 +335,7 @@ bool XMLParser::parse_node( XMLNode &node, XMLContextPtr &ctxptr )
 }
 
 // parses tag attributes
-bool XMLParser::parse_attributes( XMLAttributes &attr )
+bool XMLParser::parseAttributes( XMLAttributes &attr )
 {
    while(1==1)
    {
@@ -374,7 +374,7 @@ bool XMLParser::parse_attributes( XMLAttributes &attr )
    return true;
 }
 
-void XMLParser::parse_comment( XMLContextPtr &ctxptr )
+void XMLParser::parseComment( XMLContextPtr &ctxptr )
 {
    // get tokens until comment is over
    while (1==1)
