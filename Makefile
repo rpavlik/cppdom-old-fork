@@ -25,49 +25,26 @@ LIB_NAME=	cppdom
 # The directory where the source files for this library are located.
 srcdir=  	cppdom
 
-# Set a langauge for compiling.  This is optional and will default to C++ if
-# nothing is specified.  Currently supported langauges are C and C++.
-#LANGUAGE=	
-
 # Compiler flags needed for this library.  They are used as follows:
 #
 #    DEBUG_APP         - If set to TRUE, this librar will be compiled with
 #                        debugging symbols and no optimized symbols
 #    OPTIM_APP         - If set to TRUE, this librar will be compiled with
 #                        optimized symbols and no debugging symbols
-#    EXTRA_CFLAGS      - Extra librar-specific C compiler flags
-#    EXTRA_CXXFLAGS    - Extra librar-specific C++ compiler flags
-#    EXTRA_DEBUG_FLAGS - Extra librar-specific compiler debugging flags
 #    EXTRA_INCLUDES    - Extra include paths (-I... options) for the compilers
-#    EXTRA_OPTIM_FLAGS - Extra librar-specific compiler optimization flags
-#    EXTRA_UI_LIBS     - Extra user interface libraries needed for linking.
 #
 DEBUG_APP=		TRUE
 OPTIM_APP=		FALSE
-EXTRA_CFLAGS=		
-EXTRA_CXXFLAGS=		
-EXTRA_DEBUG_FLAGS=	
 EXTRA_INCLUDES=		-I.
-EXTRA_OPTIM_FLAGS=	
-EXTRA_UI_FLAGS=		
 
 # The list of all source files needed for this librar.  Based on this, a list
 # of object files is put in $(OBJS) automatically.
 SRCS=	xmlparser.cpp xmltokenizer.cpp cppdom.cpp		
 
-# This is for extra libraries needed specfically for your library.  The
-# general libraries needed for library are in $(LIBS).
-EXTRA_LIBS=		
-
-# This is for extra system libraries (-lpthread for example) needed
-# specifically for this library.  These are added to the linker command
-# after all the basic libraries and all the system libraries.
-EXTRA_SYS_LIBS=		
-
 # Extend this as necessary to find source files that are not in the current
 # directory.  Set EXTRA_PATH_FOR_SOURCES to all the directories that you
 # have sources in. (current dir is already included by default)
-EXTRA_PATH_FOR_SOURCES=	
+EXTRA_PATH_FOR_SOURCES=	cppdom
 
 # Additional files and directories besides the standard ones that need to be
 # removed by the 'clean' target.
