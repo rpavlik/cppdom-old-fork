@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
-	Name="xmlpp"
+	Name="cppdom"
 	ProjectGUID="{4975C4F1-3CB5-4A62-A00D-BCC89BF1B1EE}"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;CPPDOM_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -31,7 +31,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/xmlpp.lib"/>
+				OutputFile="$(OutDir)/cppdom.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -56,7 +56,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;CPPDOM_EXPORTS"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="TRUE"
@@ -68,7 +68,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/xmlpp.lib"/>
+				OutputFile="$(OutDir)/cppdom.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -85,31 +85,44 @@
 	</Configurations>
 	<Files>
 		<Filter
-			Name="files"
-			Filter="">
+			Name="Headers"
+			Filter=".h">
 			<File
-				RelativePath="..\shared_ptr.h">
+				RelativePath="..\cppdom\config.h">
 			</File>
 			<File
-				RelativePath="..\xmlconfig.h">
+				RelativePath="..\cppdom\cppdom.h">
 			</File>
 			<File
-				RelativePath="..\xmlparser.cpp">
+				RelativePath="..\cppdom\predicates.h">
 			</File>
 			<File
-				RelativePath="..\xmlparser.h">
+				RelativePath="..\cppdom\shared_ptr.h">
 			</File>
 			<File
-				RelativePath="..\xmlpp.cpp">
+				RelativePath="..\cppdom\version.h">
 			</File>
 			<File
-				RelativePath="..\xmlpp.h">
+				RelativePath="..\cppdom\xmlparser.h">
 			</File>
 			<File
-				RelativePath="..\xmltokenizer.cpp">
+				RelativePath="..\cppdom\xmltokenizer.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Sources"
+			Filter=".cpp">
+			<File
+				RelativePath="..\cppdom\cppdom.cpp">
 			</File>
 			<File
-				RelativePath="..\xmltokenizer.h">
+				RelativePath="..\cppdom\version.cpp">
+			</File>
+			<File
+				RelativePath="..\cppdom\xmlparser.cpp">
+			</File>
+			<File
+				RelativePath="..\cppdom\xmltokenizer.cpp">
 			</File>
 		</Filter>
 	</Files>
