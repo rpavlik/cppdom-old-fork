@@ -12,6 +12,7 @@
 const std::string id_token("id");
 const std::string equal_token("equal");
 const std::string ignore_attr_token("ignore_attr");
+const std::string ignore_elem_token("ignore_elem");
 
 int main()
 {
@@ -68,28 +69,31 @@ int main()
       std::string test_id = cur_test->getAttribute(id_token);
       std::string eq_value = cur_test->getAttribute(equal_token);
       bool should_be_equal = (eq_value == std::string("1"));
+
       bool has_ignore_attrib = cur_test->hasAttribute(ignore_attr_token);
       std::string attrib_ignore = cur_test->getAttribute(ignore_attr_token);
+      bool has_elem_ignore = cur_test->hasAttribute(ignore_elem_token);
+      std::string elem_ignore = cur_test->getAttribute(ignore_elem_token);
 
       std::vector<std::string> attrib_list;
       std::vector<std::string> element_list;
       if(has_ignore_attrib)
-      {
-         attrib_list.push_back(attrib_ignore);
-      }
+      { attrib_list.push_back(attrib_ignore); }
+      if(has_elem_ignore)
+      { element_list.push_back(elem_ignore); }
 
       // Load children
       // - Get the first two non-cdata nodes
       cppdom::NodeList nl = cur_test->getChildren();
       assert(nl.size() >= 2);
       unsigned cur_child=0;
-      
+
       while((nl[cur_child]->getType() != cppdom::xml_nt_node) &&
             (nl[cur_child]->getType() != cppdom::xml_nt_leaf))
       {  cur_child++; }
       child1 = nl[cur_child];
       cur_child++;                  // Goto next child
-      
+
       while((nl[cur_child]->getType() != cppdom::xml_nt_node) &&
             (nl[cur_child]->getType() != cppdom::xml_nt_leaf))
       {  cur_child++; }
