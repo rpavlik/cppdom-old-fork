@@ -110,26 +110,26 @@ public:
    /// compare operator for literals
    bool operator!=( xml_char_type ch )
    {
-      return ! isliteral ? true : ch != literal; 
+      return !isliteral ? true : ch != literal; 
    }
 
    /// compare operator for a generic string
    bool operator==( XMLString str )
    {
-      return !isliteral?str==generic:false;
+      return !isliteral ? str == generic : false;
    }
 
    /// compare operator for a generic string
    bool operator!=( XMLString str )
    {
-      return !isliteral?str!=generic:true; 
+      return !isliteral ? str != generic : true; 
    }
 
    /// set generic string
    XMLToken &operator=( XMLString &str )
    {
       generic.assign( str ); 
-      isliteral=false;  
+      isliteral = false;  
       return *this; 
    }
 
