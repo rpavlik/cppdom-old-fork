@@ -589,6 +589,8 @@ namespace cppdom
       friend class Parser;
    public:
       Document();
+      
+      ~Document();
 
       /** constructor taking xml context pointer */
       explicit Document(ContextPtr context);
