@@ -53,6 +53,10 @@
 #include <boost/spirit/utility.hpp>
 #include <boost/bind.hpp>
 
+#include <boost/spirit/iterator/multi_pass.hpp>
+#include <iostream>
+
+
 namespace bs = boost::spirit;
 using namespace boost::spirit;
 
@@ -67,24 +71,46 @@ namespace spirit
 class XmlBuilder
 {
 public:
+   /** Constructe an XmlBuilder and init for document. */
+   //XmlBuilder(cppdom::DocumentPtr doc, cppdom::ContextPtr context=cppdom::ContextPtr());
+
+   /** Prepare for parsing a new document. */
+   void reinit(cppdom::Document* doc, cppdom::ContextPtr context=cppdom::ContextPtr());
+
+   /** Call when parser is done. */
+   void finish();
+
    void startElement(char const* first, char const* last);
    void endElement(char const* first, char const* last);
    void startAttribute(char const* first, char const* last);
    void attribValue(char const* first, char const* last);
    void elementText(char const* first, char const* last);
+
+   cppdom::Document* getDocRoot()
+   { return mDocRoot; }
+
+public:
+   cppdom::Document*             mDocRoot;      /**< The root of the document. */
+   std::vector<cppdom::Node*>    mNodeStack;    /**< The current stack of nodes. */
+   cppdom::ContextPtr            mContext;      /**< The context we are using in the builder. */
+
+   std::string                   mCurAttribute; /**< Name of the current attribute we are using. */
 };
 
 /**
 * XML grammar.
 * Based on: http://www.w3.org/TR/2004/REC-xml-20040204/
+*
+* type: BUILDER_T must implement the interface concept similar to XmlBuilder above.
 */
-struct XmlGrammar : public grammar<XmlGrammar>
+template<typename BUILDER_T=XmlBuilder>
+struct XmlGrammar : public grammar<XmlGrammar<BUILDER_T> >
 {
-   XmlGrammar(XmlBuilder* builder)
+   XmlGrammar(BUILDER_T* builder)
       : mBuilder(builder)
    {;}
 
-   XmlBuilder* mBuilder;
+   BUILDER_T* mBuilder;
 
    /** Grammar definition. */
    template <typename ScannerT>
@@ -95,7 +121,7 @@ struct XmlGrammar : public grammar<XmlGrammar>
          document = prolog >> element >> *misc;       // Main document root
          ws = +space_p;                               // Whitespace, simplified from XML spec
 
-         chset<> char_data_set(anychar_p - chset_p("<&"));
+         chset<> char_data_set(anychar_p - chset_p("<"));   // May need & in this, but that doesn't seem right for text data
 
          //char_data_char = anychar_p - (chset_p('<') | chset_p('&'));
          char_data = *char_data_set;
@@ -123,18 +149,18 @@ struct XmlGrammar : public grammar<XmlGrammar>
                            >> *space_p >> '>';
 
          // element = (start element) >> ( (more elts >> end) | (quick end))
-         element = ch_p('<') >> name[boost::bind(&XmlBuilder::startElement,self.mBuilder,_1,_2)] >> *(ws >> attribute) >> *space_p
+         element = ch_p('<') >> name[boost::bind(&BUILDER_T::startElement,self.mBuilder,_1,_2)] >> *(ws >> attribute) >> *space_p
                    >> ( (ch_p('>') >> elem_content >> str_p("</")
-                                   >> name[boost::bind(&XmlBuilder::endElement,self.mBuilder,_1,_2)] >> *space_p >> ch_p('>')) |
-                        (str_p("/>"))[boost::bind(&XmlBuilder::endElement,self.mBuilder,_1,_2)] );
+                                   >> name[boost::bind(&BUILDER_T::endElement,self.mBuilder,_1,_2)] >> *space_p >> ch_p('>')) |
+                        (str_p("/>"))[boost::bind(&BUILDER_T::endElement,self.mBuilder,_1,_2)] );
 
          // elementText: eliminate extra space by consuming initial whitespace & only call when char_data matches
-         elem_content = *space_p >> !(char_data[boost::bind(&XmlBuilder::elementText,self.mBuilder,_1,_2)])
-                          >> *( (element | comment | pi | cdata_sect) >> *space_p >> !(char_data[boost::bind(&XmlBuilder::elementText,self.mBuilder,_1,_2)]) );
+         elem_content = *space_p >> !(char_data[boost::bind(&BUILDER_T::elementText,self.mBuilder,_1,_2)])
+                          >> *( (element | comment | pi | cdata_sect) >> *space_p >> !(char_data[boost::bind(&BUILDER_T::elementText,self.mBuilder,_1,_2)]) );
 
-         attribute = name[boost::bind(&XmlBuilder::startAttribute,self.mBuilder,_1,_2)] >> *space_p >> '=' >> *space_p >> attrib_value;
-         attrib_value = ('"' >> (*(anychar_p-'"'))[boost::bind(&XmlBuilder::attribValue,self.mBuilder,_1,_2)] >> '"') |
-                        ("'" >> (*(anychar_p-"'"))[boost::bind(&XmlBuilder::attribValue,self.mBuilder,_1,_2)] >> "'");
+         attribute = name[boost::bind(&BUILDER_T::startAttribute,self.mBuilder,_1,_2)] >> *space_p >> '=' >> *space_p >> attrib_value;
+         attrib_value = ('"' >> (*(anychar_p-'"'))[boost::bind(&BUILDER_T::attribValue,self.mBuilder,_1,_2)] >> '"') |
+                        ("'" >> (*(anychar_p-"'"))[boost::bind(&BUILDER_T::attribValue,self.mBuilder,_1,_2)] >> "'");
 
          BOOST_SPIRIT_DEBUG_RULE(attribute);
          BOOST_SPIRIT_DEBUG_RULE(attrib_value);
@@ -183,6 +209,70 @@ struct XmlGrammar : public grammar<XmlGrammar>
       rule<ScannerT> const& start() const
       { return document; }
    };
+};
+
+
+/** The actual parser class that we will use.
+ *
+ * Provides a simple interface for using the builder and grammar.
+ */
+class Parser
+{
+public:
+   void parseDocument(cppdom::Document& doc, std::string& content)
+   {
+      mBuilder.reinit(&doc, doc.getContext());
+      XmlGrammar<XmlBuilder> xml_grammar(&mBuilder);
+      parse_info<char const*> result;
+
+      result = bs::parse(content.c_str(), xml_grammar);
+      if(!result.full)
+      {
+         throw CPPDOM_ERROR(xml_invalid_operation, "Invalid format of XML.");
+      }
+   }
+
+   void parseDocument(cppdom::Document& doc, std::istream& instream)
+   {
+
+       /*
+       typedef char char_t;
+       typedef multi_pass<istreambuf_iterator<char_t> > iterator_t;
+
+       typedef skip_parser_iteration_policy<space_parser> iter_policy_t;
+       typedef scanner_policies<iter_policy_t> scanner_policies_t;
+       typedef scanner<iterator_t, scanner_policies_t> scanner_t;
+
+       typedef rule<scanner_t> rule_t;
+
+       iter_policy_t iter_policy(space_p);
+       scanner_policies_t policies(iter_policy);
+       */
+      typedef bs::multi_pass<std::istreambuf_iterator<char> > iterator_t;
+
+      mBuilder.reinit(&doc,doc.getContext());
+
+      XmlGrammar<XmlBuilder> xml_grammar(&mBuilder);
+      parse_info<iterator_t> result;
+
+      std::istreambuf_iterator<char> first(instream);
+      std::istreambuf_iterator<char> last;
+
+      std::string test(first,last);
+      parseDocument(doc,test);
+
+      /*
+      result = bs::parse(bs::make_multi_pass(first), bs::make_multi_pass(last), xml_grammar);
+      if(!result.full)
+      {
+         throw CPPDOM_ERROR(xml_invalid_operation, "Invalid format of XML.");
+      }
+      */
+   }
+
+public:
+   XmlBuilder  mBuilder;   /**< The builder that we are using. */
+
 };
 
 }  // namespace spirit
