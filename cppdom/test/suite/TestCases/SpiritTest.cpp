@@ -42,8 +42,8 @@
 
 #include <cppdom/cppdom.h>
 
-#define BOOST_SPIRIT_DEBUG 1
-#define BOOST_SPIRIT_DEBUG_PRINT_SOME 100
+//#define BOOST_SPIRIT_DEBUG 1
+//#define BOOST_SPIRIT_DEBUG_PRINT_SOME 100
 
 #include <boost/spirit/core.hpp>
 #include <boost/spirit/actor/push_back_actor.hpp>
@@ -127,6 +127,17 @@ void SpiritTest::testBasics()
    CPPUNIT_ASSERT(full);
 }
 
+void printElt(char const* first, char const* last)
+{
+   std::string str(first,last);
+   std::cout << "Elt: [" << str << "]" << std::endl;
+}
+
+void printEltExit(char const* first, char const* last)
+{
+   std::cout << "elt exit: " << std::string(first,last) << std::endl;
+}
+
 /**
 * XML grammar.
 * Based on: http://www.w3.org/TR/2004/REC-xml-20040204/
@@ -168,9 +179,9 @@ struct XmlGrammar : public grammar<XmlGrammar>
                            >> !('[' >> *(anychar_p - ']') >> ']')
                            >> *space_p >> '>';
          
-         element = ch_p('<') >> name >> *(ws >> attribute) >> *space_p 
-                   >> ( (ch_p('>') >> elem_content >> str_p("</") >> name >> *space_p >> ch_p('>')) |
-                        (str_p("/>")) );
+         element = ch_p('<') >> name[&printElt] >> *(ws >> attribute) >> *space_p 
+                   >> ( (ch_p('>') >> elem_content >> str_p("</") >> name[&printEltExit] >> *space_p >> ch_p('>')) |
+                        (str_p("/>"))[&printEltExit] );
                    
          elem_content = !char_data >> *( (element | comment | pi | cdata_sect) >> !char_data);
          
@@ -235,6 +246,8 @@ void SpiritTest::testXmlParser()
    BOOST_SPIRIT_DEBUG_GRAMMAR(xml_grammar);
 
    parse_info<char const*> result;
+
+   std::cout << "-------------------------" << std::endl;
    result = bs::parse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
             "<!DOCTYPE greeting [<!ELEMENT greeting (#PCDATA)>]>"
@@ -243,12 +256,14 @@ void SpiritTest::testXmlParser()
             xml_grammar);
    CPPUNIT_ASSERT(result.full);
 
+   std::cout << "-------------------------" << std::endl;
    result = bs::parse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
             "<root><node param=\"arg\" p2 = \"2\" >node text</node></root>"
             ,xml_grammar);
    CPPUNIT_ASSERT(result.full);
 
+   std::cout << "-------------------------" << std::endl;
    result = bs::parse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
             "<root>"
@@ -259,6 +274,7 @@ void SpiritTest::testXmlParser()
             ,xml_grammar);
    CPPUNIT_ASSERT(result.full);
    
+   std::cout << "-------------------------" << std::endl;
    result = bs::parse(
             "<root><node1><node2><node3><node4>"
             "Stuff<!-- More here -->And more<b>this</b>dfdf"
