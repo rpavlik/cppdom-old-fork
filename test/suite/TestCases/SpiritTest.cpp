@@ -54,6 +54,35 @@
 namespace bs = boost::spirit;
 using namespace boost::spirit;
 
+namespace
+{
+/** Callback builder class to use for testing.
+*/
+class TestXmlBuilder
+{
+public:
+   /** Call when parser is done. */
+   void finish()
+   {;}
+
+   void startElement(char const* first, char const* last)
+   {  std::cout << "StartElement: " << std::string(first,last) << std::endl; }
+
+   void endElement(char const* first, char const* last)
+   {  std::cout << "endElement: " << std::string(first,last) << std::endl; }
+
+   void startAttribute(char const* first, char const* last)
+   {  std::cout << "startAttribute: " << std::string(first,last) << std::endl; }
+
+   void attribValue(char const* first, char const* last)
+   {  std::cout << "attribValue: " << std::string(first,last) << std::endl; }
+
+   void elementText(char const* first, char const* last)
+   {  std::cout << "elementText: " << std::string(first,last) << std::endl; }
+};
+
+}
+
 namespace cppdomtest
 {
 CPPUNIT_TEST_SUITE_REGISTRATION(SpiritTest);
@@ -133,8 +162,8 @@ void SpiritTest::testXmlParser()
 {
    std::cout << "xml grammar" << std::endl;
 
-   cppdom::spirit::XmlBuilder builder;
-   cppdom::spirit::XmlGrammar xml_grammar(&builder);
+   TestXmlBuilder test_builder;
+   cppdom::spirit::XmlGrammar<TestXmlBuilder> xml_grammar(&test_builder);
    BOOST_SPIRIT_DEBUG_GRAMMAR(xml_grammar);
 
    parse_info<char const*> result;
@@ -177,8 +206,32 @@ void SpiritTest::testXmlParser()
             ,xml_grammar);
    CPPUNIT_ASSERT(result.full);
 
+   std::string xml_content1(
+            "<root><node1 attrib='value'>"
+            "<node2 a1='val a1' a2='1.567' a3='false'>"
+            "<node3><node4>"
+            "Stuff<!-- More here -->And &lt;more<b>this</b>dfdf"
+            "</node4>txt and txt </node3>  aa</node2></node1>"
+            "</root>"
+            );
+
+   cppdom::spirit::Parser spirit_parser;
+   cppdom::ContextPtr ctx(new cppdom::Context());
+   cppdom::DocumentPtr doc1(new cppdom::Document(ctx));
+
+   spirit_parser.parseDocument(*doc1, xml_content1);
+   std::cout << "---------------------- Document (char*) -----------" << std::endl;
+   doc1->save(std::cout);
+   std::cout << std::endl;
+
+   std::istringstream xml_content1_istream(xml_content1);
+   spirit_parser.parseDocument(*doc1, xml_content1_istream);
+   std::cout << "---------------------- Document (istream) -----------" << std::endl;
+   doc1->save(std::cout);
+   std::cout << std::endl;
 }
 
-}
+
+}  // namespace cppdomtest
 
 
