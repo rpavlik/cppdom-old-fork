@@ -49,11 +49,14 @@ class SpiritTest : public CppUnit::TestFixture
   CPPUNIT_TEST_SUITE(SpiritTest);
 
    CPPUNIT_TEST(testBasics);
+   CPPUNIT_TEST(testXmlParser);
 
    CPPUNIT_TEST_SUITE_END();
 
 public:
    void testBasics();
+   
+   void testXmlParser();
 };
 
 }

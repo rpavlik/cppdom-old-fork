@@ -43,9 +43,11 @@
 #include <cppdom/cppdom.h>
 
 #define BOOST_SPIRIT_DEBUG 1
+#define BOOST_SPIRIT_DEBUG_PRINT_SOME 100
 
 #include <boost/spirit/core.hpp>
 #include <boost/spirit/actor/push_back_actor.hpp>
+#include <boost/spirit/utility.hpp>
 
 namespace bs = boost::spirit;
 using namespace boost::spirit;
@@ -73,8 +75,7 @@ struct AbsGrammar : public grammar<AbsGrammar>
       
       rule<ScannerT> const& start() const 
       { return expr; }
-   };
-   
+   };   
 };
 
    
@@ -126,4 +127,148 @@ void SpiritTest::testBasics()
    CPPUNIT_ASSERT(full);
 }
 
+/**
+* XML grammar.
+* Based on: http://www.w3.org/TR/2004/REC-xml-20040204/
+*/
+struct XmlGrammar : public grammar<XmlGrammar>
+{
+   template <typename ScannerT>
+   struct definition
+   {
+      definition(XmlGrammar const& self)
+      {
+         document = prolog >> element >> *misc;       // Main document root
+         ws = +space_p;                               // Whitespace, simplified from XML spec
+
+         chset<> char_data_set(anychar_p - chset_p("<&"));
+         
+         //char_data_char = anychar_p - (chset_p('<') | chset_p('&'));
+         char_data = *char_data_set;
+         
+         // Name specifications.  Pretty strict for now
+         name_char = alnum_p | '_' | '-' | ':';
+         name = (alpha_p | '_' | ':') >> *(alnum_p | '_' | '-' | ':');
+         names = name >> *(blank_p >> name);
+         nmtoken = +name_char;
+                  
+         comment = confix_p("<!--", *anychar_p, "-->");  // Slightly less strict.
+         
+         pi = str_p("<?") >> name >> anychar_p >> str_p("?>");
+         
+         cdata_sect = str_p("<![CDATA[") >> cdata >> str_p("]]>");
+         cdata = *anychar_p;
+         
+         misc = comment | pi | ws;
+         prolog = !xmldecl >> *misc >> !(doctypedecl >> *misc);
+         xmldecl = confix_p("<?xml", *anychar_p, "?>");        // Use confix since any_char cosumes everything
+
+         doctypedecl = str_p("<!DOCTYPE") 
+                           >> *(anychar_p - chset_p("[>"))
+                           >> !('[' >> *(anychar_p - ']') >> ']')
+                           >> *space_p >> '>';
+         
+         element = ch_p('<') >> name >> *(ws >> attribute) >> *space_p 
+                   >> ( (ch_p('>') >> elem_content >> str_p("</") >> name >> *space_p >> ch_p('>')) |
+                        (str_p("/>")) );
+                   
+         elem_content = !char_data >> *( (element | comment | pi | cdata_sect) >> !char_data);
+         
+         attribute = name >> *space_p >> '=' >> *space_p >> attrib_value;
+         attrib_value = ('"' >> *(anychar_p-'"') >> '"') |
+                        ("'" >> *(anychar_p-"'") >> "'");
+
+         BOOST_SPIRIT_DEBUG_RULE(attribute);
+         BOOST_SPIRIT_DEBUG_RULE(attrib_value);
+         BOOST_SPIRIT_DEBUG_RULE(cdata_sect);
+         BOOST_SPIRIT_DEBUG_RULE(cdata);
+         BOOST_SPIRIT_DEBUG_RULE(char_data);
+         BOOST_SPIRIT_DEBUG_RULE(char_data_char);
+         BOOST_SPIRIT_DEBUG_RULE(comment);
+         BOOST_SPIRIT_DEBUG_RULE(document);
+         BOOST_SPIRIT_DEBUG_RULE(doctypedecl);
+         BOOST_SPIRIT_DEBUG_RULE(element);
+         BOOST_SPIRIT_DEBUG_RULE(elem_content);
+         BOOST_SPIRIT_DEBUG_RULE(misc);
+         BOOST_SPIRIT_DEBUG_RULE(name);
+         BOOST_SPIRIT_DEBUG_RULE(name_char);
+         BOOST_SPIRIT_DEBUG_RULE(names);
+         BOOST_SPIRIT_DEBUG_RULE(nmtoken);
+         BOOST_SPIRIT_DEBUG_RULE(pi);
+         BOOST_SPIRIT_DEBUG_RULE(prolog);
+         BOOST_SPIRIT_DEBUG_RULE(ws);
+         BOOST_SPIRIT_DEBUG_RULE(xmldecl);
+      }
+      
+      rule<ScannerT> attribute,
+                     attrib_value,
+                     cdata_sect,
+                     cdata,
+                     char_data,
+                     char_data_char,
+                     comment,
+                     document, 
+                     doctypedecl,
+                     element,
+                     elem_content,
+                     misc,
+                     name,
+                     name_char,
+                     names,
+                     nmtoken,
+                     pi,
+                     prolog,
+                     ws,
+                     xmldecl
+                     ;
+      
+      rule<ScannerT> const& start() const 
+      { return document; }
+   };   
+};
+
+void SpiritTest::testXmlParser()
+{
+   std::cout << "xml grammar" << std::endl;
+   
+   XmlGrammar xml_grammar;
+   BOOST_SPIRIT_DEBUG_GRAMMAR(xml_grammar);
+
+   parse_info<char const*> result;
+   result = bs::parse(
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
+            "<!DOCTYPE greeting [<!ELEMENT greeting (#PCDATA)>]>"
+            "<greeting>Hello, world!</greeting>"
+            "<!-- declarations for <head> & <body> -->",
+            xml_grammar);
+   CPPUNIT_ASSERT(result.full);
+
+   result = bs::parse(
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
+            "<root><node param=\"arg\" p2 = \"2\" >node text</node></root>"
+            ,xml_grammar);
+   CPPUNIT_ASSERT(result.full);
+
+   result = bs::parse(
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
+            "<root>"
+            "<node><node><node>"
+            "<single_node arg=\"alone\"/>"
+            "</node></node></node>"
+            "</root>"
+            ,xml_grammar);
+   CPPUNIT_ASSERT(result.full);
+   
+   result = bs::parse(
+            "<root><node1><node2><node3><node4>"
+            "Stuff<!-- More here -->And more<b>this</b>dfdf"
+            "</node4>txt and txt </node3>  aa</node2></node1>"
+            "</root>"
+            ,xml_grammar);
+   CPPUNIT_ASSERT(result.full);
+   
 }
+
+}
+
+
