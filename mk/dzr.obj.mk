@@ -63,14 +63,13 @@
 
 # If $(OS_OBJ_EXT) is not defined set it to obj if we are using cl as the C
 # compiler (Windows only) or to o for all other compilers.
-ifndef OS_OBJ_EXT
-  ifeq ($(CC), cl)
-     OS_OBJ_EXT=.obj
-  else
-     OS_OBJ_EXT=.o
-  endif
+ifeq ($(CC), cl)
+  OS_OBJ_EXT?=.obj
+else
+  OS_OBJ_EXT?=.o
 endif
-OBJ_EXT?=$(OS_OBJ_EXT)
+OS_OBJ_EXT?=.o
+OBJ_EXT?=${OS_OBJ_EXT}
 
 OBJ_NAME_FLAG?=	-o $@
 OBJ_BUILD_FLAG?=	-c
