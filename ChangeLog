@@ -1,4 +1,5 @@
 DATE        AUTHOR    CHANGE
 ----------- --------- ---------------------------------------------------------
+Apr-05-2002 allenb    Fix EOF and -1 chars on Irix.
 Apr-03-2002 allenb    Added Node::getChild(char*) to avoid matching templated
                       predicate version.
