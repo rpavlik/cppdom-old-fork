@@ -46,32 +46,92 @@ namespace cppdom
 
 namespace spirit
 {
+// Constructe an XmlBuilder
+/*
+XmlBuilder::XmlBuilder(cppdom::DocumentPtr doc, cppdom::ContextPtr context)
+{
+   reinit(doc,context);
+}
+*/
+
+// Prepare for parsing a new document
+void XmlBuilder::reinit(cppdom::Document* doc, cppdom::ContextPtr context)
+{
+   mDocRoot = doc;
+   mContext = doc->getContext();
+   if(mContext.get() == NULL)
+   {
+      throw CPPDOM_ERROR(xml_invalid_argument, "Attempted to use doc with no context.");
+   }
+
+   mNodeStack.clear();
+   mNodeStack.push_back(mDocRoot);     // Doc is at base of stack
+}
+
+void XmlBuilder::finish()
+{
+   assert(mNodeStack.size() == 1);     // Should only have one node left now
+}
+
 
 void XmlBuilder::startElement(char const* first, char const* last)
 {
-   std::string str(first,last);
-   std::cout << "Elt in: [" << str << "]" << std::endl;
+   std::string elt_name(first,last);
+   std::cout << "Elt in: [" << elt_name << "]" << std::endl;
+
+   // - Create node
+   // - Add to tree
+   // - Put on stack to get ready for more
+   NodePtr new_elt(new cppdom::Node(elt_name,mContext));
+   mNodeStack.back()->addChild(new_elt);
+   mNodeStack.push_back(new_elt.get());
 }
 
 void XmlBuilder::endElement(char const* first, char const* last)
 {
    std::cout << "Elt exit: " << std::string(first,last) << std::endl;
+   // Should always have more then one on stack since doc root is
+   // on stack at all times and we need one more to pop
+   assert(mNodeStack.size() > 1);
+   mNodeStack.pop_back();
+
+#ifdef _DEBUG
+   mCurAttribute.clear();     // If debug version, clear attribute so we detect problems
+#endif
 }
 
 void XmlBuilder::startAttribute(char const* first, char const* last)
 {
    std::cout << "  attrib: " << std::string(first,last);
+   mCurAttribute = std::string(first,last);
+   assert(!mCurAttribute.empty());
 }
 
 void XmlBuilder::attribValue(char const* first, char const* last)
 {
    std::cout << " [" << std::string(first,last) << "] " << std::endl;
+   assert(!mCurAttribute.empty());
+   std::string attrib_value(first,last);
+   if(cppdom::textContainsXmlEscaping(attrib_value))
+   {  attrib_value = removeXmlEscaping(attrib_value, false); }
+   mNodeStack.back()->getAttrMap().set(mCurAttribute, attrib_value);
 }
 
 void XmlBuilder::elementText(char const* first, char const* last)
 {
-   std::cout << "   Text: [" << std::string(first,last) << "] " << std::endl;
+   std::string elem_text(first,last);
+   if(textContainsXmlEscaping(elem_text))
+   {  elem_text = removeXmlEscaping(elem_text, true); }
 
+
+   std::cout << "   Text: [" << std::string(first,last) << "] " << std::endl;
+   if(!elem_text.empty())
+   {
+      cppdom::NodePtr cdata_node(new cppdom::Node("cdata",mContext));
+      cdata_node->setType(Node::xml_nt_cdata);
+      cdata_node->setCdata(elem_text);
+      mNodeStack.back()->addChild(cdata_node);
+   }
 }
 
 
