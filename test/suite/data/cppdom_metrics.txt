@@ -1,1 +1,6 @@
 strider/Debug/Main/MetricTest                                      1221.75
+strider/Debug/ParseMetricTest/timeLoadTestDocs/data/hamlet.xml     171123
+strider/Debug/ParseMetricTest/timeLoadTestDocs/data/rime10.xml     22441.4
+strider/Main/MetricTest                                            1221.75
+strider/ParseMetricTest/timeLoadTestDocs/data/hamlet.xml           117041
+strider/ParseMetricTest/timeLoadTestDocs/data/rime10.xml           15441.8
