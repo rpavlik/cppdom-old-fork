@@ -205,14 +205,14 @@ public:
    /** @name event handling methods */
    //@{
    /** sets the event handler; enables handling events */
-   void set_eventhandler( XMLEventHandlerPtr ehptr )
+   void setEventHandler( XMLEventHandlerPtr ehptr )
    {
       eventhandler = ehptr;
       handleevents = true;
    }
 
    /** returns the currently used eventhandler (per reference) */
-   XMLEventHandler &getEventhandler()
+   XMLEventHandler &getEventHandler()
    { 
       return *eventhandler.get(); 
    }
