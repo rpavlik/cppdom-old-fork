@@ -160,7 +160,7 @@ namespace cppdom
    // macro for keeping the errorcode switch short and easy
 #define XMLERRORCODE(x,y)  case x: err = y; break;
 
-      const char *err;
+      const char *err(NULL);
       switch(mErrorCode)
       {
          XMLERRORCODE(xml_unknown,"unspecified or unknown error");

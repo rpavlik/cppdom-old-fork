@@ -61,8 +61,46 @@
 #include <sstream>
 #include <vector>
 
+
+// ---- TYPE DEFS for CPPDOM --- //
+/** handle to a tagname string in a tagname map */
+namespace cppdom
+{
+   typedef int TagNameHandle;
+}
+
+//#define CPPDOM_USE_HASH_MAP
+
+// Use fastest map available
+#if defined(CPPDOM_USE_HASH_MAP) && defined(__GNUC__) && (__GNUC__ >= 3)
+
+#include <ext/hash_map>
 #include <map>
-#define CPPDOM_MAP std::map
+
+namespace std
+{ using namespace __gnu_cxx; }
+
+namespace cppdom
+{
+   struct HashString
+   {
+      bool operator()(std::string const& str) const
+      { return __gnu_cxx::hash<char const *>()(str.c_str()); }
+   };
+
+   typedef std::hash_map<TagNameHandle,std::string>   TagNameMap_t;
+   typedef std::hash_map<std::string, TagNameHandle, HashString>  NameToTagMap_t;
+}
+
+#else
+
+#include <map>
+namespace cppdom
+{
+   typedef std::map<TagNameHandle,std::string>   TagNameMap_t;
+   typedef std::map<std::string, TagNameHandle>  NameToTagMap_t;
+}
+#endif
 
 #include "config.h"
 #include "shared_ptr.h"   // the boost::shared_ptr class
@@ -184,14 +222,6 @@ namespace cppdom
 
 
    // typedefs
-
-   /** handle to a tagname string in a tagname map */
-   typedef int TagNameHandle;
-
-   /** maps the tagname string to a handle */
-   typedef CPPDOM_MAP<TagNameHandle,std::string>   TagNameMap_t;
-   typedef CPPDOM_MAP<std::string, TagNameHandle>  NameToTagMap_t;
-
    /** smart pointer for Context */
    typedef cppdom_boost::shared_ptr<class Context> ContextPtr;
 
@@ -336,7 +366,7 @@ namespace cppdom
    {
       friend class Parser;
    public:
-      typedef CPPDOM_MAP<std::string, std::string> attr_map_t;
+      typedef std::map<std::string, std::string> attr_map_t;
       typedef attr_map_t::const_iterator  const_iterator;
       typedef attr_map_t::iterator        iterator;
       typedef attr_map_t::value_type      value_type;
