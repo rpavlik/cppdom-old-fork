@@ -496,8 +496,12 @@ namespace cppdom
       /** loads xml node from input stream */
       void load(std::istream& in, ContextPtr& context);
 
-      /** saves node to xml output stream */
-      void save(std::ostream& out, int indent=0);
+      /** saves node to xml output stream
+      * @param indent - The amount to indent
+      * @doIndent - If true, then indent the output
+      * @doNewline - If true then use newlines in output
+      */
+      void save(std::ostream& out, int indent=0, bool doIndent=true, bool doNewline=true);
       //@}
 
       ContextPtr getContext();
@@ -535,8 +539,11 @@ namespace cppdom
       /** loads xml Document (node) from input stream */
       void load(std::istream& in, ContextPtr& context);
 
-      /** saves node to xml output stream */
-      void save(std::ostream& out);
+      /** saves node to xml output stream
+      * @param doIndent - If true, then indent the output.
+      * @param doNewline - If true, then use newlines in the output.
+      */
+      void save(std::ostream& out, bool doIndent=true, bool doNewline=true);
 
       /**
        * \exception throws cppdom::Error when the file name is invalid.

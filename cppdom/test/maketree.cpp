@@ -76,7 +76,11 @@ int main()
    testHelpers::dump_node(doc);
 
    // Write the document out to a file
+   std::cout << "------- Indented document ------\n";
    doc.save(std::cout);
+   std::cout << "------- No indent, no newline document ------\n";
+   doc.save(std::cout, false, false);
+
    std::string filename("maketree.xml");
    doc.saveFile(filename);
 
