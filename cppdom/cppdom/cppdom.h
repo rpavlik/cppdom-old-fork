@@ -40,7 +40,7 @@
 
    // Visual Studio 7 has support for member templates.
 #  if _MSC_VER < 1300
-#     define XMLPP_NO_MEMBER_TEMPLATES
+#     define CPPDOM_NO_MEMBER_TEMPLATES
 #  endif
 #endif
 
@@ -290,20 +290,20 @@ public:
       mData = str_val;
    }
 
-#ifndef XMLPP_NO_MEMBER_TEMPLATES
+#ifndef CPPDOM_NO_MEMBER_TEMPLATES
    template<class T>
    XMLAttribute( const T& val )
    {
       setValue<T>( val );
    }
-#endif // ! XMLPP_NO_MEMBER_TEMPLATES
+#endif // ! CPPDOM_NO_MEMBER_TEMPLATES
 
    XMLString getString() const
    {
       return mData; 
    }
 
-#ifndef XMLPP_NO_MEMBER_TEMPLATES
+#ifndef CPPDOM_NO_MEMBER_TEMPLATES
    /** Set mData to the string value of val
    * @note Requires a stream operation of type T
    */
@@ -323,7 +323,7 @@ public:
       iss >> t;
       return t;
    }
-#endif // ! XMLPP_NO_MEMBER_TEMPLATES
+#endif // ! CPPDOM_NO_MEMBER_TEMPLATES
 
    /** Autoconversion to string (so old code should work) */
    operator std::string() const
