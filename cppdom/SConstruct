@@ -142,6 +142,7 @@ Export('baseEnv')
 # Process subdirectories
 subdirs = Split("""
    cppdom
+   test
 """)
 
 for s in subdirs:
@@ -152,4 +153,3 @@ baseEnv.Alias('install', PREFIX)
 
 # Build everything by default
 Default('.')
-

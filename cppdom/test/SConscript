@@ -1,0 +1,15 @@
+
+Import('baseEnv')
+
+env = baseEnv.Copy()
+env['LIBPATH'].extend(['#cppdom'])
+env['LIBS'].extend(['cppdom'])
+
+tests = Split("""
+   nodetest
+   parsetest
+   predtest
+""")
+
+for t in tests:
+   env.Program(t, t+'.cpp')
