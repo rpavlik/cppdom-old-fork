@@ -25,10 +25,9 @@
    Boston, MA  02111-1307  USA.
 
 */
-/*! \file xmlpp.hpp
-
-  the main declaration header
-
+/** @file xmlpp.hpp
+*
+*  the main declaration header
 */
 
 // prevent multiple includes
@@ -53,66 +52,51 @@
 namespace xmlpp {
 
 
-//! basic char type
+/** basic char type */
 typedef char xml_char_type;
-//! string class typedef
+/** string class typedef */
 typedef std::basic_string<xml_char_type> xmlstring;
-//! string smart pointer
+/** string smart pointer */
 typedef xmlpp_boost::shared_ptr<xmlstring> xmlstringptr;
 
 
 //! xml parsing error codes enumeration
 enum xmlerrorcode
 {
-      //! unspecified or unknown error
-   xml_unknown = 0,
-      //! error in the infile stream
-   xml_instream_error,
-
-      //! expected an open tag literal '<'
-   xml_opentag_expected,
-      //! expected a '<' or cdata
-   xml_opentag_cdata_expected,
-      //! expected a '>' closing tag literal
-   xml_closetag_expected,
-      //! expected a processing instruction or doctype tag
-   xml_pi_doctype_expected,
-      //! expected a tag name after '<' or '</'
-   xml_tagname_expected,
-      //! expected a '/' after closing tag literal '<'
-   xml_closetag_slash_expected,
-      //! tag name from start and end tag mismatch
-   xml_tagname_close_mismatch,
-
-      //! expected '=' after attribute name
-   xml_attr_equal_expected,
-      //! expected value after an '=' in attribute
-   xml_attr_value_expected,
-
-      //! invalid nodetype encountered while saving
-   xml_save_invalid_nodetype,
+   xml_unknown = 0,              /**< unspecified or unknown error */
+   xml_instream_error,           /**< error in the infile stream */
+   xml_opentag_expected,         /**< expected an open tag literal '<' */
+   xml_opentag_cdata_expected,   /**< expected a '<' or cdata */
+   xml_closetag_expected,        /**< expected a '>' closing tag literal */
+   xml_pi_doctype_expected,      /**< expected a processing instruction or doctype tag */
+   xml_tagname_expected,         /**< expected a tag name after '<' or '</' */
+   xml_closetag_slash_expected,  /**< expected a '/' after closing tag literal '<' */
+   xml_tagname_close_mismatch,   /**< tag name from start and end tag mismatch */
+   xml_attr_equal_expected,      /**< expected '=' after attribute name */
+   xml_attr_value_expected,      /**< expected value after an '=' in attribute */
+   xml_save_invalid_nodetype,    /**< invalid nodetype encountered while saving */
 
 // added by kevin for 0.7 compatibility...
    xml_filename_invalid,
    xml_file_access,
 
-      //! dummy error code
-   xml_dummy
+   xml_dummy                     /**< dummy error code */
 };
 
 
 // classes
 
-//! xml error class
-/*! contains an xmlerrorcode and is thrown while parsing xml input */
+/** xml error class
+*  contains an xmlerrorcode and is thrown while parsing xml input
+*/
 class XMLPP_API xmlerror
 {
 public:
-   //! constructor
+   /** constructor */
    xmlerror( xmlerrorcode code ){ errorcode = code; }
-   //! returns the error code
+   /** returns the error code */
    xmlerrorcode get_error() const { return errorcode; }
-   //! returns the string representation of the error code
+   /** returns the string representation of the error code */
    void get_strerror(xmlstring &error) const;
    xmlstring get_string() const
    {
@@ -120,7 +104,7 @@ public:
       this->get_strerror( err );
       return err;
    }
-   //! return additional error info
+   /** return additional error info */
    const xmlstring get_info() const { return "unknown error"; }
 
 protected:
@@ -165,25 +149,25 @@ protected:
 
 // typedefs
 
-//! handle to a tagname string in a tagname map
+/** handle to a tagname string in a tagname map */
 typedef int xmltagnamehandle;
-//! maps the tagname string to a handle
+/** maps the tagname string to a handle */
 typedef std::map<xmltagnamehandle,xmlstring> xmltagnamemap;
-//! maps an entity to a string representation
+/** maps an entity to a string representation */
 typedef std::map<xmlstring,xmlstring> xmlentitymap;
-//! smart pointer for xmlcontext
+/** smart pointer for xmlcontext */
 typedef xmlpp_boost::shared_ptr<class xmlcontext> xmlcontextptr;
-//! smart pointer to the event handler
+/** smart pointer to the event handler */
 typedef xmlpp_boost::shared_ptr<class xmleventhandler> xmleventhandlerptr;
 
 typedef xmltagnamehandle XMLTagNameHandle;
-//! maps the tagname string to a handle
+/** maps the tagname string to a handle */
 typedef xmltagnamemap XMLTagNameMap;
-//! maps an entity to a string representation
+/** maps an entity to a string representation */
 typedef xmlentitymap XMLEntityMap;
-//! smart pointer for xmlcontext
+/** smart pointer for xmlcontext */
 typedef xmlcontextptr XMLContextPtr;
-//! smart pointer to the event handler
+/** smart pointer to the event handler */
 typedef xmleventhandlerptr XMLEventHandlerPtr;
 
 
@@ -248,24 +232,20 @@ protected:
 
 typedef xmlcontext XMLContext;
 
-//! node type enumeration
+/** node type enumeration */
 enum xmlnodetype
 {
-      //! normal node, can contain subnodes
-   xml_nt_node,
-      //! a leaf node, which contains no further nodes, eg. <img/>
-   xml_nt_leaf,
-      //! document root node
-   xml_nt_document,
-      //! cdata node, which only contains char data
-   xml_nt_cdata
+   xml_nt_node,      /**< normal node, can contain subnodes */
+   xml_nt_leaf,      /**< a leaf node, which contains no further nodes, eg. <img/> */
+   xml_nt_document,  /**< document root node */
+   xml_nt_cdata      /**< cdata node, which only contains char data */
 };
 
 
 // typedefs
-//! smart pointer to node
+/** smart pointer to node */
 typedef xmlpp_boost::shared_ptr<class xmlnode> xmlnodeptr;
-//! list of node smart pointer
+/** list of node smart pointer */
 typedef std::list<xmlnodeptr> xmlnodelist;
 typedef xmlnodelist XMLNodeList;
 typedef XMLNodeList::iterator XMLNodeListIterator;
@@ -326,65 +306,58 @@ public:
    xmlstring get_attribute( const xmlstring &attr ) const
    { return attributes.get(attr); }
 
-   /** returns cdata string */
+   /** returns cdata string
+   * @note: This only returns data for nodes that are leaf nodes of type "cdata".
+   *        Calling this on a node that has cdata as a child does nothing
+   */
    const xmlstring &get_cdata()
    { return mCdata; }
    //@}
 
    /** @name node data manipulation */
    //@{
-   //! sets new nodetype
+   /** sets new nodetype */
    void set_type( xmlnodetype ntype )
    { nodetype=ntype; }
-   //! returns the node name
+   /** returns the node name */
    void set_name( const xmlstring &nname );
-   //! sets new cdata
+   /** sets new cdata */
    void set_cdata( const xmlstring &ncdata )
    { mCdata=ncdata; }
-   //! sets new attribute value
+   /** sets new attribute value */
    void set_attribute( const xmlstring &attr, const xmlstring &value )
    { attributes.set(attr,value); }
-   //! inserts a node into the subnodelist
+   /** inserts a node into the subnodelist */
    void insert( xmlnode &node)
    { xmlnodeptr nodeptr(new xmlnode(node)); nodelist.push_back(nodeptr); }
    //@}
 
    /** @name navigation through the nodes */
    //@{
-   //! returns subnode list
+   /** returns subnode list */
    xmlnodelist& children(){ return nodelist; }
-   //! returns the first child with the given name
+   /** returns the first child with the given name */
    xmlnodeptr firstchild( const xmlstring &childname );
-   //! select some nodes and put it into a separate nodelist
+   /** select some nodes and put it into a separate nodelist */
    xmlnodelist select_nodes(const xmlstring &nodename);
    //@}
 
    /** @name load/save functions */
    //@{
-   //! loads xml node from input stream
+   /** loads xml node from input stream */
    void load( std::istream &instream, xmlcontextptr &ctxptr );
-   //! saves node to xml output stream
+   /** saves node to xml output stream */
    void save( std::ostream &outstream, int indent=0 );
    //@}
 
 protected:
-   //! handle to the real tag name
-   xmltagnamehandle nodenamehandle;
 
-   //! smart pointer to the context class
-   xmlcontextptr contextptr;
-
-   //! nodetype
-   xmlnodetype nodetype;
-
-   //! attributes of the tag
-   xmlattributes attributes;
-
-   //! char data
-   xmlstring mCdata;
-
-   //! stl list with subnodes
-   xmlnodelist nodelist;
+   xmltagnamehandle nodenamehandle;    /**< handle to the real tag name */
+   xmlcontextptr contextptr;           /**< smart pointer to the context class */
+   xmlnodetype nodetype;               /**< The type of the node */
+   xmlattributes attributes;           /**< Attributes of the element */
+   xmlstring mCdata;                   /**< Character data (if there is any) */
+   xmlnodelist nodelist;               /**< stl list with subnodes */
 };
 
 
