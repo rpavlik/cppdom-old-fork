@@ -594,9 +594,10 @@ namespace cppdom
 
    protected:
       TagNameHandle  mNodeNameHandle;  /**< handle to the real tag name */
-#ifdef CPPDOM_DEBUG
+
+//#ifdef CPPDOM_DEBUG
       std::string    mNodeName_debug;  /**< The node name for debugging */
-#endif
+//#endif
       ContextPtr     mContext;         /**< smart pointer to the context class */
       Node::Type     mNodeType;        /**< The type of the node */
       Attributes     mAttributes;      /**< Attributes of the element */
