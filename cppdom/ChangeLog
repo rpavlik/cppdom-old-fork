@@ -2,6 +2,10 @@ DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
 NOTE: Odd numbered minor versions are development series (ex: 0.1, 0.9, etc)
 
+2005-02-04 allenb       Added ability to get children by path.
+                        Added extension to assist with using xml files
+                        as configuration files.  See: ext/OptionRepository.h
+                        VERSION: 0.5.5
 2005-02-03 allenb       Added tests for Node interface.
                         Added Node::hasChild() method.
                         VERSION: 0.5.4
