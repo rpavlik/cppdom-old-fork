@@ -1,10 +1,15 @@
 #
 # Spec file for cppdom
+#rpmbuild -bb -v --define='_topdir /var/tmp/cppdom' --define='_rpmdir /var/tmp/cppdom' --buildroot=/..../cppdom/build.linux/dist/cppdom-0.5.3 cppdom.spec
+# Run as: 
 #
 Summary: A C++ xml API for use with STL
-Name: cppdom
-Version: 0.4.0
-Release: 1
+# Name: cppdom
+# Version: 0.5.2
+# Release: 1
+Name: _SCONS_PACKAGE_NAME_
+Version: _SCONS_PACKAGE_VERSION_
+Release: _SCONS_PACKAGE_RELEASE_
 Copyright: LGLP
 Group: Libraries
 #Source0: none
@@ -13,8 +18,7 @@ URL: http://www.sf.net/projects/xml-cppdom
 Vendor: xml-cppdom project
 Packager: Allen Bierbaum
 
-BuildRoot: /var/tmp/allenb/Source/cppdom-0.4.0
-
+BuildRoot: /var/tmp/cppdom-root
 
 %description
 This is the xml-cppdom library for fast access to xml trees
@@ -23,8 +27,8 @@ in a very STL natural way.
 %files
 %defattr(-, root, root)
 /include
-/bin
 /lib
+/test
 
 %changelog
 * Thu Mar 13 2003 Allen Bierbaum
