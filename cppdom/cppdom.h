@@ -323,6 +323,22 @@ public:
       iss >> t;
       return t;
    }
+
+   // Specializations of getValue<T> placed inline for Visual Studio 7.
+   // MIPSpro and GCC do not handle this. They get out-of-line
+   // specializations, found below.
+#ifdef _MSC_VER
+   /**
+    * Specialization of getValue<T> for std::string so that more than just the
+    * first word of the attribute string is returned.
+    */
+   template<>
+   std::string getValue<std::string>() const
+   {
+      std::string value(mData);
+      return value;
+   }
+#endif // ! _MSC_VER
 #endif // ! CPPDOM_NO_MEMBER_TEMPLATES
 
    /** Autoconversion to string (so old code should work) */
@@ -334,6 +350,17 @@ public:
 protected:
    XMLString mData;
 };
+
+#ifndef CPPDOM_NO_MEMBER_TEMPLATES
+#ifndef _MSC_VER
+template<>
+inline std::string XMLAttribute::getValue<std::string>() const
+{
+   std::string value(mData);
+   return value;
+}
+#endif // ! _MSC_VER
+#endif // ! CPPDOM_NO_MEMBER_TEMPLATES
 
 
 //! xml tag attribute map
