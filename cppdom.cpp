@@ -357,6 +357,60 @@ namespace cppdom
       return *this;
    }
 
+   /** Returns true if the nodes are equal
+   * @param ignoreAttribs - Attributes to ignore in the comparison
+   * @param ignoreElements - Elements to ignore in the comparison
+   */
+   bool Node::isEqual(NodePtr otherNode, const std::vector<std::string>& ignoreAttribs, 
+                                         const std::vector<std::string>& ignoreElements)
+   {
+      // Check attributes
+      Attributes& other_attribs = otherNode->getAttrMap();
+
+      if(other_attribs.size() !=  mAttributes.size())
+      { return false; }
+                  
+      // Check attribute values
+      for(Attributes::iterator cur_attrib = other_attribs.begin();
+          cur_attrib != other_attribs.end(); cur_attrib++)
+      {
+         std::string attrib_name = (*cur_attrib).first;
+         std::string attrib_value = (*cur_attrib).second;
+         
+         // If not in ignore list
+         if(std::find(ignoreAttribs.begin(), ignoreAttribs.end(), attrib_name) 
+                        == ignoreAttribs.end())
+         {
+            // if (not have attribute) OR attrib != needed
+            if( !mAttributes.has(attrib_name) || 
+                (mAttributes.get(attrib_name) != attrib_value))
+            {  return false; }
+         }
+      }
+      
+      // Check cdata
+      if(otherNode->getFullCdata() != getFullCdata())
+      {  return false; }
+
+      // -- Check children -- //
+      NodeList other_children = otherNode->getChildren();
+      if(mNodeList.size() != other_children.size())
+      { return false; }
+      
+      // Recurse into each element
+      NodeList::iterator my_child, other_child;
+      for(my_child = mNodeList.begin(), other_child = other_children.end(); 
+          my_child != mNodeList.end(), other_child != other_children.end();
+          my_child++, other_child++)
+      {
+         if(false == (*my_child)->isEqual((*other_child), ignoreAttribs, ignoreElements))
+         {  return false; }         
+      }
+
+      return true;
+   }
+
+
    NodeType Node::getType() const
    {
       return mNodeType;
@@ -368,6 +422,11 @@ namespace cppdom
    }
 
    Attributes& Node::getAttrMap()
+   {
+      return mAttributes;
+   }
+
+   const Attributes& Node::getAttrMap() const
    {
       return mAttributes;
    }
