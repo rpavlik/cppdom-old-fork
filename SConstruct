@@ -268,7 +268,7 @@ if not SCons.Script.options.help_msg:
          README
       """))
    Export('cppdom_pkg')
-
+   
    # Process subdirectories
    for d in ['cppdom', 'test']:
       SConscript(pj(d,'SConscript'), build_dir=pj(buildDir, d), duplicate=0)
@@ -323,6 +323,6 @@ if not SCons.Script.options.help_msg:
 
    env.Depends('cppdom-config', 'cppdom/version.h')
    env.Install(pj(PREFIX, 'bin'), cppdom_config)
-   #env.Alias('install', PREFIX)
+   env.Alias('install', PREFIX)
    
    

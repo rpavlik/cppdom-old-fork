@@ -42,4 +42,5 @@ else:
    
 cppdom_lib.addSources(sources)
 cppdom_lib.addHeaders(headers, 'cppdom')
-#cppdom_lib.build()
+cppdom_lib.build()
+
