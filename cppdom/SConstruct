@@ -239,7 +239,7 @@ Help(help_text)
 
 # --- MAIN BUILD STEPS ---- #
 # If we are running the build
-if not SCons.Script.options.help_msg:  
+if not SConsAddons.Util.hasHelpFlag():
    opts.Update(baseEnv)                   # Update the options
 
    try:                                   # Try to save the options if possible
