@@ -5,12 +5,24 @@ Dependencies
 - Reasonably compliant C++ compiler (gcc 3.x, vc 7.1, etc)
 - Boost library: See www.boost.org for details and downloads
 - CppUnit (optional for test suite): See cppunit.sf.net
+- SConsAddons - Addon library for the build system.  https://realityforge.vrsource.org/SconsAddons
 
 
 Building
 ========
-CppDom uses the scons build system.  You can download scons from www.scons.org
-once you have scons, the follow steps should be all you need.
+CppDom uses the scons build system.  You can download scons from www.scons.org.
+
+We also use the SconsAddons library (see above).  You will need it's source 
+directory in your PYTHONPATH to build.
+
+ex: https://realityforge.vrsource.org/svn/scons-addons/trunk/scons-addons
+
+PYTHONPATH=/home/username/scons-addons/src
+
+NOTE: In the future we hope to use 3rd party branches or svn:externals to 
+remove the need to download this separately.
+
+Once you have both of these, the follow steps should be all you need.
 
 Please see 'scons --help' for a list of options for specifying where the
 dependencies are located.
