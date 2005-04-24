@@ -193,7 +193,7 @@ if GetPlatform() == 'irix':
    baseEnv = BuildIRIXEnvironment()
 elif GetPlatform() == 'linux' or GetPlatform() == 'freebsd':
    baseEnv = BuildLinuxEnvironment()
-elif GetPlatform() == 'darwin':
+elif GetPlatform() == 'mac':
    baseEnv = BuildDarwinEnvironment()
 elif GetPlatform() == 'win32':
    baseEnv = BuildWin32Environment()
