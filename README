@@ -7,6 +7,21 @@ Dependencies
 - CppUnit (optional for test suite): See cppunit.sf.net
 - SConsAddons - Addon library for the build system.  https://realityforge.vrsource.org/SconsAddons
 
+Building on Windows
+===================
+Open the file vc7\cppdom.sln using Visual Studio .NET (version 2002 or newer
+is required).  Build the desired targets (usually "Debug - DLL" and
+"Release - DLL").  The compiled files will be in the 'lib' subdirectory of
+the source tree.
+
+Installation must be performed by hand.  The following commands show a
+possible way to install everything correctly:
+
+   mkdir C:\cppdom\include\cppdom
+   mkdir C:\cppdom\lib
+   copy cppdom\*.h C:\cppdom\include\cppdom
+   copy lib\*.lib C:\cppdom\lib
+   copy lib\*.dll C:\cppdom\lib
 
 Building
 ========
