@@ -161,7 +161,45 @@ def BuildSunEnvironment():
    return ret_env;
 
 def BuildWin32Environment():
-   return Environment(ENV = os.environ)
+   env = Environment(ENV = os.environ)
+   for t in ['msvc', 'mslink']:
+      Tool(t)(env)
+
+   env['LINKFLAGS'] += ' /subsystem:console /incremental:no'
+   env['CXXFLAGS'] += '/DWIN32 /D_WINDOWS /D_USRDLL /DCPPDOM_EXPORTS /Zm800 /GX /GR /Op /Zc:wchar_t,forScope'
+
+   if optimize != 'no':
+      env['CXXFLAGS'] += ' /Ogity /O2 /Gs /Ob2 /MD /DNDEBUG'
+      env['LINKFLAGS'] += ' /RELEASE'
+   else:   
+      env['CXXFLAGS'] += ' /Z7 /Od /Ob0 /MDd /D_DEBUG'
+      env['LINKFLAGS'] += ' /DEBUG'
+
+   return env
+
+def BuildCygwinEnvironment():
+   "Builds a base environment for other modules to build on set up for Cygwin"
+   global optimize, profile, builders
+
+   CXX = 'g++'
+   LINK = CXX
+   CXXFLAGS = ['-ftemplate-depth-256', '-Wall', '-pipe']
+   LINKFLAGS = []
+
+   # Enable profiling?
+   if profile != 'no':
+      CXXFLAGS.extend(['-pg'])
+      LINKFLAGS.extend(['-pg'])
+
+   # Debug or optimize build?
+   if optimize != 'no':
+      CXXFLAGS.extend(['-DNDEBUG', '-g', '-O3'])
+   else:
+      CXXFLAGS.extend(['-D_DEBUG', '-g'])
+
+   env = Environment(ENV=os.environ, CXX=CXX, LINK=LINK)
+   env.Append(CXXFLAGS=CXXFLAGS, LINKFLAGS=LINKFLAGS)
+   return env
 
 #------------------------------------------------------------------------------
 # Main build setup
@@ -197,12 +235,15 @@ elif GetPlatform() == 'mac':
    baseEnv = BuildDarwinEnvironment()
 elif GetPlatform() == 'win32':
    baseEnv = BuildWin32Environment()
+elif string.find(sys.platform, 'cygwin') != -1:
+   baseEnv = BuildCygwinEnvironment()
 elif GetPlatform() == 'sun':
    baseEnv = BuildSunEnvironment()
 else:
    print 'Unsupported build environment: ' + GetPlatform()
    print 'Attempting to use standard SCons toolchains.'
    baseEnv = Environment()
+
 Export('baseEnv')
 
 # --- OPTIONS --- #
@@ -304,25 +345,24 @@ if not SConsAddons.Util.hasHelpFlag():
    #baseEnv.Tar('cppdom-' + '%i.%i.%i' % CPPDOM_VERSION + '.tar.gz', tar_sources)
 
    # Setup the builder for cppdom-config
-   env = baseEnv.Copy(BUILDERS = builders)
-   cppdom_config  = env.ConfigBuilder('cppdom-config', 'cppdom-config.in',
-      submap = {
-         '@prefix@'                    : PREFIX,
-         '@exec_prefix@'               : '${prefix}',
-         '@cppdom_cxxflags@'           : '',
-         '@includedir@'                : pj(PREFIX, 'include'),
-         '@cppdom_extra_cxxflags@'     : '',
-         '@cppdom_extra_include_dirs@' : '',
-         '@cppdom_libs@'               : '-lcppdom',
-         '@libdir@'                    : pj(PREFIX, 'lib'),
-         '@VERSION_MAJOR@'             : str(CPPDOM_VERSION[0]),
-         '@VERSION_MINOR@'             : str(CPPDOM_VERSION[1]),
-         '@VERSION_PATCH@'             : str(CPPDOM_VERSION[2]),
-      }
-   )
+   if GetPlatform() != 'win32':
+      env = baseEnv.Copy(BUILDERS = builders)
+      cppdom_config  = env.ConfigBuilder('cppdom-config', 'cppdom-config.in',
+         submap = {
+            '@prefix@'                    : PREFIX,
+            '@exec_prefix@'               : '${prefix}',
+            '@cppdom_cxxflags@'           : '',
+            '@includedir@'                : pj(PREFIX, 'include'),
+            '@cppdom_extra_cxxflags@'     : '',
+            '@cppdom_extra_include_dirs@' : '',
+            '@cppdom_libs@'               : '-lcppdom',
+            '@libdir@'                    : pj(PREFIX, 'lib'),
+            '@VERSION_MAJOR@'             : str(CPPDOM_VERSION[0]),
+            '@VERSION_MINOR@'             : str(CPPDOM_VERSION[1]),
+            '@VERSION_PATCH@'             : str(CPPDOM_VERSION[2]),
+         }
+      )
 
-   env.Depends('cppdom-config', 'cppdom/version.h')
-   env.Install(pj(PREFIX, 'bin'), cppdom_config)
-   env.Alias('install', PREFIX)
-   
-   
+      env.Depends('cppdom-config', 'cppdom/version.h')
+      env.Install(pj(PREFIX, 'bin'), cppdom_config)
+      env.Alias('install', PREFIX)
