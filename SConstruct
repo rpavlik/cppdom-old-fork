@@ -90,7 +90,7 @@ def BuildDarwinEnvironment():
    global optimize, profile, builders
 
    CXXFLAGS = ['-Wall']
-   LINKFLAGS = ['-dynamiclib']
+   LINKFLAGS = ['']
 
    # Enable profiling?
    if profile != 'no':
