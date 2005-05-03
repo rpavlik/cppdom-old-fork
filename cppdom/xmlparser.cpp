@@ -131,6 +131,9 @@ namespace cppdom
                   if (token3.getGeneric().at(0) == '-' &&
                       token3.getGeneric().at(1) == '-')
                   {
+                      // needed to correctly handle <!---->
+                      Token temp_token(token3.getGeneric().substr(2));
+                      mTokenizer.putBack(temp_token);
                       parseComment(context);
                   }
                   else
@@ -462,7 +465,14 @@ namespace cppdom
       while (true)
       {
          ++mTokenizer;
-         if (*mTokenizer == "--")
+         if (mTokenizer->isEndOfStream())
+         {
+            throw CPPDOM_ERROR(xml_closetag_expected, "");
+         }
+
+         // Needed to handle -->s not preceded by whitespace
+         const std::string& s = mTokenizer->getGeneric();
+         if (s.length() >= 2 && (s.substr(s.length() - 2) == "--"))
          {
             ++mTokenizer;
             if (*mTokenizer == '>')
