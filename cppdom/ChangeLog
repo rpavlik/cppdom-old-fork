@@ -2,6 +2,7 @@ DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
 NOTE: Odd numbered minor versions are development series (ex: 0.1, 0.9, etc)
 
+[Version 0.6.0 released - 6.1.2005]============================================
 2005-02-06 allenb       Added hasOption() method to OptionRepository
                         VERSION: 0.5.6
 2005-02-04 allenb       Added ability to get children by path.
@@ -19,6 +20,7 @@ NOTE: Odd numbered minor versions are development series (ex: 0.1, 0.9, etc)
                         VERSION: 0.5.1
 2004-04-12 allenb       Moving into active development version again
                         NEW VERSION: 0.5.0
+
 [Version 0.4.0 released - 4.6.2004]============================================
 2004-02-29 allenb       Moved the node type enum into Node as Node::Type. 
                         This breaks all old code that used the type interface.
