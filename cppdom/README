@@ -30,14 +30,14 @@ Building
 ========
 CppDom uses the scons build system.  You can download scons from www.scons.org.
 
-We also use the SconsAddons library (see above).  You will need it's source 
+We also use the SconsAddons library (see above).  You will need its source 
 directory in your PYTHONPATH to build.
 
 ex: https://realityforge.vrsource.org/svn/scons-addons/trunk/scons-addons
 
 PYTHONPATH=/home/username/scons-addons/src
 
-NOTE: In the future we hope to use 3rd party branches or svn:externals to 
+NOTE: In the future we hope to use third party branches or svn:externals to 
 remove the need to download this separately.
 
 Once you have both of these, the follow steps should be all you need.
