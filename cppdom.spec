@@ -5,7 +5,7 @@
 #
 Summary: A C++ xml API for use with STL
 # Name: cppdom
-# Version: 0.5.2
+# Version: 0.6.0
 # Release: 1
 Name: _SCONS_PACKAGE_NAME_
 Version: _SCONS_PACKAGE_VERSION_
