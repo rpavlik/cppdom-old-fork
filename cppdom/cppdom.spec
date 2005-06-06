@@ -1,37 +1,69 @@
-#
-# Spec file for cppdom
-#rpmbuild -bb -v --define='_topdir /var/tmp/cppdom' --define='_rpmdir /var/tmp/cppdom' --buildroot=/..../cppdom/build.linux/dist/cppdom-0.5.3 cppdom.spec
-# Run as: 
-#
-Summary: A C++ xml API for use with STL
-# Name: cppdom
-# Version: 0.6.0
-# Release: 1
-Name: _SCONS_PACKAGE_NAME_
-Version: _SCONS_PACKAGE_VERSION_
-Release: _SCONS_PACKAGE_RELEASE_
-Copyright: LGLP
-Group: Development/Libraries
-#Source0: none
-URL: http://www.sf.net/projects/xml-cppdom
-#Epoch: 1
-Vendor: xml-cppdom Project
-Packager: Allen Bierbaum
+# Spec file for cppdom.
+%define name    cppdom
+%define version	0.3.3
+%define release	1
 
-BuildRoot: /var/tmp/cppdom-root
+Name: %{name}
+Summary: A C++ based XML loader and writer with an internal DOM representation.
+Version: %{version}
+Release: %{release}
+Source: %{name}-%{version}.tar.gz
+URL: http://sourceforge.net/projects/xml-cppdom
+Group: System Environment/Libraries
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
+License: LGPL
+BuildPrereq: scons >= 0.96.1
+Provides: cppdom = %{version}-%{release}
+Obsoletes: cppdom <= %{version}-%{release}
 
 %description
-CppDom is a C++ based XML loader and writer with an internal DOM representation.
-It is very lightweight and high-performance.  The goal of the project is to
-provide a lightweight C++ interface for XML programming that is similar to
-the API and functionality of JDOM.
+A C++ based XML loader and writer with an internal DOM representation. It is
+very lightweight and high-performance. The goal of this project is to provide
+a lightweight C++ interface for XML programming that is similar in API and
+functionality to JDOM.
+
+%package devel
+Summary: The CppDOM Headers
+Group: System Environment/Libraries
+Requires: cppdom = %{version}-%{release}
+Provides: cppdom-devel = %{version}-%{release}
+
+%description devel
+Headers for CppDOM
+
+%prep
+rm -rf $RPM_BUILD_ROOT
+%setup -q
+
+%build
+scons optimize=yes prefix=$RPM_BUILD_ROOT/usr
+
+%install
+scons install prefix=$RPM_BUILD_ROOT/usr
+# Remove all stupid scons temp files
+find $RPM_BUILD_ROOT/usr -name .sconsign -exec rm {} \;
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%pre
+
+%post
+
+%preun
+
+%postun
 
 %files
 %defattr(-, root, root)
-/include
-/lib
-/test
+/usr/bin/cppdom-config
+/usr/lib/*.so
+
+%files devel
+%defattr(-, root, root)
+/usr/include/cppdom/*.h
+/usr/lib/*.a
+
+%doc README AUTHORS ChangeLog COPYING
 
 %changelog
-* Thu Mar 13 2003 Allen Bierbaum
-- First version
