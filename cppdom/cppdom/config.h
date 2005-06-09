@@ -47,7 +47,7 @@
 
 // -----------------------------------
 // win32 configuration
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 
 // switch some warnings off
 #  pragma warning( disable: 4786 4275 4251 )
