@@ -1,0 +1,67 @@
+DATE       AUTHOR       CHANGE
+---------- ------------ -------------------------------------------------------
+2005-07-30 allenb       Make OpenSG option smarter about handling opts
+                        and libs.  Delay calling osg-config until necessary.
+2005-05-13 allenb       Added a couple of globs to utils to test out.
+2005-04-14 allenb       Moved over to subversion.
+2004-11-17 allenb       Added utility method to get a relative path
+                        from a known path and base directory.
+2004-11-10 allenb       Refactored AutoDist to make better use of FileBundles.
+                        Now packages can have multiple file bundles and
+                        files bundles can have their own install prefix.
+                        Fix relative path handling with FileBundles.
+2004-09-24 allenb       Updated Boost python to get more info from python
+                        about current version, libs, etc.  This allows building
+                        with 2.2 or 2.3 (or future versions hopefully).
+2004-05-31 allenb       Added option to updateEnv for boost and vapor options
+                        to explicitly tell it to update CPPPATH with include
+                        paths.
+2004-04-16 allenb       Removed auto-creation of install alias in AutoDist.
+                        This was causing problems when multiple packages
+                        install to the same prefix.
+2004-04-14 allenb       Added RPM packager.
+2004-04-14 allenb       Added support for packagers.
+2004-04-13 allenb       Refactor AutoDist to make it handle files and prefixes
+                        better.
+2004-03-25 allenb       Require param to boost option stating wether to use
+                        debug and multi-threaded libraries.  This should help
+                        avoid problems that occur if you just let the defaults
+                        get used.
+2004-03-09 allenb       Updated pyste builder to scons 0.95
+2004-03-06 allenb       Updated the autodist factory methods for libs and
+                        programs to use the package environment by default.
+2004-03-06 allenb       Add smarter search for boost include path.
+2004-02-27 allenb       Added OpenSG option set.
+2004-02-25 allenb       Updated Options code so options with multiple keys
+                        could have help text per option.
+                        Fixed boost option to work with the new boost build.
+2003-12-30 allenb       Fixed problem with boost/filesystem/operations.hpp in
+                        Boost options class.
+2003-12-22 allenb       Added FileBundle object for installing sets of files
+                        within a package.
+                        NEW VERSION: 0.0.10
+2003-11-20 allenb       Added new util methods for getting paths in SConscripts
+                        NEW VERSION: 0.0.9
+2003-11-19 allenb       Fixed bug in pyste option when script does not exist.
+2003-11-10 allenb       Added builder for package config scripts.
+2003-11-10 allenb       Removed global Prefix() method replacing it with 
+                        storing the prefix in the autodist package instead.
+2003-10-?? allenb       Added support for Pyste
+2003-09-09 allenb       Added install prefixes to all AutoDist packages.
+                        NEW VERSION 0.0.8
+2003-09-09 allenb       Added isBuilt interface.
+                        Fixed bug that prevented libraries from building in
+                        build directories
+                        NEW VERSION 0.0.7
+           allenb       major refactoring of system
+                        NEW VERSION 0.0.6
+                        NEW VERSION 0.0.5
+                        NEW VERSION 0.0.4
+                        NEW VERSION 0.0.3
+                        NEW VERSION 0.0.2
+2003-08-22 allenb       Initial version
+                        NEW VERSION 0.0.1
+2003-08-22 allenb       Added initial implementation of Options addon.
+                        NEW VERSION 0.1.0
+
+

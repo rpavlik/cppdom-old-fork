@@ -8,6 +8,8 @@ import os, string, sys, re
 import glob
 pj = os.path.join
 
+sys.path.insert(0,pj('tools','scons-addons','src'))
+
 Default('.')
 
 # Bring in the AutoDist build helper
