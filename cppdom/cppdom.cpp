@@ -938,15 +938,18 @@ namespace cppdom
       parser.parseDocument(*this, context);
    }
 
-   /** \todo implement: print <!doctype> tag;
-   * \exception throws cppdom::Error when a streaming or parsing error occur
-   */
+   /**
+    * \todo Implement encoding handling for use in the doctype string.
+    * \exception throws cppdom::Error when a streaming or parsing error occur
+    */
    void Document::save(std::ostream& out, bool doIndent, bool doNewline)
    {
       // output all processing instructions
       NodeList::const_iterator iter, stop;
       iter = mProcInstructions.begin();
       stop = mProcInstructions.end();
+
+      out << "<?xml version=\"1.0\" ?>" << std::endl;
 
       for(; iter!=stop; ++iter)
       {
@@ -968,11 +971,6 @@ namespace cppdom
          // output closing brace
          out << "?>" << std::endl;
       }
-
-      // output <!doctype> tag
-
-      // left to do ...
-
 
       // call save() method of the first (and hopefully only) node in Document
       (*mNodeList.begin())->save(out, 0, doIndent, doNewline);
