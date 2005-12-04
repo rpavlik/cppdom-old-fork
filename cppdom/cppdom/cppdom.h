@@ -545,7 +545,7 @@ namespace cppdom
       /** Return first child of the given name.
        * @param name    Name can be a single element name or a chain of the form "tag/tag/tag"
        */
-      NodePtr Node::getChildPath(const std::string& path);
+      NodePtr getChildPath(const std::string& path);
 
       /** returns a list of the nodes children */
       NodeList& getChildren();
