@@ -5,6 +5,7 @@ except:
    pass
 
 import os, string, sys, re
+import distutils.util
 import glob
 pj = os.path.join
 
@@ -249,7 +250,7 @@ else:
 Export('baseEnv')
 
 # --- OPTIONS --- #
-option_filename = "config.cache." + GetPlatform()
+option_filename = "config.cache." + distutils.util.get_platform()
 opts = SConsAddons.Options.Options(files = [option_filename, 'options.custom'],
                                    args= ARGUMENTS)
 
@@ -296,7 +297,7 @@ if not SConsAddons.Util.hasHelpFlag():
 
    # Setup file paths
    PREFIX = os.path.abspath(baseEnv['prefix'])
-   buildDir = "build." + GetPlatform()
+   buildDir = "build." + distutils.util.get_platform()
    distDir = pj(buildDir, 'dist')
    Export('buildDir', 'PREFIX', 'distDir')
    
