@@ -2,7 +2,7 @@
 import os
 pj = os.path.join
 
-Import('baseEnv PREFIX GetPlatform opts cppdom_pkg')
+Import('baseEnv PREFIX LIBDIR GetPlatform opts cppdom_pkg')
 boost_options = opts.GetOption('boost')
 
 headers = Split("""
@@ -38,11 +38,13 @@ cppdom_lib_env.Append(CPPPATH = ['#'])
 
 # If should not do static only, then create static and shared libraries
 if baseEnv['StaticOnly'] == "no":
-   cppdom_lib = cppdom_pkg.createStaticAndSharedLibrary('cppdom', cppdom_lib_env)
+   cppdom_lib = cppdom_pkg.createStaticAndSharedLibrary('cppdom',
+                                                        cppdom_lib_env,
+                                                        installPrefix = LIBDIR)
 else:
-   cppdom_lib = cppdom_pkg.createStaticLibrary('cppdom', cppdom_lib_env)
+   cppdom_lib = cppdom_pkg.createStaticLibrary('cppdom', cppdom_lib_env,
+                                               installPrefix = LIBDIR)
    
 cppdom_lib.addSources(sources)
 cppdom_lib.addHeaders(headers, 'cppdom')
 cppdom_lib.build()
-
