@@ -66,7 +66,7 @@ def CreateConfig(target, source, env):
 # --- Platform specific environment factory methods --- #
 def BuildLinuxEnvironment():
    "Builds a base environment for other modules to build on set up for linux"
-   global optimize, profile, builders
+   global optimize, profile, builders, cpu_arch
 
    CXXFLAGS = ['-Wall']
    LINKFLAGS = []
@@ -81,6 +81,15 @@ def BuildLinuxEnvironment():
       CXXFLAGS.extend(['-DNDEBUG', '-O2'])
    else:
       CXXFLAGS.extend(['-D_DEBUG', '-g'])
+
+   if cpu_arch == 'ia32':
+      CXXFLAGS.extend(['-m32'])
+      LINKFLAGS.extend(['-m32'])
+   elif cpu_arch == 'x86_64':
+      CXXFLAGS.extend(['-m64'])
+      LINKFLAGS.extend(['-m64'])
+   elif cpu_arch != '':
+      print "WARNING: Unknown CPU archtecture", cpu_arch
 
    return Environment(
       ENV         = os.environ,
@@ -223,6 +232,24 @@ print 'Building CppDom Version: %i.%i.%i' % CPPDOM_VERSION
 optimize = ARGUMENTS.get('optimize', 'no')
 profile = ARGUMENTS.get('profile', 'no')
 
+platform = distutils.util.get_platform()
+
+# IA32
+if re.search(r'i.86', platform):
+   cpu_arch_default = 'ia32'
+# x86_64 (aka, x64, EM64T)
+elif re.search(r'x86_64', platform):
+   cpu_arch_default = 'x86_64'
+# PowerPC
+elif re.search(r'Power_Mac', platform):
+   cpu_arch_default = 'ppc'
+else:
+   print "WARNING: Unknown CPU architecture from", platform
+   cpu_arch_default = 'unknown'
+
+cpu_arch = ARGUMENTS.get('arch', cpu_arch_default)
+Export('cpu_arch')
+
 # Create the extra builders
 # Define a builder for the cppdom-config script
 builders = {
@@ -261,6 +288,8 @@ opts.AddOption( boost_options )
 opts.Add('prefix', 'Installation prefix', '/usr/local')
 opts.Add('StaticOnly', 'If not "no" then build only static library', 'no')
 opts.Add('MakeDist', 'If true, make the distribution packages as part of the build', 'no')
+opts.Add('arch', 'CPU architecture (ia32, x86_64, or ppc)',
+         cpu_arch_default)
 Export('opts', 'cppunit_options', 'boost_options')
   
 help_text = """--- CppDom Build system ---
@@ -297,7 +326,12 @@ if not SConsAddons.Util.hasHelpFlag():
 
    # Setup file paths
    PREFIX = os.path.abspath(baseEnv['prefix'])
-   buildDir = "build." + distutils.util.get_platform()
+
+   if cpu_arch != cpu_arch_default:
+      buildDir = "build.%s-%s" % (platform, cpu_arch)
+   else:
+      buildDir = "build." + platform
+
    distDir = pj(buildDir, 'dist')
    Export('buildDir', 'PREFIX', 'distDir')
    
