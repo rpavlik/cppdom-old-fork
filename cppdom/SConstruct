@@ -68,58 +68,75 @@ def BuildLinuxEnvironment():
    "Builds a base environment for other modules to build on set up for linux"
    global optimize, profile, builders, cpu_arch
 
-   CXXFLAGS = ['-Wall']
-   LINKFLAGS = []
+   env = Environment(ENV = os.environ)
+
+   if not os.environ.has_key('CXXFLAGS'):
+      CXXFLAGS = ['-Wall']
+
+      if cpu_arch == 'ia32':
+         CXXFLAGS.extend(['-m32'])
+      elif cpu_arch == 'x86_64':
+         CXXFLAGS.extend(['-m64'])
+      elif cpu_arch != '':
+         print "WARNING: Unknown CPU archtecture", cpu_arch
+
+      env.Append(CXXFLAGS = CXXFLAGS)
+   else:
+      # XXX: This does not handle spaces in paths correctly.
+      env['CXXFLAGS'] = os.environ['CXXFLAGS'].split(' ')
+
+   if not os.environ.has_key('LINKFLAGS'):
+      LINKFLAGS = []
+
+      if cpu_arch == 'ia32':
+         LINKFLAGS.extend(['-m32'])
+      elif cpu_arch == 'x86_64':
+         LINKFLAGS.extend(['-m64'])
+      elif cpu_arch != '':
+         print "WARNING: Unknown CPU archtecture", cpu_arch
+
+      env.Append(LINKFLAGS = LINKFLAGS)
+   else:
+      # XXX: This does not handle spaces in paths correctly.
+      env['LINKFLAGS'] = os.environ['LINKFLAGS'].split(' ')
 
    # Enable profiling?
    if profile != 'no':
-      CXXFLAGS.extend(['-pg'])
-      LINKFLAGS.extend(['-pg'])
+      env.Append(CXXFLAGS = ['-pg'])
+      env.Append(LINKFLAGS = ['-pg'])
 
    # Debug or optimize build?
    if optimize != 'no':
-      CXXFLAGS.extend(['-DNDEBUG', '-O2'])
+      env.Append(CXXFLAGS = ['-DNDEBUG', '-O2'])
    else:
-      CXXFLAGS.extend(['-D_DEBUG', '-g'])
+      env.Append(CXXFLAGS = ['-D_DEBUG', '-g'])
 
-   if cpu_arch == 'ia32':
-      CXXFLAGS.extend(['-m32'])
-      LINKFLAGS.extend(['-m32'])
-   elif cpu_arch == 'x86_64':
-      CXXFLAGS.extend(['-m64'])
-      LINKFLAGS.extend(['-m64'])
-   elif cpu_arch != '':
-      print "WARNING: Unknown CPU archtecture", cpu_arch
-
-   return Environment(
-      ENV         = os.environ,
-      CXXFLAGS    = CXXFLAGS,
-      LINKFLAGS   = LINKFLAGS
-   )
+   return env
 
 def BuildDarwinEnvironment():
    "Builds a base environment for other modules to build on set up for Darwin"
    global optimize, profile, builders
 
-   CXXFLAGS = ['-Wall']
-   LINKFLAGS = ['']
+   env = Environment(ENV = os.environ)
+
+   if not os.environ.has_key('CXXFLAGS'):
+      CXXFLAGS = ['-Wall']
+      LINKFLAGS = ['']
+
+      env.Append(CXXFLAGS = CXXFLAGS, LINKFLAGS = LINKFLAGS)
 
    # Enable profiling?
    if profile != 'no':
-      CXXFLAGS.extend(['-pg'])
-      LINKFLAGS.extend(['-pg'])
+      env.Append(CXXFLAGS = ['-pg'])
+      env.Append(LINKFLAGS = ['-pg'])
 
    # Debug or optimize build?
    if optimize != 'no':
-      CXXFLAGS.extend(['-DNDEBUG', '-O2'])
+      env.Append(CXXFLAGS = ['-DNDEBUG', '-O2'])
    else:
-      CXXFLAGS.extend(['-D_DEBUG', '-g'])
+      env.Append(CXXFLAGS = ['-D_DEBUG', '-g'])
 
-   return Environment(
-      ENV         = os.environ,
-      CXXFLAGS    = CXXFLAGS,
-      LINKFLAGS   = LINKFLAGS
-   )
+   return env
 
 def BuildIRIXEnvironment():
    "Builds a base environment for other modules to build on set up for IRIX"
@@ -277,7 +294,7 @@ else:
 Export('baseEnv')
 
 # --- OPTIONS --- #
-option_filename = "config.cache." + distutils.util.get_platform()
+option_filename = "config.cache." + platform
 opts = SConsAddons.Options.Options(files = [option_filename, 'options.custom'],
                                    args= ARGUMENTS)
 
@@ -286,6 +303,7 @@ boost_options = SConsAddons.Options.Boost.Boost("boost","1.31.0",required=0)
 opts.AddOption( cppunit_options )
 opts.AddOption( boost_options )
 opts.Add('prefix', 'Installation prefix', '/usr/local')
+opts.Add('libdir', 'Library installation directory under <prefix>')
 opts.Add('StaticOnly', 'If not "no" then build only static library', 'no')
 opts.Add('MakeDist', 'If true, make the distribution packages as part of the build', 'no')
 opts.Add('arch', 'CPU architecture (ia32, x86_64, or ppc)',
@@ -327,13 +345,21 @@ if not SConsAddons.Util.hasHelpFlag():
    # Setup file paths
    PREFIX = os.path.abspath(baseEnv['prefix'])
 
+   if baseEnv.has_key('libdir'):
+      LIBDIR = baseEnv['libdir']
+   else:
+      if cpu_arch == 'x86_64':
+         LIBDIR = 'lib64'
+      else:
+         LIBDIR = 'lib'
+
    if cpu_arch != cpu_arch_default:
       buildDir = "build.%s-%s" % (platform, cpu_arch)
    else:
       buildDir = "build." + platform
 
    distDir = pj(buildDir, 'dist')
-   Export('buildDir', 'PREFIX', 'distDir')
+   Export('buildDir', 'PREFIX', 'LIBDIR', 'distDir')
    
    # Setup package
    CPPDOM_VERSION
@@ -393,7 +419,7 @@ if not SConsAddons.Util.hasHelpFlag():
             '@cppdom_extra_cxxflags@'     : '',
             '@cppdom_extra_include_dirs@' : '',
             '@cppdom_libs@'               : '-lcppdom',
-            '@libdir@'                    : pj(PREFIX, 'lib'),
+            '@libdir@'                    : pj(PREFIX, LIBDIR),
             '@VERSION_MAJOR@'             : str(CPPDOM_VERSION[0]),
             '@VERSION_MINOR@'             : str(CPPDOM_VERSION[1]),
             '@VERSION_PATCH@'             : str(CPPDOM_VERSION[2]),
