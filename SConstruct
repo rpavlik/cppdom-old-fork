@@ -304,6 +304,7 @@ opts.AddOption( cppunit_options )
 opts.AddOption( boost_options )
 opts.Add('prefix', 'Installation prefix', '/usr/local')
 opts.Add('libdir', 'Library installation directory under <prefix>')
+opts.Add('build_test', 'Build the test programs', 'yes')
 opts.Add('StaticOnly', 'If not "no" then build only static library', 'no')
 opts.Add('MakeDist', 'If true, make the distribution packages as part of the build', 'no')
 opts.Add('arch', 'CPU architecture (ia32, x86_64, or ppc)',
@@ -353,6 +354,8 @@ if not SConsAddons.Util.hasHelpFlag():
       else:
          LIBDIR = 'lib'
 
+   build_test = baseEnv['build_test']
+
    if cpu_arch != cpu_arch_default:
       buildDir = "build.%s-%s" % (platform, cpu_arch)
    else:
@@ -373,8 +376,13 @@ if not SConsAddons.Util.hasHelpFlag():
       """))
    Export('cppdom_pkg')
    
+   dirs = ['cppdom']
+
+   if build_test == 'yes':
+      dirs.append('test')
+
    # Process subdirectories
-   for d in ['cppdom', 'test']:
+   for d in dirs:
       SConscript(pj(d,'SConscript'), build_dir=pj(buildDir, d), duplicate=0)
 
    if baseEnv['MakeDist'] != 'no':
