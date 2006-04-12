@@ -127,7 +127,7 @@ fi
 
 if test "x$echo_libs" = "xyes"; then
    if test "x$use_base_dir" = "xyes"; then
-      echo -L$CPPDOM_BASE_DIR/@libdir@ @cppdom_libs@
+      echo -L$CPPDOM_BASE_DIR/@lib_subdir@ @cppdom_libs@
    else
       echo -L@libdir@ @cppdom_libs@
    fi

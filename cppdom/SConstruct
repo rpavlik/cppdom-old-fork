@@ -428,6 +428,7 @@ if not SConsAddons.Util.hasHelpFlag():
             '@cppdom_extra_include_dirs@' : '',
             '@cppdom_libs@'               : '-lcppdom',
             '@libdir@'                    : pj(PREFIX, LIBDIR),
+            '@lib_subdir@'                : LIBDIR,
             '@VERSION_MAJOR@'             : str(CPPDOM_VERSION[0]),
             '@VERSION_MINOR@'             : str(CPPDOM_VERSION[1]),
             '@VERSION_PATCH@'             : str(CPPDOM_VERSION[2]),
