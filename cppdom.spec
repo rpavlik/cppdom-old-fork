@@ -80,7 +80,7 @@ find %{buildroot}%{_prefix} -name .sconsign -exec rm {} \;
 
 %changelog
 * Wed Apr 12 2006 Patrick Hartling
-- Uppdated to handle multi-architecture installations.
+- Updated to handle multi-architecture installations.
 
 * Mon Jun 06 2005 Aron Bierbaum
 - Total rewrite
