@@ -1,5 +1,6 @@
-<options>
+<options root_attrib="21">
     <option_1 intval="1" floatval="12.21" stringval="value"/>
+    <option_2 stringval="string value"/>
     <filelist>
         <file name="file1.txt"/>
         <file name="file2.txt"/>

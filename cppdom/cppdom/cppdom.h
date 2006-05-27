@@ -129,6 +129,32 @@ namespace cppdom
    // Add escaping to xml text
    std::string addXmlEscaping(const std::string& data, bool isCdata);
 
+   /** Method to split string base on seperator.
+    *
+    * If separator does not exist in string, then just return that string in the output.
+    *
+    * @example:
+    *    std::string s = "apple, orange, cherry, peach, grapefruit, cantalope,watermelon";
+    *    std::vector<std::string> v;
+    *    split( s, " ,", std::back_inserter(v) );
+    */
+   template<class OutIt>
+   void splitStr(
+      const std::string& s,
+      const std::string& sep,
+      OutIt dest)
+   {
+      std::string::size_type left = s.find_first_not_of( sep );
+      std::string::size_type right = s.find_first_of( sep, left );
+      while( left < right )
+      {
+         *dest = s.substr( left, right-left );
+         ++dest;
+         left = s.find_first_not_of( sep, right );
+         right = s.find_first_of( sep, left );
+      }
+   }
+
    //! xml parsing error codes enumeration
    enum ErrorCode
    {
@@ -162,7 +188,7 @@ namespace cppdom
     * xml error class
     * contains an ErrorCode and is thrown while parsing xml input
     */
-   class CPPDOM_CLASS Error
+   class CPPDOM_CLASS Error : public std::exception
    {
    public:
       /** constructor */
@@ -174,6 +200,8 @@ namespace cppdom
       /** returns the error code */
       ErrorCode getError() const;
 
+      virtual ~Error() throw();
+
       /** returns the string representation of the error code */
       std::string getStrError() const;
 
@@ -181,6 +209,8 @@ namespace cppdom
 
       /** return additional error info */
       std::string getInfo() const;
+
+      virtual const char* what() const throw();
 
    protected:
       ErrorCode   mErrorCode;
