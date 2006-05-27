@@ -51,34 +51,6 @@
 #include <cppdom/predicates.h>
 #include <string>
 
-namespace
-{
-   /** Method to split string base on seperator.
-    *
-    * If separator does not exist in string, then just return that string in the output.
-    *
-    * @example:
-    *    std::string s = "apple, orange, cherry, peach, grapefruit, cantalope,watermelon";
-    *    std::vector<std::string> v;
-    *    split( s, " ,", std::back_inserter(v) );
-    */
-   template<class OutIt>
-   void splitStr(
-      const std::string& s,
-      const std::string& sep,
-      OutIt dest)
-   {
-      std::string::size_type left = s.find_first_not_of( sep );
-      std::string::size_type right = s.find_first_of( sep, left );
-      while( left < right )
-      {
-         *dest = s.substr( left, right-left );
-         ++dest;
-         left = s.find_first_not_of( sep, right );
-         right = s.find_first_of( sep, left );
-      }
-   }
-}
 
 // namespace declaration
 namespace cppdom
@@ -179,6 +151,9 @@ namespace cppdom
       mLocation = location_stream.str();
    }
 
+   Error::~Error() throw()
+   {;}
+
    ErrorCode Error::getError() const
    {
       return mErrorCode;
@@ -225,6 +200,12 @@ namespace cppdom
    std::string Error::getInfo() const
    {
       return mLocation;
+   }
+
+   const char* Error::what() const throw()
+   {
+      std::string error_desc = getString();
+      return error_desc.c_str();
    }
 
    //LLocation methods
