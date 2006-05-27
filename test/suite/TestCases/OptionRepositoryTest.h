@@ -51,12 +51,16 @@ class OptionRepositoryTest : public CppUnit::TestFixture
 
 CPPUNIT_TEST_SUITE(OptionRepositoryTest);
 CPPUNIT_TEST(testOptionAccess);
+CPPUNIT_TEST(testOptionSetting);
 CPPUNIT_TEST_SUITE_END();
 
 public:
 
    /** Test accessing options. */
    void testOptionAccess();
+
+   /** Test setting options. */
+   void testOptionSetting();
 
 
 };

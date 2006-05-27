@@ -10,7 +10,7 @@ namespace cppdom
 {
 
 /**
- * Extension class for manaing configuration options.
+ * Extension class for managing configuration options.
  * Allow an xml configuration file to be loaded and provides a simplified
  * API for accessing contained options.
  * It acts as a hierarchical map of indices to correlated string values.
@@ -84,14 +84,27 @@ public:
     */
    void loadOptionsFile(std::string filename);
 
+   /** Save a set of options to the given file.
+    * @param filename   Name of the file to save the XML options.
+    */
+   void saveOptionsFile(std::string filename);
+
 protected:
    /** Helper method to split the option string to the elt path and the attrib name. */
    void splitOptionPath(const std::string& option, std::string& option_path, std::string& attrib_name);
 
 protected:
-   cppdom::NodePtr   mOptionRoot;   /** Root of options tree. */
-   std::string       mOptionRootTag;   /** The tag for the root options element. default: options. */
+   cppdom::DocumentPtr  mDocRoot;         /** Root of the document we are holding. */
+   cppdom::NodePtr      mOptionRoot;      /** Root of options tree. */
+   std::string          mOptionRootTag;   /** The tag for the root options element. default: options. */
 };
+
+template<>
+std::string OptionRepository::getValue<std::string>(std::string option, const std::string defaultValue)
+{
+   std::string str_val = getOptionString(option);
+   return str_val;
+}
 
 }
 
