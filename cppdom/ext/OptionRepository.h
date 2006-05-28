@@ -100,7 +100,7 @@ protected:
 };
 
 template<>
-std::string OptionRepository::getValue<std::string>(std::string option, const std::string defaultValue)
+inline std::string OptionRepository::getValue<std::string>(std::string option, const std::string defaultValue)
 {
    std::string str_val = getOptionString(option);
    return str_val;
