@@ -182,7 +182,7 @@ namespace cppdom
 #endif
 
 
-               parseAttributes(pinode.getAttrMap());
+               parseAttributes(pinode.attrib());
 
                NodePtr nodeptr(new Node(pinode));
                doc.mProcInstructions.push_back(nodeptr);
@@ -323,11 +323,11 @@ namespace cppdom
       }
 
       // parse attributes
-      this->parseAttributes(node.getAttrMap());
+      this->parseAttributes(node.attrib());
 
       if (handle)
       {
-         context->getEventHandler().parsedAttributes(node.getAttrMap());
+         context->getEventHandler().parsedAttributes(node.attrib());
       }
 
       // check for leaf

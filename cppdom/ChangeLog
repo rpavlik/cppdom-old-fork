@@ -2,11 +2,15 @@ DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
 NOTE: Odd numbered minor versions are development series (ex: 0.1, 0.9, etc)
 
+2006-07-02 allenb       Refactored the Attributes class to just be an std::map
+                        of strings to attributes.
+                        Added an attrib() method to Node that returns this map.
+                        VERSION: 0.7.2
 2006-05-06 allenb       Added ability to set options in OptionRepository.
                         Added saveOptionFile to OptionRepository.
                         Refactored OptionRepository to hold onto Doc node.
                         cppdom::Error now derived from std::exception
-                        VERSION: 0.7.0
+                        VERSION: 0.7.1
                         
 [Version 0.6.0 released - 6.1.2005]============================================
 2005-02-06 allenb       Added hasOption() method to OptionRepository

@@ -78,7 +78,7 @@ void NodeTest::testChildAccess()
 
    test_node = nodetest_root->getChildPath("gp/parent/child");
    CPPUNIT_ASSERT(test_node.get() != NULL);
-   int int_val = test_node->getAttribute("val").getValue<int>();
+   int int_val = test_node->attrib()["val"].getValue<int>();
    CPPUNIT_ASSERT(21 == int_val);
 
    // Test getChildren()
@@ -91,8 +91,8 @@ void NodeTest::testChildAccess()
    // Test getChildren(string)
    kids = nodetest_root->getChildren("dupe_child");
    CPPUNIT_ASSERT(kids.size() == 2);
-   CPPUNIT_ASSERT(kids[0]->getAttribute("id").getValue<int>() == 1);
-   CPPUNIT_ASSERT(kids[1]->getAttribute("id").getValue<int>() == 2);
+   CPPUNIT_ASSERT(kids[0]->attrib()["id"].getValue<int>() == 1);
+   CPPUNIT_ASSERT(kids[1]->attrib()["id"].getValue<int>() == 2);
 }
 
 // Test equality test (isEqual())

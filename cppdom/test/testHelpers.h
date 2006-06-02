@@ -41,7 +41,7 @@ void dump_node( Node &node, int level = 0 )
    else
       std::cout << c << name.c_str() << std::endl;
 
-   Attributes attr = node.getAttrMap();
+   Attributes attr = node.attrib();
 
    // guru: added output of attributes
    for (Attributes::iterator j = attr.begin(); j!=attr.end(); j++)
@@ -49,7 +49,7 @@ void dump_node( Node &node, int level = 0 )
       for (int i=0; i<level; i++)
          std::cout << " ";
       std::cout << "   ";
-      std::cout << j->first << ": " << j->second << std::endl;
+      std::cout << j->first << ": " << j->second.getString() << std::endl;
    }
 
    NodeList& nlist = node.getChildren();

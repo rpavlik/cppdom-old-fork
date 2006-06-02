@@ -41,7 +41,7 @@ bool configureInput( const std::string& filename )
       std::cerr << "in name: " << (*it)->getName() << std::endl;
       try
       {
-         cppdom::Attributes& attr = (*it)->getAttrMap();
+         cppdom::Attributes& attr = (*it)->attrib();
          std::cout << "attr: " << attr.get( "action" ) << "\n" << std::flush;
          std::cout << "attr: " << attr.get( "device" ) << "\n" << std::flush;
          std::cout << "attr: " << attr.get( "input" ) << "\n" << std::flush;
