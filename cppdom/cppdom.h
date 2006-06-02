@@ -60,6 +60,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <iostream>
 
 
 // ---- TYPE DEFS for CPPDOM --- //
@@ -314,6 +315,8 @@ namespace cppdom
    /**
     * XML attribute class.
     * Just wraps a string (this is really just and attribute VALUE)
+    * This is just meant to be a "magic" class to provide some syntactic
+    * sugar related to autoconversions and get<value>() usefullness.
     */
    class CPPDOM_CLASS Attribute
    {
@@ -373,6 +376,16 @@ namespace cppdom
       /** Autoconversion to string (so old code should work) */
       operator std::string() const;
 
+      bool operator==(const Attribute& rhs)
+      {
+         return rhs.mData == mData;
+      }
+
+      bool operator!=(const Attribute& rhs)
+      {
+         return !operator==(rhs);
+      }
+
    protected:
       std::string mData;
    };
@@ -391,70 +404,37 @@ namespace cppdom
    /**
     * XML tag attribute map.
     * Contains all attributes and values a tag has, represented in a map.
-    * maps: attrib_name:string --> attrib_value:string
+    * maps: attrib_name:string --> attrib_value:Attribute
+    * Wraps a standard map with a couple of helper methods.
+    *
+    * WARNING: Since we are deriving from std::map and std::map has no
+    * virtual destructor you can not use this class polymorphically.
+    * In other words don't allocate an instance of this class with new
+    * and store it with an std::map<>* .
     */
-   class CPPDOM_CLASS Attributes
+   class CPPDOM_CLASS Attributes : public std::map<std::string, Attribute>
    {
-      friend class Parser;
    public:
-      typedef std::map<std::string, std::string> attr_map_t;
-      typedef attr_map_t::const_iterator  const_iterator;
-      typedef attr_map_t::iterator        iterator;
-      typedef attr_map_t::value_type      value_type;
-
-      /** ctor */
+            /** ctor */
       Attributes();
 
       /**
        * Get the named attribute.
        * @returns empty string "" if not found, else the value.
        */
-      std::string get(const std::string& key) const;
+      Attribute get(const std::string& key) const;
 
       /**
        * Sets new attribute value.
        * If not found, then just insert the new attribute.
        */
-      void set(const std::string& key, const std::string& value);
+      void set(const std::string& key, const Attribute value);
 
       /**
        * Check if the attribute map has the given attribute.
        * @return false if not found.
        */
       bool has(const std::string& key) const;
-
-      std::pair<iterator, bool> insert(const value_type& x)
-      {
-         return mMap.insert(x);
-      }
-
-      iterator begin()
-      {
-         return mMap.begin();
-      }
-
-      iterator end()
-      {
-         return mMap.end();
-      }
-
-      const_iterator begin() const
-      {
-         return mMap.begin();
-      }
-
-      const_iterator end() const
-      {
-         return mMap.end();
-      }
-
-      attr_map_t::size_type size() const
-      {
-         return mMap.size();
-      }
-
-   private:
-      attr_map_t mMap;
    };
 
 
@@ -547,18 +527,29 @@ namespace cppdom
        */
       Attribute getAttribute(const std::string& name) const;
 
-      /** returns attribute map of the node */
-      Attributes& getAttrMap();
-
-      /** returns attribute map of the node */
-      const Attributes& getAttrMap() const;
-
       /**
        * sets new attribute value
        * @param attr - Attribute name to set.  There must not be ANY spaces in this name
        * @post Element.attr is set to value.  If it didn't exist before, now it does.
        */
       void setAttribute(const std::string& attr, const Attribute& value);
+
+      /** Direct access to attribute map. */
+      Attributes& attrib();
+
+      /** Direct access to attribute map. */
+      const Attributes& attrib() const;
+
+      /** returns attribute map of the node
+       * @deprecated
+       */
+      Attributes& getAttrMap();
+
+      /** returns attribute map of the node
+       * @deprecated
+       */
+      const Attributes& getAttrMap() const;
+
       //@}
 
       /** @name Children and parents */
@@ -792,5 +783,13 @@ namespace cppdom
    void merge(NodePtr fromNode, NodePtr toNode);
    //@}
 }
+
+inline std::ostream& operator<<(std::ostream& out, const cppdom::Attribute& attrib)
+{
+   out << attrib.getString();
+   return out;
+}
+
+
 
 #endif

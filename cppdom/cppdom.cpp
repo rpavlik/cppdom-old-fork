@@ -340,41 +340,28 @@ namespace cppdom
    Attributes::Attributes()
    {}
 
-   std::string Attributes::get(const std::string& key) const
+   Attribute Attributes::get(const std::string& key) const
    {
-      attr_map_t::const_iterator iter;
+      Attributes::const_iterator iter;
 
       // try to find the key in the map
-      iter = mMap.find(key);
-      std::string empty("");
-      return ((iter == mMap.end()) ? empty : iter->second);
+      iter = find(key);
+      Attribute empty("");
+      return ((iter == end()) ? empty : iter->second);
    }
 
-   void Attributes::set(const std::string& key, const std::string& value)
+   void Attributes::set(const std::string& key, const Attribute value)
    {
-      attr_map_t::iterator iter;
-
-      // try to find the key in the map
-      iter = mMap.find(key);
-      if (iter != mMap.end())
-      {
-         (*iter).second = value;
-      }
-      else
-      {
-         // insert, because the key-value pair was not found
-         attr_map_t::value_type pa(key,value);
-         mMap.insert(pa);
-      }
+      (*this)[key] = value;
    }
 
    bool Attributes::has(const std::string& key) const
    {
-      attr_map_t::const_iterator iter;
+      Attributes::const_iterator iter;
 
       // try to find the key in the map
-      iter = mMap.find(key);
-      return (iter != mMap.end());
+      iter = find(key);
+      return (iter != end());
    }
 
 
@@ -456,7 +443,7 @@ namespace cppdom
       }
 
       // Check attributes
-      Attributes& other_attribs = otherNode->getAttrMap();
+      Attributes& other_attribs = otherNode->attrib();
 
       if(other_attribs.size() !=  mAttributes.size())
       {
@@ -469,7 +456,7 @@ namespace cppdom
           cur_attrib != other_attribs.end(); cur_attrib++)
       {
          std::string attrib_name = (*cur_attrib).first;
-         std::string attrib_value = (*cur_attrib).second;
+         Attribute attrib_value = (*cur_attrib).second;
          if(dbgit) std::cout << indent << "Comparing attribute: " << attrib_name << std::endl;
 
          // If not in ignore list
@@ -548,6 +535,18 @@ namespace cppdom
    {
       return mAttributes;
    }
+
+   Attributes& Node::attrib()
+   {
+      return mAttributes;
+   }
+
+   /** Direct access to attribute map. */
+   const Attributes& Node::attrib() const
+   {
+      return mAttributes;
+   }
+
 
    Attribute Node::getAttribute(const std::string& name) const
    {
@@ -947,7 +946,7 @@ namespace cppdom
          for(; aiter!=astop; ++aiter)
          {
             Attributes::value_type attr = *aiter;
-            out << ' ' << attr.first << '=' << '\"' << attr.second << '\"';
+            out << ' ' << attr.first << '=' << '\"' << attr.second.getString() << '\"';
          }
          // output closing brace
          out << "?>" << std::endl;

@@ -41,7 +41,7 @@ inline void dump_node( Node &node, int level = 0 )
    else
       std::cout << c << name.c_str() << std::endl;
 
-   Attributes attr = node.getAttrMap();
+   Attributes attr = node.attrib();
 
    // guru: added output of attributes
    for (Attributes::iterator j = attr.begin(); j!=attr.end(); j++)
