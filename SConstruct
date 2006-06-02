@@ -403,6 +403,7 @@ if not SConsAddons.Util.hasHelpFlag():
 		  COPYING
 		  README
 		  cppdom-config.in
+		  cppdom.pc.in
 		  SConstruct
 		  doc/cppdom.doxy
 		  doc/dox/examples_index.dox
@@ -437,4 +438,25 @@ if not SConsAddons.Util.hasHelpFlag():
 
       env.Depends('cppdom-config', 'cppdom/version.h')
       env.Install(pj(PREFIX, 'bin'), cppdom_config)
-      env.Alias('install', PREFIX)
+
+   # Setup the builder for cppdom.pc
+   if GetPlatform() != 'win32':
+      env = baseEnv.Copy(BUILDERS = builders)
+      cppdom_pc  = env.ConfigBuilder('cppdom.pc', 'cppdom.pc.in',
+         submap = {
+            '@prefix@'                    : PREFIX,
+            '@exec_prefix@'               : '${prefix}',
+            '@cppdom_cxxflags@'           : '',
+            '@includedir@'                : pj(PREFIX, 'include'),
+            '@cppdom_extra_cxxflags@'     : '',
+            '@cppdom_libs@'               : '-lcppdom',
+            '@libdir@'                    : pj(PREFIX, LIBDIR),
+            '@version_major@'             : str(CPPDOM_VERSION[0]),
+            '@version_minor@'             : str(CPPDOM_VERSION[1]),
+            '@version_patch@'             : str(CPPDOM_VERSION[2]),
+         }
+      )
+
+      env.Depends('cppdom.pc', 'cppdom/version.h')
+      env.Install(pj(PREFIX,LIBDIR, 'pkgconfig'), cppdom_pc)
+   env.Alias('install', PREFIX)
