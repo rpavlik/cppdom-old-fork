@@ -1,0 +1,17 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+cxxflags=@cppdom_cxxflags@
+includedir=@includedir@
+libs=@cppdom_libs@
+libdir=@libdir@
+version_major=@version_major@
+version_minor=@version_minor@
+version_patch=@version_patch@
+
+Name: XML CppDom
+Version: ${version_major}.${version_minor}.${version_patch}
+Description: A C++ based XML loader and writer with an internal DOM representation.
+URL: http://xml-cppdom.sf.net
+Requires:
+Libs: -L${libdir} ${libs}
+Cflags: -I${includedir} -I${cxxflags}
