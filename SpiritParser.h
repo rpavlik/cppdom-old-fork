@@ -155,7 +155,7 @@ public:
       assert(!mCurAttribute.empty());
       if(cppdom::textContainsXmlEscaping(attrib_value))
       {  attrib_value = removeXmlEscaping(attrib_value, false); }
-      mNodeStack.back()->getAttrMap().set(mCurAttribute, attrib_value);
+      mNodeStack.back()->attrib().set(mCurAttribute, attrib_value);
    }
 
    /** Called with element content text. */
