@@ -2,6 +2,7 @@ DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
 NOTE: Odd numbered minor versions are development series (ex: 0.1, 0.9, etc)
 
+2006-06-05 allenb       Refactored the build system to remove AutoDist.
 2006-06-02 dshipton     Install .pc file for pkg-config use
                         VERSION: 0.7.3
 2006-02-07 allenb       Refactored the Attributes class to just be an std::map

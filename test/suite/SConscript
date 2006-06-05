@@ -1,6 +1,5 @@
 #!python
-Import('baseEnv', 'GetPlatform', 'buildDir', 'cppdom_pkg')
-Import('cppunit_options', 'boost_options')
+Import('*')
 
 import os
 pj = os.path.join
@@ -17,19 +16,15 @@ sources = Split("""
 if boost_options.isAvailable():
    sources.append("TestCases/SpiritTest.cpp")
 
-env = cppdom_pkg.getEnv().Copy()
-env.Append(CPPPATH = ["#", "."],
-           LIBPATH = [pj('#', buildDir, 'cppdom')],
-           LIBS    = ['cppdom'])
+env = baseEnv.Copy()
+env.Append(CPPPATH = [inst_paths['include'], '#test', pj('#test','suite')],
+                LIBPATH = [inst_paths['lib'],],
+                LIBS = ['cppdom'])
+
 cppunit_options.updateEnv(env)
 
 # Win32 doesn't have libdl
 if GetPlatform() != 'win32':
    env.Append(LIBS = Split('dl'))
 
-if GetPlatform() == 'linux':
-   env.Append(CXXFLAGS = ['-fexceptions'])
-
-test_prog = cppdom_pkg.createProgram('runner', env, 'test/cppdom')
-test_prog.addSources(sources)
-test_prog.build()
+test_prog = env.Program('runner', sources)
