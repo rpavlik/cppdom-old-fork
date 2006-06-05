@@ -10,7 +10,7 @@ namespace testHelpers
 {
 
    // dumps the node
-void dump_node( Node &node, int level = 0 )
+inline void dump_node( Node &node, int level = 0 )
 {
    std::string name = node.getName();
    Node::Type type = node.getType();

@@ -4,17 +4,13 @@ try:
 except:
    pass
 
-import os, string, sys, re
+import os, string, sys, re, glob
 import distutils.util
-import glob
 pj = os.path.join
 
 sys.path.insert(0,pj('tools','scons-addons','src'))
 
 Default('.')
-
-# Bring in the AutoDist build helper
-#sys.path.append('tools/build')
 
 import SCons.Environment
 import SCons
@@ -22,13 +18,14 @@ import SConsAddons.Util
 import SConsAddons.Options
 import SConsAddons.Options.CppUnit
 import SConsAddons.Options.Boost
-import SConsAddons.AutoDist as AutoDist
 
 #------------------------------------------------------------------------------
 # Define some generally useful functions
 #------------------------------------------------------------------------------
 def GetCppDomVersion():
-   "Gets the CppDom version from cppdom/version.h"
+   """Gets the CppDom version from cppdom/version.h.
+      Returns version as tuple (major,minor,patch)
+   """
    contents = open('cppdom/version.h', 'r').read()
    major = re.compile('.*(#define *CPPDOM_VERSION_MAJOR *(\d+)).*', re.DOTALL).sub(r'\2', contents)
    minor = re.compile('.*(#define *CPPDOM_VERSION_MINOR *(\d+)).*', re.DOTALL).sub(r'\2', contents)
@@ -63,6 +60,11 @@ def CreateConfig(target, source, env):
       os.chmod(targets[0], 0755)
    return 0
 
+def symlinkInstallFunc(dest, source, env):
+    """Install a source file into a destination by sym linking it."""
+    os.symlink(pj(os.getcwd(), source), dest)
+    return 0
+
 # --- Platform specific environment factory methods --- #
 def BuildLinuxEnvironment():
    "Builds a base environment for other modules to build on set up for linux"
@@ -70,46 +72,31 @@ def BuildLinuxEnvironment():
 
    env = Environment(ENV = os.environ)
 
-   if not os.environ.has_key('CXXFLAGS'):
-      CXXFLAGS = ['-Wall']
+   LINKFLAGS = []
+   CXXFLAGS = ['-Wall']
 
-      if cpu_arch == 'ia32':
-         CXXFLAGS.extend(['-m32'])
-      elif cpu_arch == 'x86_64':
-         CXXFLAGS.extend(['-m64'])
-      elif cpu_arch != '':
-         print "WARNING: Unknown CPU archtecture", cpu_arch
-
-      env.Append(CXXFLAGS = CXXFLAGS)
-   else:
-      # XXX: This does not handle spaces in paths correctly.
-      env['CXXFLAGS'] = os.environ['CXXFLAGS'].split(' ')
-
-   if not os.environ.has_key('LINKFLAGS'):
-      LINKFLAGS = []
-
-      if cpu_arch == 'ia32':
-         LINKFLAGS.extend(['-m32'])
-      elif cpu_arch == 'x86_64':
-         LINKFLAGS.extend(['-m64'])
-      elif cpu_arch != '':
-         print "WARNING: Unknown CPU archtecture", cpu_arch
-
-      env.Append(LINKFLAGS = LINKFLAGS)
-   else:
-      # XXX: This does not handle spaces in paths correctly.
-      env['LINKFLAGS'] = os.environ['LINKFLAGS'].split(' ')
+   # Arch specific flags
+   if cpu_arch == 'ia32':
+      CXXFLAGS.extend(['-m32'])
+      LINKFLAGS.extend(['-m32'])
+   elif cpu_arch == 'x86_64':
+      CXXFLAGS.extend(['-m64'])
+      LINKFLAGS.extend(['-m64'])
+   elif cpu_arch != '':
+      print "WARNING: Unknown CPU archtecture", cpu_arch
 
    # Enable profiling?
    if profile != 'no':
-      env.Append(CXXFLAGS = ['-pg'])
-      env.Append(LINKFLAGS = ['-pg'])
+      CXXFLAGS.append('-pg')
+      LINKFLAGS.append('-pg')
 
    # Debug or optimize build?
    if optimize != 'no':
-      env.Append(CXXFLAGS = ['-DNDEBUG', '-O2'])
+      CXXFLAGS.extend(['-DNDEBUG', '-O2'])
    else:
-      env.Append(CXXFLAGS = ['-D_DEBUG', '-g'])
+      CXXFLAGS.extend(['-D_DEBUG', '-g'])
+
+   env.Append(CXXFLAGS = CXXFLAGS, LINKFLAGS = LINKFLAGS)
 
    return env
 
@@ -236,10 +223,7 @@ def BuildCygwinEnvironment():
 EnsureSConsVersion(0,94)
 SourceSignatures('MD5')
 #SourceSignatures('timestamp')
-
-# Use single sconsign file.  (unfortunately irix crashes with this option)
-#if GetPlatform() != 'irix':
-#   SConsignFile('.sconsign.%s.dbm'%GetPlatform())                 # Store all dep info in single file
+SConsignFile()
 
 # Figure out what vesion of CppDom we're using
 CPPDOM_VERSION = GetCppDomVersion()
@@ -263,10 +247,20 @@ elif re.search(r'Power_Mac', platform):
 else:
    print "WARNING: Unknown CPU architecture from", platform
    cpu_arch_default = 'unknown'
-
 cpu_arch = ARGUMENTS.get('arch', cpu_arch_default)
-Export('cpu_arch')
 
+default_libdir = 'lib'
+if cpu_arch == 'x86_64':
+   default_libdir = 'lib64'
+         
+if cpu_arch != cpu_arch_default:
+   buildDir = "build.%s-%s" % (platform, cpu_arch)
+else:
+   buildDir = "build." + platform
+
+def_prefix = pj( Dir('.').get_abspath(), buildDir, 'instlinks')
+unspecified_prefix = "use-instlinks"
+               
 # Create the extra builders
 # Define a builder for the cppdom-config script
 builders = {
@@ -302,14 +296,13 @@ cppunit_options = SConsAddons.Options.CppUnit.CppUnit("cppunit", "1.9.10", requi
 boost_options = SConsAddons.Options.Boost.Boost("boost","1.31.0",required=0)
 opts.AddOption( cppunit_options )
 opts.AddOption( boost_options )
-opts.Add('prefix', 'Installation prefix', '/usr/local')
-opts.Add('libdir', 'Library installation directory under <prefix>')
+opts.Add('prefix', 'Installation prefix', unspecified_prefix)
+opts.Add('libdir', 'Library installation directory under <prefix>', default_libdir)
 opts.Add('build_test', 'Build the test programs', 'yes')
 opts.Add('StaticOnly', 'If not "no" then build only static library', 'no')
 opts.Add('MakeDist', 'If true, make the distribution packages as part of the build', 'no')
 opts.Add('arch', 'CPU architecture (ia32, x86_64, or ppc)',
          cpu_arch_default)
-Export('opts', 'cppunit_options', 'boost_options')
   
 help_text = """--- CppDom Build system ---
 Targets:
@@ -343,58 +336,29 @@ if not SConsAddons.Util.hasHelpFlag():
    if boost_options.isAvailable():
       boost_options.updateEnv(baseEnv)
 
-   # Setup file paths
-   PREFIX = os.path.abspath(baseEnv['prefix'])
+   # If defaulting to instlinks prefix:
+   #  - Use symlinks
+   #  - Manually set the used prefix to the instlinks of the build dir
+   if baseEnv['prefix'] == unspecified_prefix:
+      baseEnv['INSTALL'] = symlinkInstallFunc
+      baseEnv['prefix'] = def_prefix
 
-   if baseEnv.has_key('libdir'):
-      LIBDIR = baseEnv['libdir']
-   else:
-      if cpu_arch == 'x86_64':
-         LIBDIR = 'lib64'
-      else:
-         LIBDIR = 'lib'
-
-   build_test = baseEnv['build_test']
-
-   if cpu_arch != cpu_arch_default:
-      buildDir = "build.%s-%s" % (platform, cpu_arch)
-   else:
-      buildDir = "build." + platform
-
-   distDir = pj(buildDir, 'dist')
-   Export('buildDir', 'PREFIX', 'LIBDIR', 'distDir')
-   
-   # Setup package
-   CPPDOM_VERSION
-   cppdom_pkg = AutoDist.Package(name="cppdom", version = "%s.%s.%s"%CPPDOM_VERSION,
-                                 prefix=PREFIX, baseEnv=baseEnv)
-   cppdom_pkg.addExtraDist(Split("""
-         AUTHORS
-         ChangeLog
-         COPYING
-         README
-      """))
-   Export('cppdom_pkg')
+   inst_paths = {}
+   inst_paths['base'] = os.path.abspath(baseEnv['prefix'])
+   inst_paths['lib'] = pj(inst_paths['base'], baseEnv['libdir'])
+   inst_paths['bin'] = pj(inst_paths['base'], 'bin')   
+   inst_paths['include'] = pj(inst_paths['base'], 'include')   
+   print "using prefix: ", inst_paths['base']   
    
    dirs = ['cppdom']
-
-   if build_test == 'yes':
+   if baseEnv['build_test'] == 'yes':
       dirs.append('test')
+
+   Export('baseEnv','inst_paths','cpu_arch','opts', 'cppunit_options', 'boost_options')
 
    # Process subdirectories
    for d in dirs:
       SConscript(pj(d,'SConscript'), build_dir=pj(buildDir, d), duplicate=0)
-
-   if baseEnv['MakeDist'] != 'no':
-      cppdom_pkg.setDistDir( distDir )
-      if GetPlatform() == 'linux':
-         cppdom_pkg.addPackager( SConsAddons.AutoDist.TarGzPackager() )
-         #cppdom_pkg.addPackager( SConsAddons.AutoDist.RpmPackager('cppdom.spec'))
-      elif GetPlatform() == 'win32':
-         pass
-      else:
-         cppdom_pkg.addPackager( SConsAddons.AutoDist.TarGzPackager() )
-   cppdom_pkg.build()
 
    # Setup tar of source files
    tar_sources = Split("""
@@ -416,47 +380,35 @@ if not SConsAddons.Util.hasHelpFlag():
    #baseEnv.Append(TARFLAGS = ['-z',])
    #baseEnv.Tar('cppdom-' + '%i.%i.%i' % CPPDOM_VERSION + '.tar.gz', tar_sources)
 
+   # Build up substitution map
+   submap = {
+      '@prefix@'                    : inst_paths['base'],
+      '@exec_prefix@'               : '${prefix}',
+      '@cppdom_cxxflags@'           : '',
+      '@includedir@'                : inst_paths['include'],
+      '@cppdom_extra_cxxflags@'     : '',
+      '@cppdom_extra_include_dirs@' : '',
+      '@cppdom_libs@'               : '-lcppdom',
+      '@libdir@'                    : inst_paths['lib'],
+      '@lib_subdir@'                : baseEnv['libdir'],
+      '@VERSION_MAJOR@'             : str(CPPDOM_VERSION[0]),
+      '@VERSION_MINOR@'             : str(CPPDOM_VERSION[1]),
+      '@VERSION_PATCH@'             : str(CPPDOM_VERSION[2]),
+   }
+
    # Setup the builder for cppdom-config
    if GetPlatform() != 'win32':
       env = baseEnv.Copy(BUILDERS = builders)
-      cppdom_config  = env.ConfigBuilder('cppdom-config', 'cppdom-config.in',
-         submap = {
-            '@prefix@'                    : PREFIX,
-            '@exec_prefix@'               : '${prefix}',
-            '@cppdom_cxxflags@'           : '',
-            '@includedir@'                : pj(PREFIX, 'include'),
-            '@cppdom_extra_cxxflags@'     : '',
-            '@cppdom_extra_include_dirs@' : '',
-            '@cppdom_libs@'               : '-lcppdom',
-            '@libdir@'                    : pj(PREFIX, LIBDIR),
-            '@lib_subdir@'                : LIBDIR,
-            '@VERSION_MAJOR@'             : str(CPPDOM_VERSION[0]),
-            '@VERSION_MINOR@'             : str(CPPDOM_VERSION[1]),
-            '@VERSION_PATCH@'             : str(CPPDOM_VERSION[2]),
-         }
-      )
+      cppdom_config  = env.ConfigBuilder('cppdom-config', 'cppdom-config.in', submap=submap )
 
       env.Depends('cppdom-config', 'cppdom/version.h')
-      env.Install(pj(PREFIX, 'bin'), cppdom_config)
+      env.Install(inst_paths['bin'], cppdom_config)
 
    # Setup the builder for cppdom.pc
    if GetPlatform() != 'win32':
       env = baseEnv.Copy(BUILDERS = builders)
-      cppdom_pc  = env.ConfigBuilder('cppdom.pc', 'cppdom.pc.in',
-         submap = {
-            '@prefix@'                    : PREFIX,
-            '@exec_prefix@'               : '${prefix}',
-            '@cppdom_cxxflags@'           : '',
-            '@includedir@'                : pj(PREFIX, 'include'),
-            '@cppdom_extra_cxxflags@'     : '',
-            '@cppdom_libs@'               : '-lcppdom',
-            '@libdir@'                    : pj(PREFIX, LIBDIR),
-            '@version_major@'             : str(CPPDOM_VERSION[0]),
-            '@version_minor@'             : str(CPPDOM_VERSION[1]),
-            '@version_patch@'             : str(CPPDOM_VERSION[2]),
-         }
-      )
+      cppdom_pc  = env.ConfigBuilder('cppdom.pc', 'cppdom.pc.in', submap=submap)
 
       env.Depends('cppdom.pc', 'cppdom/version.h')
-      env.Install(pj(PREFIX,LIBDIR, 'pkgconfig'), cppdom_pc)
-   env.Alias('install', PREFIX)
+      env.Alias('install', inst_paths['base'])
+

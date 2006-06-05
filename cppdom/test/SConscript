@@ -1,12 +1,12 @@
 #!python
-Import('baseEnv cppunit_options cppdom_pkg buildDir')
+Import('*')
 
 import os
 pj = os.path.join
 
-test_env = cppdom_pkg.getEnv().Copy()
-test_env.Append(CPPPATH = ['#', '#test'],
-                LIBPATH = [pj('#', buildDir, 'cppdom')],
+test_env = baseEnv.Copy()
+test_env.Append(CPPPATH = [inst_paths['include'], '#test'],
+                LIBPATH = [inst_paths['lib'],],
                 LIBS = ['cppdom'])
 
 tests = Split("""
@@ -16,9 +16,7 @@ tests = Split("""
 """)
 
 for t in tests:
-   test_prog = cppdom_pkg.createProgram(t, test_env, 'test/cppdom')
-   test_prog.addSources([t+'.cpp'])
-   test_prog.build()
+   test_prog = test_env.Program(t, t+'.cpp')
 
 subdirs = []
 if cppunit_options.isAvailable():
