@@ -2,7 +2,7 @@
 import os
 pj = os.path.join
 
-Import('baseEnv PREFIX LIBDIR GetPlatform opts cppdom_pkg')
+Import('*')
 boost_options = opts.GetOption('boost')
 
 headers = Split("""
@@ -29,22 +29,18 @@ sources = Split("""
 if boost_options.isAvailable():
    sources.append("SpiritParser.cpp")
 
-cppdom_lib_env = cppdom_pkg.getEnv().Copy()
-cppdom_lib_env.Append(CPPPATH = ['#'])
-
-#if GetPlatform() == 'irix':
-#   env['SHCXXFLAGS'] = '${CXXFLAGS}'
+cppdom_lib_env = baseEnv.Copy()
+cppdom_lib_env.Append(CPPPATH = [inst_paths['include'],])
 
 
 # If should not do static only, then create static and shared libraries
 if baseEnv['StaticOnly'] == "no":
-   cppdom_lib = cppdom_pkg.createStaticAndSharedLibrary('cppdom',
-                                                        cppdom_lib_env,
-                                                        installPrefix = LIBDIR)
-else:
-   cppdom_lib = cppdom_pkg.createStaticLibrary('cppdom', cppdom_lib_env,
-                                               installPrefix = LIBDIR)
-   
-cppdom_lib.addSources(sources)
-cppdom_lib.addHeaders(headers, 'cppdom')
-cppdom_lib.build()
+   cppdom_lib = cppdom_lib_env.SharedLibrary('cppdom',sources)
+   cppdom_lib_env.Install(inst_paths['lib'], cppdom_lib)
+
+cppdom_static_lib = cppdom_lib_env.StaticLibrary('cppdom',sources)
+cppdom_lib_env.Install(inst_paths['lib'], cppdom_static_lib)
+
+header_path = pj(inst_paths['include'],'cppdom')
+cppdom_lib_env.InstallAs(target = [pj(header_path, h) for h in headers], 
+                         source = headers)
