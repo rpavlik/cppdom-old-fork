@@ -401,6 +401,21 @@ namespace cppdom
       mNodeList.clear();
    }
 
+   /** Create a node. */
+   NodePtr Node::create(std::string nodeName, ContextPtr ctx)
+   {
+      NodePtr new_node(new Node(nodeName, ctx));
+      return new_node;
+   }
+
+   /** Create a node. */
+   NodePtr Node::create(std::string nodeName, NodePtr parent)
+   {
+      NodePtr new_node(new Node(nodeName, parent->getContext()));
+      parent->addChild(new_node);
+      return new_node;
+   }
+
    Node& Node::operator=(const Node& node)
    {
       mNodeNameHandle = node.mNodeNameHandle;

@@ -474,6 +474,12 @@ namespace cppdom
 
       ~Node();
 
+      /** Create a node. */
+      static NodePtr create(std::string nodeName, ContextPtr ctx);
+
+      /** Create a node. */
+      static NodePtr create(std::string nodeName, NodePtr parent);
+
    public:
       /** assign operator */
       Node& operator=(const Node& node);
