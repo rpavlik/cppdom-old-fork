@@ -4,9 +4,9 @@ cxxflags=@cppdom_cxxflags@
 includedir=@includedir@
 libs=@cppdom_libs@
 libdir=@libdir@
-version_major=@version_major@
-version_minor=@version_minor@
-version_patch=@version_patch@
+version_major=@VERSION_MAJOR@
+version_minor=@VERSION_MINOR@
+version_patch=@VERSION_PATCH@
 
 Name: XML CppDom
 Version: ${version_major}.${version_minor}.${version_patch}
