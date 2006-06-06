@@ -225,9 +225,11 @@ SourceSignatures('MD5')
 #SourceSignatures('timestamp')
 SConsignFile()
 
-# Figure out what vesion of CppDom we're using
+# Figure out what version of CppDom we're using
 CPPDOM_VERSION = GetCppDomVersion()
+Export('CPPDOM_VERSION')
 print 'Building CppDom Version: %i.%i.%i' % CPPDOM_VERSION
+
 
 # Get command-line arguments
 optimize = ARGUMENTS.get('optimize', 'no')
@@ -300,6 +302,7 @@ opts.Add('prefix', 'Installation prefix', unspecified_prefix)
 opts.Add('libdir', 'Library installation directory under <prefix>', default_libdir)
 opts.Add('build_test', 'Build the test programs', 'yes')
 opts.Add('StaticOnly', 'If not "no" then build only static library', 'no')
+opts.Add('versioning', 'If no then build only libraries and headers without versioning', 'yes')
 opts.Add('MakeDist', 'If true, make the distribution packages as part of the build', 'no')
 opts.Add('arch', 'CPU architecture (ia32, x86_64, or ppc)',
          cpu_arch_default)
@@ -346,15 +349,28 @@ if not SConsAddons.Util.hasHelpFlag():
    inst_paths = {}
    inst_paths['base'] = os.path.abspath(baseEnv['prefix'])
    inst_paths['lib'] = pj(inst_paths['base'], baseEnv['libdir'])
-   inst_paths['bin'] = pj(inst_paths['base'], 'bin')   
-   inst_paths['include'] = pj(inst_paths['base'], 'include')   
+   inst_paths['bin'] = pj(inst_paths['base'], 'bin')
+   if baseEnv['versioning'] == 'yes':
+      INCLUDE_VERSION= "cppdom-%s.%s.%s" % CPPDOM_VERSION
+      inst_paths['include'] = pj(inst_paths['base'], 'include', INCLUDE_VERSION)
+   else:
+      inst_paths['include'] = pj(inst_paths['base'], 'include')
+      
+
    print "using prefix: ", inst_paths['base']   
    
    dirs = ['cppdom']
    if baseEnv['build_test'] == 'yes':
       dirs.append('test')
 
-   Export('baseEnv','inst_paths','cpu_arch','opts', 'cppunit_options', 'boost_options')
+   if baseEnv['versioning'] == 'yes':
+      CPPDOM_LIB_NAME="cppdom-%s_%s_%s" % CPPDOM_VERSION
+      CPPDOM_VERSION_EXTENSION="-%s.%s.%s" % CPPDOM_VERSION
+   else:
+      CPPDOM_LIB_NAME='cppdom'
+      CPPDOM_VERSION_EXTENSION=''
+
+   Export('baseEnv','inst_paths','cpu_arch','opts', 'cppunit_options', 'boost_options', 'CPPDOM_LIB_NAME')
 
    # Process subdirectories
    for d in dirs:
@@ -388,7 +404,7 @@ if not SConsAddons.Util.hasHelpFlag():
       '@includedir@'                : inst_paths['include'],
       '@cppdom_extra_cxxflags@'     : '',
       '@cppdom_extra_include_dirs@' : '',
-      '@cppdom_libs@'               : '-lcppdom',
+      '@cppdom_libs@'               : "-l%s" % CPPDOM_LIB_NAME,
       '@libdir@'                    : inst_paths['lib'],
       '@lib_subdir@'                : baseEnv['libdir'],
       '@VERSION_MAJOR@'             : str(CPPDOM_VERSION[0]),
@@ -407,7 +423,8 @@ if not SConsAddons.Util.hasHelpFlag():
    # Setup the builder for cppdom.pc
    if GetPlatform() != 'win32':
       env = baseEnv.Copy(BUILDERS = builders)
-      cppdom_pc  = env.ConfigBuilder('cppdom.pc', 'cppdom.pc.in', submap=submap)
+      cppdom_pc  = env.ConfigBuilder("cppdom%s.pc" % CPPDOM_VERSION_EXTENSION, 'cppdom.pc.in', submap=submap)
+      env.Install(pj(inst_paths['lib'],'pkgconfig'), cppdom_pc)
 
       env.Depends('cppdom.pc', 'cppdom/version.h')
       env.Alias('install', inst_paths['base'])
