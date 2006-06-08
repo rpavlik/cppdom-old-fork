@@ -60,6 +60,30 @@ def CreateConfig(target, source, env):
       os.chmod(targets[0], 0755)
    return 0
 
+def CreatePkgConfig(target, source, env):
+   """ Config script builder 
+      Creates the pkgconfig .pc file users use to compile against this library 
+   """
+   targets = map(lambda x: str(x), target)
+   sources = map(lambda x: str(x), source)
+
+   submap = env['submap']
+
+   # Build each target from its source
+   for i in range(len(targets)):
+      print "Generating pkg-config file " + targets[i]
+      contents = open(sources[i], 'r').read()
+
+      # Go through the substitution dictionary and modify the contents read in
+      # from the source file
+      for key, value in submap.items():
+         contents = re.sub(re.escape(key), value, contents)
+
+      # Write out the target file with the new contents
+      open(targets[0], 'w').write(contents)
+      os.chmod(targets[0], 0644)
+   return 0
+
 def symlinkInstallFunc(dest, source, env):
     """Install a source file into a destination by sym linking it."""
     os.symlink(pj(os.getcwd(), source), dest)
@@ -265,8 +289,10 @@ unspecified_prefix = "use-instlinks"
                
 # Create the extra builders
 # Define a builder for the cppdom-config script
+# Define a builder for the cppdom.pc file
 builders = {
-   'ConfigBuilder'   : Builder(action = CreateConfig)
+   'ConfigBuilder'   : Builder(action = CreateConfig),
+   'PkgConfigBuilder'   : Builder(action = CreatePkgConfig)
 }
 
 # Create and export the base environment
@@ -421,7 +447,7 @@ if not SConsAddons.Util.hasHelpFlag():
    # Setup the builder for cppdom.pc
    if GetPlatform() != 'win32':
       env = baseEnv.Copy(BUILDERS = builders)
-      cppdom_pc  = env.ConfigBuilder("cppdom.pc", 'cppdom.pc.in', submap=submap)
+      cppdom_pc  = env.PkgConfigBuilder("cppdom.pc", 'cppdom.pc.in', submap=submap)
       env.Install(pj(inst_paths['lib'],'pkgconfig'), cppdom_pc)
 
       env.Depends('cppdom.pc', 'cppdom/version.h')
