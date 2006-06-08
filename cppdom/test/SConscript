@@ -7,7 +7,7 @@ pj = os.path.join
 test_env = baseEnv.Copy()
 test_env.Append(CPPPATH = [inst_paths['include'], '#test'],
                 LIBPATH = [inst_paths['lib'],],
-                LIBS = ['cppdom'])
+                LIBS = [CPPDOM_LIB_NAME])
 
 tests = Split("""
    maketree
