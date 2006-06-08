@@ -365,10 +365,8 @@ if not SConsAddons.Util.hasHelpFlag():
 
    if baseEnv['versioning'] == 'yes':
       CPPDOM_LIB_NAME="cppdom-%s_%s_%s" % CPPDOM_VERSION
-      CPPDOM_VERSION_EXTENSION="-%s.%s.%s" % CPPDOM_VERSION
    else:
       CPPDOM_LIB_NAME='cppdom'
-      CPPDOM_VERSION_EXTENSION=''
 
    Export('baseEnv','inst_paths','cpu_arch','opts', 'cppunit_options', 'boost_options', 'CPPDOM_LIB_NAME')
 
@@ -423,7 +421,7 @@ if not SConsAddons.Util.hasHelpFlag():
    # Setup the builder for cppdom.pc
    if GetPlatform() != 'win32':
       env = baseEnv.Copy(BUILDERS = builders)
-      cppdom_pc  = env.ConfigBuilder("cppdom%s.pc" % CPPDOM_VERSION_EXTENSION, 'cppdom.pc.in', submap=submap)
+      cppdom_pc  = env.ConfigBuilder("cppdom.pc", 'cppdom.pc.in', submap=submap)
       env.Install(pj(inst_paths['lib'],'pkgconfig'), cppdom_pc)
 
       env.Depends('cppdom.pc', 'cppdom/version.h')
