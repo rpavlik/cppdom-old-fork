@@ -181,6 +181,19 @@ namespace cppdom
 
       xml_dummy                     /**< dummy error code */
    };
+   
+   // typedefs
+   /** smart pointer to node */
+   class Node;
+   typedef cppdom_boost::shared_ptr<cppdom::Node> NodePtr;
+   
+   class Document;
+   typedef cppdom_boost::shared_ptr<cppdom::Document> DocumentPtr;
+
+
+   /** list of node smart pointer */
+   typedef std::vector<NodePtr> NodeList;
+   typedef NodeList::iterator NodeListIterator;
 
 
    // classes
@@ -302,15 +315,7 @@ namespace cppdom
       bool              mHandleEvents;    /**< indicates if the event handler is used */
       EventHandlerPtr   mEventHandler;    /**< current parsing event handler */
    };
-
-   // typedefs
-   /** smart pointer to node */
-   typedef cppdom_boost::shared_ptr<class Node> NodePtr;
-
-   /** list of node smart pointer */
-   typedef std::vector<NodePtr> NodeList;
-   typedef NodeList::iterator NodeListIterator;
-
+   
 
    /**
     * XML attribute class.
@@ -738,9 +743,6 @@ namespace cppdom
       /** node list of document type definition rules */
       NodeList mDtdRules;
    };
-
-   typedef cppdom_boost::shared_ptr<class Document> DocumentPtr;
-
 
    /** Interface for xml parsing event handler */
    class CPPDOM_CLASS EventHandler
