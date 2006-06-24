@@ -1,7 +1,6 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
-NOTE: Odd numbered minor versions are development series (ex: 0.1, 0.9, etc)
-
+2006-06-24 patrickh     Support building universal binaries on Mac OS X.
 2006-06-13 allenb       Fixed bug in how NodePtr and DocumentPtr types were
                         defined.  Now explicitly declare Node and Document.
                         VERSION: 0.7.5
