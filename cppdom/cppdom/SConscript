@@ -30,12 +30,14 @@ if boost_options.isAvailable():
    sources.append("SpiritParser.cpp")
 
 cppdom_lib_env = baseEnv.Copy()
-cppdom_lib_env.Append(CPPPATH = [inst_paths['include'],])
+cppdom_lib_env.Append(CPPPATH = [inst_paths['include'],],
+                     CPPDEFINES="CPPDOM_EXPORTS")
 
 
 # If should not do static only, then create static and shared libraries
 if baseEnv['StaticOnly'] == "no":
    cppdom_lib = cppdom_lib_env.SharedLibrary(CPPDOM_LIB_NAME, sources)
+   print "lib: ", cppdom_lib, str(cppdom_lib)
    cppdom_lib_env.Install(inst_paths['lib'], cppdom_lib)
 
 cppdom_static_lib = cppdom_lib_env.StaticLibrary(CPPDOM_LIB_NAME, sources)

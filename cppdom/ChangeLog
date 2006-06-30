@@ -1,5 +1,8 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
+2006-06-30 allenb       Refatored the build system to support building on win32
+                        using SCons.  This requires an in-development version
+                        of scons-addons to get the EnvironmentBuilder.
 2006-06-24 patrickh     Support building universal binaries on Mac OS X.
 2006-06-13 allenb       Fixed bug in how NodePtr and DocumentPtr types were
                         defined.  Now explicitly declare Node and Document.

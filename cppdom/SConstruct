@@ -1,6 +1,7 @@
 #!python
 try:
    import wing.wingdbstub;       # stuff for debugging
+   print "Loaded wingdb stub for debugging..."
 except:
    pass
 
@@ -8,7 +9,7 @@ import os, string, sys, re, glob
 import distutils.util
 pj = os.path.join
 
-sys.path.insert(0,pj('tools','scons-addons','src'))
+#sys.path.insert(0,pj('tools','scons-addons','src'))
 
 Default('.')
 
@@ -18,6 +19,7 @@ import SConsAddons.Util
 import SConsAddons.Options
 import SConsAddons.Options.CppUnit
 import SConsAddons.Options.Boost
+from SConsAddons.EnvironmentBuilder import EnvironmentBuilder
 
 #------------------------------------------------------------------------------
 # Define some generally useful functions
@@ -94,33 +96,17 @@ def BuildLinuxEnvironment():
    "Builds a base environment for other modules to build on set up for linux"
    global optimize, profile, builders, cpu_arch
 
-   env = Environment(ENV = os.environ)
-
-   LINKFLAGS = []
-   CXXFLAGS = ['-Wall']
-
-   # Arch specific flags
-   if cpu_arch == 'ia32':
-      CXXFLAGS.extend(['-m32'])
-      LINKFLAGS.extend(['-m32'])
-   elif cpu_arch == 'x86_64':
-      CXXFLAGS.extend(['-m64'])
-      LINKFLAGS.extend(['-m64'])
-   elif cpu_arch != '':
-      print "WARNING: Unknown CPU archtecture", cpu_arch
-
-   # Enable profiling?
-   if profile != 'no':
-      CXXFLAGS.append('-pg')
-      LINKFLAGS.append('-pg')
-
-   # Debug or optimize build?
-   if optimize != 'no':
-      CXXFLAGS.extend(['-DNDEBUG', '-O2'])
-   else:
-      CXXFLAGS.extend(['-D_DEBUG', '-g'])
-
-   env.Append(CXXFLAGS = CXXFLAGS, LINKFLAGS = LINKFLAGS)
+   env = Environment(ENV = os.environ) 
+   
+   ## Arch specific flags
+   #if cpu_arch == 'ia32':
+   #   CXXFLAGS.extend(['-m32'])
+   #   LINKFLAGS.extend(['-m32'])
+   #elif cpu_arch == 'x86_64':
+   #   CXXFLAGS.extend(['-m64'])
+   #   LINKFLAGS.extend(['-m64'])
+   #elif cpu_arch != '':
+   #   print "WARNING: Unknown CPU archtecture", cpu_arch
 
    return env
 
@@ -283,19 +269,7 @@ profile = ARGUMENTS.get('profile', 'no')
 
 platform = distutils.util.get_platform()
 
-# IA32
-if re.search(r'i.86', platform):
-   cpu_arch_default = 'ia32'
-# x86_64 (aka, x64, EM64T)
-elif re.search(r'x86_64', platform):
-   cpu_arch_default = 'x86_64'
-# PowerPC
-elif re.search(r'Power_Mac', platform):
-   cpu_arch_default = 'ppc'
-else:
-   print "WARNING: Unknown CPU architecture from", platform
-   cpu_arch_default = 'unknown'
-
+cpu_arch_default = SConsAddons.Util.GetArch()
 universal_default = 'yes'
 sdk_default = ''
 
@@ -325,23 +299,39 @@ builders = {
    'PkgConfigBuilder'   : Builder(action = CreatePkgConfig)
 }
 
+
 # Create and export the base environment
+env_bldr = EnvironmentBuilder()
+#env_bldr.enableWarnings(EnvironmentBuilder.MAXIMUM)
+env_bldr.enableWarnings(EnvironmentBuilder.MINIMAL)
+
+if optimize != 'no':
+   env_bldr.enableOpt(EnvironmentBuilder.STANDARD)
+   env_bldr.setMsvcRuntime(EnvironmentBuilder.MSVC_MT_DLL_RT)
+else:
+   env_bldr.enableDebug()
+   env_bldr.setMsvcRuntime(EnvironmentBuilder.MSVC_MT_DBG_DLL_RT)
+
+if profile != 'no':
+   env_bldr.enableProfiling()
+
+#baseEnv = env_bldr.buildEnvironment(ENV = os.environ)  
+#baseEnv = env_bldr.buildEnvironment(MSVS_VERSION="7.0")
+baseEnv = env_bldr.buildEnvironment()
+
+print "Version: ", baseEnv["MSVS"]["VERSION"]
+print "Versions: ", baseEnv["MSVS"]["VERSIONS"]
+
+#baseEnv["MSVS_VERSION"] = "7.0"
+
 if GetPlatform() == 'irix':
    baseEnv = BuildIRIXEnvironment()
-elif GetPlatform() == 'linux' or GetPlatform() == 'freebsd':
-   baseEnv = BuildLinuxEnvironment()
-elif GetPlatform() == 'mac':
-   baseEnv = BuildDarwinEnvironment()
-elif GetPlatform() == 'win32':
-   baseEnv = BuildWin32Environment()
-elif string.find(sys.platform, 'cygwin') != -1:
-   baseEnv = BuildCygwinEnvironment()
 elif GetPlatform() == 'sun':
    baseEnv = BuildSunEnvironment()
-else:
-   print 'Unsupported build environment: ' + GetPlatform()
-   print 'Attempting to use standard SCons toolchains.'
-   baseEnv = Environment()
+#else:
+#   print 'Unsupported build environment: ' + GetPlatform()
+#   print 'Attempting to use standard SCons toolchains.'
+#   baseEnv = Environment()
 
 Export('baseEnv')
 
@@ -360,10 +350,14 @@ opts.Add('build_test', 'Build the test programs', 'yes')
 opts.Add('StaticOnly', 'If not "no" then build only static library', 'no')
 opts.Add('versioning', 'If no then build only libraries and headers without versioning', 'yes')
 opts.Add('MakeDist', 'If true, make the distribution packages as part of the build', 'no')
-opts.Add('arch', 'CPU architecture (ia32, x86_64, or ppc)', cpu_arch_default)
+opts.Add('arch', 'CPU architecture (ia32, x86_64, or ppc)',
+         cpu_arch_default)
 opts.Add('universal', 'Build universal binaries (Mac OS X only)',
          universal_default)
 opts.Add('sdk', 'Platform SDK (Mac OS X only)', sdk_default)
+if baseEnv.has_key("MSVS"):
+   opts.Add('MSVS_VERSION', 'NOT WORKING: Set to specific version of MSVS to use. %s'%str(baseEnv['MSVS']['VERSIONS']), 
+            baseEnv['MSVS']['VERSION'])
   
 help_text = """--- CppDom Build system ---
 Targets:
@@ -401,7 +395,8 @@ if not SConsAddons.Util.hasHelpFlag():
    #  - Use symlinks
    #  - Manually set the used prefix to the instlinks of the build dir
    if baseEnv['prefix'] == unspecified_prefix:
-      baseEnv['INSTALL'] = symlinkInstallFunc
+      if hasattr(os,'symlink'):
+         baseEnv['INSTALL'] = symlinkInstallFunc
       baseEnv['prefix'] = def_prefix
 
    inst_paths = {}
