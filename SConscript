@@ -35,12 +35,11 @@ cppdom_lib_env.Append(CPPPATH = [inst_paths['include'],],
 
 
 # If should not do static only, then create static and shared libraries
-if baseEnv['StaticOnly'] == "no":
-   cppdom_lib = cppdom_lib_env.SharedLibrary(CPPDOM_LIB_NAME, sources)
-   print "lib: ", cppdom_lib, str(cppdom_lib)
+if baseEnv['static_only'] == "no":
+   cppdom_lib = cppdom_lib_env.SharedLibrary(cppdom_static_libname, sources)   
    cppdom_lib_env.Install(inst_paths['lib'], cppdom_lib)
 
-cppdom_static_lib = cppdom_lib_env.StaticLibrary(CPPDOM_LIB_NAME, sources)
+cppdom_static_lib = cppdom_lib_env.StaticLibrary(cppdom_shared_libname, sources)
 cppdom_lib_env.Install(inst_paths['lib'], cppdom_static_lib)
 
 header_path = pj(inst_paths['include'],'cppdom')
