@@ -181,73 +181,7 @@ def BuildIRIXEnvironment():
       LINKFLAGS   = LINKFLAGS
    )
 
-def BuildSunEnvironment():
-   "Builds a base environment for other modules to build on set up for linux"
-   global optimize, profile, builders
 
-   CXXFLAGS = ['-Wall', '-fexceptions']
-   LINKFLAGS = []
-
-   # Enable profiling?
-   if profile != 'no':
-      CXXFLAGS.extend(['-pg'])
-      LINKFLAGS.extend(['-pg'])
-
-   # Debug or optimize build?
-   if optimize != 'no':
-      CXXFLAGS.extend(['-DNDEBUG', '-O2'])
-   else:
-      CXXFLAGS.extend(['-D_DEBUG', '-g'])
-
-   ret_env = Environment( ENV = os.environ )
-   
-   # Override the tool chains used
-   for t in ['gcc', 'gnulink', 'g++']:
-      Tool(t)(ret_env)    
-   
-   ret_env['CXXFLAGS'] = CXXFLAGS;
-   return ret_env;
-
-def BuildWin32Environment():
-   env = Environment(ENV = os.environ)
-   for t in ['msvc', 'mslink']:
-      Tool(t)(env)
-
-   env['LINKFLAGS'] += ' /subsystem:console /incremental:no'
-   env['CXXFLAGS'] += '/DWIN32 /D_WINDOWS /D_USRDLL /DCPPDOM_EXPORTS /Zm800 /GX /GR /Op /Zc:wchar_t,forScope'
-
-   if optimize != 'no':
-      env['CXXFLAGS'] += ' /Ogity /O2 /Gs /Ob2 /MD /DNDEBUG'
-      env['LINKFLAGS'] += ' /RELEASE'
-   else:   
-      env['CXXFLAGS'] += ' /Z7 /Od /Ob0 /MDd /D_DEBUG'
-      env['LINKFLAGS'] += ' /DEBUG'
-
-   return env
-
-def BuildCygwinEnvironment():
-   "Builds a base environment for other modules to build on set up for Cygwin"
-   global optimize, profile, builders
-
-   CXX = 'g++'
-   LINK = CXX
-   CXXFLAGS = ['-ftemplate-depth-256', '-Wall', '-pipe']
-   LINKFLAGS = []
-
-   # Enable profiling?
-   if profile != 'no':
-      CXXFLAGS.extend(['-pg'])
-      LINKFLAGS.extend(['-pg'])
-
-   # Debug or optimize build?
-   if optimize != 'no':
-      CXXFLAGS.extend(['-DNDEBUG', '-g', '-O3'])
-   else:
-      CXXFLAGS.extend(['-D_DEBUG', '-g'])
-
-   env = Environment(ENV=os.environ, CXX=CXX, LINK=LINK)
-   env.Append(CXXFLAGS=CXXFLAGS, LINKFLAGS=LINKFLAGS)
-   return env
 
 #------------------------------------------------------------------------------
 # Main build setup
@@ -264,8 +198,8 @@ print 'Building CppDom Version: %i.%i.%i' % CPPDOM_VERSION
 
 
 # Get command-line arguments
-optimize = ARGUMENTS.get('optimize', 'no')
-profile = ARGUMENTS.get('profile', 'no')
+optimize = ARGUMENTS.get('optimize', 'no') != 'no'
+profile = ARGUMENTS.get('profile', 'no') != 'no'
 
 platform = distutils.util.get_platform()
 
@@ -305,14 +239,14 @@ env_bldr = EnvironmentBuilder()
 #env_bldr.enableWarnings(EnvironmentBuilder.MAXIMUM)
 env_bldr.enableWarnings(EnvironmentBuilder.MINIMAL)
 
-if optimize != 'no':
+if optimize:
    env_bldr.enableOpt(EnvironmentBuilder.STANDARD)
    env_bldr.setMsvcRuntime(EnvironmentBuilder.MSVC_MT_DLL_RT)
 else:
    env_bldr.enableDebug()
    env_bldr.setMsvcRuntime(EnvironmentBuilder.MSVC_MT_DBG_DLL_RT)
 
-if profile != 'no':
+if profile:
    env_bldr.enableProfiling()
 
 #baseEnv = env_bldr.buildEnvironment(ENV = os.environ)  
@@ -326,8 +260,6 @@ print "Versions: ", baseEnv["MSVS"]["VERSIONS"]
 
 if GetPlatform() == 'irix':
    baseEnv = BuildIRIXEnvironment()
-elif GetPlatform() == 'sun':
-   baseEnv = BuildSunEnvironment()
 #else:
 #   print 'Unsupported build environment: ' + GetPlatform()
 #   print 'Attempting to use standard SCons toolchains.'
@@ -347,7 +279,7 @@ opts.AddOption( boost_options )
 opts.Add('prefix', 'Installation prefix', unspecified_prefix)
 opts.Add('libdir', 'Library installation directory under <prefix>', default_libdir)
 opts.Add('build_test', 'Build the test programs', 'yes')
-opts.Add('StaticOnly', 'If not "no" then build only static library', 'no')
+opts.Add('static_only', 'If not "no" then build only static library', 'no')
 opts.Add('versioning', 'If no then build only libraries and headers without versioning', 'yes')
 opts.Add('MakeDist', 'If true, make the distribution packages as part of the build', 'no')
 opts.Add('arch', 'CPU architecture (ia32, x86_64, or ppc)',
@@ -404,8 +336,8 @@ if not SConsAddons.Util.hasHelpFlag():
    inst_paths['lib'] = pj(inst_paths['base'], baseEnv['libdir'])
    inst_paths['bin'] = pj(inst_paths['base'], 'bin')
    if baseEnv['versioning'] == 'yes':
-      INCLUDE_VERSION= "cppdom-%s.%s.%s" % CPPDOM_VERSION
-      inst_paths['include'] = pj(inst_paths['base'], 'include', INCLUDE_VERSION)
+      inst_paths['include'] = pj(inst_paths['base'], 'include', 
+                                 "cppdom-%s.%s.%s" % CPPDOM_VERSION)
    else:
       inst_paths['include'] = pj(inst_paths['base'], 'include')
       
@@ -416,13 +348,28 @@ if not SConsAddons.Util.hasHelpFlag():
    if baseEnv['build_test'] == 'yes':
       dirs.append('test')
 
-   if baseEnv['versioning'] == 'yes':
-      CPPDOM_LIB_NAME="cppdom-%s_%s_%s" % CPPDOM_VERSION
+   # Build up library name to use
+   if GetPlatform() == "win32":   
+      static_lib_suffix = "_s"
+      shared_lib_suffix = ""
+      if not optimize:
+         static_lib_suffix += "_d"
+         shared_lib_suffix += "_d"
    else:
-      CPPDOM_LIB_NAME='cppdom'
+      static_lib_suffix = ""
+      shared_lib_suffix = ""      
+   
+   if baseEnv['versioning'] == 'yes':
+      version_suffix = "-%s_%s_%s" % CPPDOM_VERSION
+   else:
+      version_suffix = ''
+      
+   cppdom_shared_libname = 'cppdom' + shared_lib_suffix + version_suffix
+   cppdom_static_libname = 'cppdom' + static_lib_suffix + version_suffix   
 
-   Export('baseEnv','inst_paths','cpu_arch', 'universal', 'sdk', 'opts',
-          'cppunit_options', 'boost_options', 'CPPDOM_LIB_NAME')
+   Export('baseEnv','inst_paths','cpu_arch', 'universal', 'sdk', 'opts', 'optimize',
+          'cppunit_options', 'boost_options', 
+          'cppdom_shared_libname','cppdom_static_libname')
 
    # Process subdirectories
    for d in dirs:
@@ -456,7 +403,7 @@ if not SConsAddons.Util.hasHelpFlag():
       '@includedir@'                : inst_paths['include'],
       '@cppdom_extra_cxxflags@'     : '',
       '@cppdom_extra_include_dirs@' : '',
-      '@cppdom_libs@'               : "-l%s" % CPPDOM_LIB_NAME,
+      '@cppdom_libs@'               : "-l%s" % cppdom_shared_libname,
       '@libdir@'                    : inst_paths['lib'],
       '@lib_subdir@'                : baseEnv['libdir'],
       '@VERSION_MAJOR@'             : str(CPPDOM_VERSION[0]),
