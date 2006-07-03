@@ -6,24 +6,26 @@ except:
    pass
 
 import os, string, sys, re, glob
-import distutils.util
-pj = os.path.join
-
 #sys.path.insert(0,pj('tools','scons-addons','src'))
-
-Default('.')
+print "WARNING:"
+print "WARNING: The build may not currently work.  Please use revision 1.56 for now."
+print "WARNING:  'cvs update -r 1.56 SConstruct' "
+print "WARNING:"
 
 import SCons.Environment
 import SCons
 import SConsAddons.Util
-import SConsAddons.Options
+import SConsAddons.Options as sca_opts
 import SConsAddons.Options.CppUnit
 import SConsAddons.Options.Boost
 from SConsAddons.EnvironmentBuilder import EnvironmentBuilder
 
-#------------------------------------------------------------------------------
-# Define some generally useful functions
-#------------------------------------------------------------------------------
+# Aliases
+GetPlatform = SConsAddons.Util.GetPlatform
+Export('GetPlatform')
+pj = os.path.join
+
+# ------ HELPER METHODS -------- #
 def GetCppDomVersion():
    """Gets the CppDom version from cppdom/version.h.
       Returns version as tuple (major,minor,patch)
@@ -34,10 +36,14 @@ def GetCppDomVersion():
    patch = re.compile('.*(#define *CPPDOM_VERSION_PATCH *(\d+)).*', re.DOTALL).sub(r'\2', contents)
    return (int(major), int(minor), int(patch))
 
-GetPlatform = SConsAddons.Util.GetPlatform
-Export('GetPlatform')
+def symlinkInstallFunc(dest, source, env):
+   """Replacement function for install so it can install source
+      to destination by sym linking it.
+   """
+   os.symlink(pj(os.getcwd(), source), dest)
+   return 0
 
-
+# ------ CUSTOM BUILDERS ------------- #
 def CreateConfig(target, source, env):
    """ Config script builder 
       Creates the prefix-config file users use to compile against this library 
@@ -63,7 +69,7 @@ def CreateConfig(target, source, env):
    return 0
 
 def CreatePkgConfig(target, source, env):
-   """ Config script builder 
+   """ Pkg Config file builder.
       Creates the pkgconfig .pc file users use to compile against this library 
    """
    targets = map(lambda x: str(x), target)
@@ -86,77 +92,8 @@ def CreatePkgConfig(target, source, env):
       os.chmod(targets[0], 0644)
    return 0
 
-def symlinkInstallFunc(dest, source, env):
-    """Install a source file into a destination by sym linking it."""
-    os.symlink(pj(os.getcwd(), source), dest)
-    return 0
 
 # --- Platform specific environment factory methods --- #
-def BuildLinuxEnvironment():
-   "Builds a base environment for other modules to build on set up for linux"
-   global optimize, profile, builders, cpu_arch
-
-   env = Environment(ENV = os.environ) 
-   
-   ## Arch specific flags
-   #if cpu_arch == 'ia32':
-   #   CXXFLAGS.extend(['-m32'])
-   #   LINKFLAGS.extend(['-m32'])
-   #elif cpu_arch == 'x86_64':
-   #   CXXFLAGS.extend(['-m64'])
-   #   LINKFLAGS.extend(['-m64'])
-   #elif cpu_arch != '':
-   #   print "WARNING: Unknown CPU archtecture", cpu_arch
-
-   return env
-
-def BuildDarwinEnvironment():
-   "Builds a base environment for other modules to build on set up for Darwin"
-   global optimize, profile, builders, cpu_arch_default, universal
-
-   env = Environment(ENV = os.environ)
-
-   if not os.environ.has_key('CXXFLAGS'):
-      CXXFLAGS = ['-Wall']
-      LINKFLAGS = ['']
-
-      env.Append(CXXFLAGS = CXXFLAGS, LINKFLAGS = LINKFLAGS)
-
-   # Enable profiling?
-   if profile != 'no':
-      env.Append(CXXFLAGS = ['-pg'])
-      env.Append(LINKFLAGS = ['-pg'])
-
-   # Debug or optimize build?
-   if optimize != 'no':
-      env.Append(CXXFLAGS = ['-DNDEBUG', '-O2'])
-   else:
-      env.Append(CXXFLAGS = ['-D_DEBUG', '-g'])
-
-   if universal != 'yes':
-      if cpu_arch != cpu_arch_default:
-         if cpu_arch == 'ia32':
-            env.Append(CXXFLAGS = ['-arch', 'i386'],
-                       LINKFLAGS = ['-arch', 'i386'])
-         elif cpu_arch == 'ppc':
-            env.Append(CXXFLAGS = ['-arch', 'ppc'],
-                       LINKFLAGS = ['-arch', 'ppc'])
-   else:
-      env.Append(CXXFLAGS = ['-arch', 'ppc', '-arch', 'i386'],
-                 LINKFLAGS = ['-arch', 'ppc', '-arch', 'i386'])
-
-   if sdk != '':
-      env.Append(CXXFLAGS = ['-isysroot', sdk],
-                 LINKFLAGS = ['-isysroot', sdk])
-
-      sdk_re = re.compile('MacOSX(10\..*?)u?\.sdk')
-      match = sdk_re.search(sdk)
-      if match is not None:
-         min_osx_ver = '-mmacosx-version-min=' + match.group(1)
-         env.Append(CXXFLAGS = [min_osx_ver], LINKFLAGS = [min_osx_ver])
-
-   return env
-
 def BuildIRIXEnvironment():
    "Builds a base environment for other modules to build on set up for IRIX"
    global optimize, profile, builders
@@ -187,8 +124,8 @@ def BuildIRIXEnvironment():
 # Main build setup
 #------------------------------------------------------------------------------
 EnsureSConsVersion(0,94)
-SourceSignatures('MD5')
-#SourceSignatures('timestamp')
+#SourceSignatures('MD5')
+SourceSignatures('timestamp')
 SConsignFile()
 
 # Figure out what version of CppDom we're using
@@ -196,80 +133,14 @@ CPPDOM_VERSION = GetCppDomVersion()
 Export('CPPDOM_VERSION')
 print 'Building CppDom Version: %i.%i.%i' % CPPDOM_VERSION
 
-
-# Get command-line arguments
-optimize = ARGUMENTS.get('optimize', 'no') != 'no'
-profile = ARGUMENTS.get('profile', 'no') != 'no'
-
-platform = distutils.util.get_platform()
-
-cpu_arch_default = SConsAddons.Util.GetArch()
-universal_default = 'yes'
-sdk_default = ''
-
-cpu_arch = ARGUMENTS.get('arch', cpu_arch_default)
-universal = ARGUMENTS.get('universal', universal_default)
-sdk = ARGUMENTS.get('sdk', sdk_default)
-
-default_libdir = 'lib'
-if cpu_arch == 'x86_64':
-   default_libdir = 'lib64'
-
-if GetPlatform() == 'mac' and universal == 'yes':
-   buildDir = "build.%s-universal" % platform
-elif cpu_arch != cpu_arch_default:
-   buildDir = "build.%s-%s" % (platform, cpu_arch)
-else:
-   buildDir = "build." + platform
-
-def_prefix = pj( Dir('.').get_abspath(), buildDir, 'instlinks')
+option_env = Environment()
+platform = SConsAddons.Util.GetPlatform()
 unspecified_prefix = "use-instlinks"
-               
-# Create the extra builders
-# Define a builder for the cppdom-config script
-# Define a builder for the cppdom.pc file
-builders = {
-   'ConfigBuilder'   : Builder(action = CreateConfig),
-   'PkgConfigBuilder'   : Builder(action = CreatePkgConfig)
-}
-
-
-# Create and export the base environment
-env_bldr = EnvironmentBuilder()
-#env_bldr.enableWarnings(EnvironmentBuilder.MAXIMUM)
-env_bldr.enableWarnings(EnvironmentBuilder.MINIMAL)
-
-if optimize:
-   env_bldr.enableOpt(EnvironmentBuilder.STANDARD)
-   env_bldr.setMsvcRuntime(EnvironmentBuilder.MSVC_MT_DLL_RT)
-else:
-   env_bldr.enableDebug()
-   env_bldr.setMsvcRuntime(EnvironmentBuilder.MSVC_MT_DBG_DLL_RT)
-
-if profile:
-   env_bldr.enableProfiling()
-
-#baseEnv = env_bldr.buildEnvironment(ENV = os.environ)  
-#baseEnv = env_bldr.buildEnvironment(MSVS_VERSION="7.0")
-baseEnv = env_bldr.buildEnvironment()
-
-print "Version: ", baseEnv["MSVS"]["VERSION"]
-print "Versions: ", baseEnv["MSVS"]["VERSIONS"]
-
-#baseEnv["MSVS_VERSION"] = "7.0"
-
-if GetPlatform() == 'irix':
-   baseEnv = BuildIRIXEnvironment()
-#else:
-#   print 'Unsupported build environment: ' + GetPlatform()
-#   print 'Attempting to use standard SCons toolchains.'
-#   baseEnv = Environment()
-
-Export('baseEnv')
+default_libdir = 'lib'
 
 # --- OPTIONS --- #
 option_filename = "config.cache." + platform
-opts = SConsAddons.Options.Options(files = [option_filename, 'options.custom'],
+opts = sca_opts.Options(files = [option_filename, 'options.custom'],
                                    args= ARGUMENTS)
 
 cppunit_options = SConsAddons.Options.CppUnit.CppUnit("cppunit", "1.9.10", required=0)
@@ -278,18 +149,20 @@ opts.AddOption( cppunit_options )
 opts.AddOption( boost_options )
 opts.Add('prefix', 'Installation prefix', unspecified_prefix)
 opts.Add('libdir', 'Library installation directory under <prefix>', default_libdir)
+opts.AddOption( sca_opts.BoolOption('optimize','If true, generate optimized code.',False))
+opts.AddOption( sca_opts.BoolOption('profile','If true, generate profiled code.',False))
 opts.Add('build_test', 'Build the test programs', 'yes')
 opts.Add('static_only', 'If not "no" then build only static library', 'no')
 opts.Add('versioning', 'If no then build only libraries and headers without versioning', 'yes')
 opts.Add('MakeDist', 'If true, make the distribution packages as part of the build', 'no')
 opts.Add('arch', 'CPU architecture (ia32, x86_64, or ppc)',
-         cpu_arch_default)
+         SConsAddons.Util.GetArch())
 opts.Add('universal', 'Build universal binaries (Mac OS X only)',
-         universal_default)
-opts.Add('sdk', 'Platform SDK (Mac OS X only)', sdk_default)
-if baseEnv.has_key("MSVS"):
-   opts.Add('MSVS_VERSION', 'NOT WORKING: Set to specific version of MSVS to use. %s'%str(baseEnv['MSVS']['VERSIONS']), 
-            baseEnv['MSVS']['VERSION'])
+         'yes')
+opts.Add('sdk', 'Platform SDK (Mac OS X only)', '')
+if option_env.has_key("MSVS"):
+   opts.Add('MSVS_VERSION', 'Set to specific version of MSVS to use. %s'%str(option_env['MSVS']['VERSIONS']), 
+            option_env['MSVS']['VERSION'])
   
 help_text = """--- CppDom Build system ---
 Targets:
@@ -298,27 +171,76 @@ Targets:
    Type 'scons' to just build it
  
 """
-
-help_text = help_text + """Options:
-   optimize=yes    Generate optimized code.
-   profile=yes     Turn on generation of profiling code.
-   
-"""
-
-help_text = help_text + opts.GenerateHelpText(baseEnv)
-#help_text += "Options:\n" + opts.GenerateHelpText(baseEnv)
-Help(help_text)
+if SConsAddons.Util.hasHelpFlag():
+   opts.Update(option_env)
+   help_text = help_text + opts.GenerateHelpText(option_env)
+   Help(help_text)
 
 # --- MAIN BUILD STEPS ---- #
 # If we are running the build
-if not SConsAddons.Util.hasHelpFlag():
-   opts.Update(baseEnv)                   # Update the options
+if not SConsAddons.Util.hasHelpFlag():   
+   if cpu_arch == 'x86_64':
+      default_libdir = 'lib64'
+   
+   if GetPlatform() == 'mac' and universal == 'yes':
+      buildDir = "build.%s-universal" % platform
+   elif cpu_arch != cpu_arch_default:
+      buildDir = "build.%s-%s" % (platform, cpu_arch)
+   else:
+      buildDir = "build." + platform
+   
+   def_prefix = pj( Dir('.').get_abspath(), buildDir, 'instlinks')   
+   
+   # Create the extra builders
+   # Define a builder for the cppdom-config script
+   # Define a builder for the cppdom.pc file
+   builders = {
+      'ConfigBuilder'   : Builder(action = CreateConfig),
+      'PkgConfigBuilder'   : Builder(action = CreatePkgConfig)
+   }
+   
+   
+   # Create and export the base environment
+   env_bldr = EnvironmentBuilder()
+   #env_bldr.enableWarnings(EnvironmentBuilder.MAXIMUM)
+   env_bldr.enableWarnings(EnvironmentBuilder.MINIMAL)
+   
+   if optimize:
+      env_bldr.enableOpt(EnvironmentBuilder.STANDARD)
+      env_bldr.setMsvcRuntime(EnvironmentBuilder.MSVC_MT_DLL_RT)
+   else:
+      env_bldr.enableDebug()
+      env_bldr.setMsvcRuntime(EnvironmentBuilder.MSVC_MT_DBG_DLL_RT)
+   
+   if profile:
+      env_bldr.enableProfiling()
+   
+   #baseEnv = env_bldr.buildEnvironment(ENV = os.environ)  
+   #baseEnv = env_bldr.buildEnvironment(MSVS_VERSION="7.0")
+   baseEnv = env_bldr.buildEnvironment()
+   
+   if GetPlatform() == 'irix':
+      baseEnv = BuildIRIXEnvironment()
+      opts.Update(baseEnv)
+   elif GetPlatform() == 'win32':
+      baseEnv = env_bldr.buildEnvironment(options=opts)
+   else:
+      baseEnv = env_bldr.buildEnvironment(ENV = os.environ,
+                                          options=opts)   
+   
+   Export('baseEnv')
 
+   # Finish up option processing and saving
+   help_text = help_text + opts.GenerateHelpText(option_env)
+   Help(help_text)
+   
    try:                                   # Try to save the options if possible
       opts.Save(option_filename, baseEnv)
    except LookupError, le:
       pass
+
    
+
    # Update environment for boost options
    if boost_options.isAvailable():
       boost_options.updateEnv(baseEnv)
@@ -331,6 +253,7 @@ if not SConsAddons.Util.hasHelpFlag():
          baseEnv['INSTALL'] = symlinkInstallFunc
       baseEnv['prefix'] = def_prefix
 
+   # Setup installation paths
    inst_paths = {}
    inst_paths['base'] = os.path.abspath(baseEnv['prefix'])
    inst_paths['lib'] = pj(inst_paths['base'], baseEnv['libdir'])
@@ -365,36 +288,39 @@ if not SConsAddons.Util.hasHelpFlag():
       version_suffix = ''
       
    cppdom_shared_libname = 'cppdom' + shared_lib_suffix + version_suffix
-   cppdom_static_libname = 'cppdom' + static_lib_suffix + version_suffix   
+   cppdom_static_libname = 'cppdom' + static_lib_suffix + version_suffix
 
    Export('baseEnv','inst_paths','cpu_arch', 'universal', 'sdk', 'opts', 'optimize',
           'cppunit_options', 'boost_options', 
           'cppdom_shared_libname','cppdom_static_libname')
+   
+   variants = {}
+   variants["performance"] = ["debug","optimized"]   
+   variants["runtime"] = ["debug","standard"]
+   variants["libtype"] = ["static","dynamic"]
+   #variants["arch"] = ["32","64"]
+   
+   variant_pass = 0
+     
+   #for each variant:
+   #   build environment 
+   #   setup options 
+   #   
+   #   if "win32" == GetPlatform():
+   #      
+   #   else:
+   #      if variant["runtime"] = "debug":
+   #         inst_path['lib'] += 'debug'
+   #   build_dir = platform + variant_desc 
+   #   for d in dirs:
+   #      SConscript(pj(d,'SConscript'), build_dir=pj(buildDir,d), duplicate=0)
 
    # Process subdirectories
    for d in dirs:
       SConscript(pj(d,'SConscript'), build_dir=pj(buildDir, d), duplicate=0)
 
-   # Setup tar of source files
-   tar_sources = Split("""
-	 	  AUTHORS
-                  ChangeLog
-		  COPYING
-		  README
-		  cppdom-config.in
-		  cppdom.pc.in
-		  SConstruct
-		  doc/cppdom.doxy
-		  doc/dox/examples_index.dox
-		  doc/dox/mainpage.dox
-		  vc7/cppdom.sln
-		  vc7/cppdom.vcproj
-		  cppdom/
-		  test/
-   """)
-   #baseEnv.Append(TARFLAGS = ['-z',])
-   #baseEnv.Tar('cppdom-' + '%i.%i.%i' % CPPDOM_VERSION + '.tar.gz', tar_sources)
 
+   # ------------------ Build -config and .pc files ----------------- #
    # Build up substitution map
    submap = {
       '@prefix@'                    : inst_paths['base'],
@@ -427,4 +353,7 @@ if not SConsAddons.Util.hasHelpFlag():
 
       env.Depends('cppdom.pc', 'cppdom/version.h')
       env.Alias('install', inst_paths['base'])
+
+   # Close up with aliases and defaults   
+   Default('.')
 
