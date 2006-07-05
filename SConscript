@@ -3,7 +3,6 @@ import os
 pj = os.path.join
 
 Import('*')
-boost_options = opts.GetOption('boost')
 
 headers = Split("""
    config.h
@@ -31,17 +30,18 @@ if boost_options.isAvailable():
 
 cppdom_lib_env = baseEnv.Copy()
 cppdom_lib_env.Append(CPPPATH = [inst_paths['include'],],
-                     CPPDEFINES="CPPDOM_EXPORTS")
-
+                      CPPDEFINES="CPPDOM_EXPORTS")
 
 # If should not do static only, then create static and shared libraries
-if baseEnv['static_only'] == "no":
-   cppdom_lib = cppdom_lib_env.SharedLibrary(cppdom_static_libname, sources)   
+if "shared" in combo["libtype"]:
+   cppdom_lib = cppdom_lib_env.SharedLibrary(cppdom_shared_libname, sources)   
    cppdom_lib_env.Install(inst_paths['lib'], cppdom_lib)
 
-cppdom_static_lib = cppdom_lib_env.StaticLibrary(cppdom_shared_libname, sources)
-cppdom_lib_env.Install(inst_paths['lib'], cppdom_static_lib)
+if "static" in combo["libtype"]:
+   cppdom_static_lib = cppdom_lib_env.StaticLibrary(cppdom_static_libname, sources)
+   cppdom_lib_env.Install(inst_paths['lib'], cppdom_static_lib)
 
-header_path = pj(inst_paths['include'],'cppdom')
-cppdom_lib_env.InstallAs(target = [pj(header_path, h) for h in headers], 
-                         source = headers)
+if variant_pass == 0:
+   header_path = pj(inst_paths['include'],'cppdom')
+   cppdom_lib_env.InstallAs(target = [pj(header_path, h) for h in headers], 
+                            source = headers)
