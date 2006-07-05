@@ -21,7 +21,7 @@ env.Append(CPPPATH = [inst_paths['include'], '#test', pj('#test','suite')],
                 LIBPATH = [inst_paths['lib'],],
                 LIBS = ['cppdom'])
 
-cppunit_options.updateEnv(env)
+cppunit_options.apply(env)
 
 # Win32 doesn't have libdl
 if GetPlatform() != 'win32':
