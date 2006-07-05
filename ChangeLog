@@ -1,5 +1,8 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
+2006-07-05 allenb       More refactoring of build system.
+                        It is not possible to specify all variants to build
+                        and build them simultaneously.
 2006-06-30 allenb       Refatored the build system to support building on win32
                         using SCons.  This requires an in-development version
                         of scons-addons to get the EnvironmentBuilder.
