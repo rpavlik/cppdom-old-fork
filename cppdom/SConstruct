@@ -315,9 +315,15 @@ if not SConsAddons.Util.hasHelpFlag():
       cppdom_shared_libname = 'cppdom' + shared_lib_suffix + version_suffix
       cppdom_static_libname = 'cppdom' + static_lib_suffix + version_suffix
       
+      # set a library name to use when linking test applications
+      if "shared" in combo["libtype"]:
+         cppdom_app_libname = cppdom_shared_libname
+      elif "static" in combo["libtype"]:
+         cppdom_app_libname = cppdom_static_libname, sources
+      
       Export('baseEnv','inst_paths','opts', 'variant_pass','combo',
              'cppunit_options', 'boost_options', 
-             'cppdom_shared_libname','cppdom_static_libname')
+             'cppdom_shared_libname','cppdom_static_libname', 'cppdom_app_libname')
 
       dirs = ['cppdom']
       if common_env['build_test'] == 'yes':
