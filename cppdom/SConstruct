@@ -42,7 +42,23 @@ def symlinkInstallFunc(dest, source, env):
    os.symlink(pj(os.getcwd(), source), dest)
    return 0
 
-def zipVariants(variantMap):   
+def zipVariants(variantMap):
+   """ This method takes a map of variants and items within each variant and returns
+       a list of all combinations of ways that the variants can be combined.
+
+       The input format is:
+       { key : ([option_list,], is_alternative), }
+       - option_list is a list of all items for this variant.
+       - is_alternative is a flag saying wether we just need to choose one item or if all
+         items can be in the same variant combination
+
+       The return format is:         
+       [ {"var":"option", "var2":["op1","op2"]}, .. }
+       
+       Each entry in the list is a dictionary that fully specfies a combination of
+       variant keys and associated items.
+    """
+          
    # List of (key,[varlist,])
    alt_items = [ (i[0],i[1][0]) for i in variantMap.iteritems() if i[1][1] == True]
    always_items = [ (i[0],i[1][0]) for i in variantMap.iteritems() if i[1][1] == False]
@@ -64,6 +80,8 @@ def zipVariants(variantMap):
    
    #print cur_combos
    
+   # Now turn the list of combo lists into a list of
+   # combo dictionaries
    ret_combos = []
    for c in cur_combos:
       combo = {}
@@ -249,7 +267,7 @@ if not SConsAddons.Util.hasHelpFlag():
    # Update environment for boost options
    if boost_options.isAvailable():
       boost_options.apply(common_env)
-   
+
    # Return list of combos
    # [ {"var":"option", "var2":["op1","op2"], .. }
    var_combos = zipVariants(variants)
