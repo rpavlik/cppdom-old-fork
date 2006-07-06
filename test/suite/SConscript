@@ -19,7 +19,7 @@ if boost_options.isAvailable():
 env = baseEnv.Copy()
 env.Append(CPPPATH = [inst_paths['include'], '#test', pj('#test','suite')],
                 LIBPATH = [inst_paths['lib'],],
-                LIBS = ['cppdom'])
+                LIBS = [cppdom_app_libname])
 
 cppunit_options.apply(env)
 
