@@ -30,7 +30,7 @@ if boost_options.isAvailable():
 
 cppdom_lib_env = baseEnv.Copy()
 cppdom_lib_env.Append(CPPPATH = [inst_paths['include'],],
-                      CPPDEFINES="CPPDOM_EXPORTS")
+                      CPPDEFINES=["CPPDOM_EXPORTS",])
 
 # If should not do static only, then create static and shared libraries
 if "shared" in combo["libtype"]:
