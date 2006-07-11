@@ -54,10 +54,12 @@
 
 // export/import #define's for building a win32 dll
 #  ifdef CPPDOM_EXPORTS
-#     define CPPDOM_EXPORT(ret)  __declspec(dllexport) ret __stdcall
+//#     define CPPDOM_EXPORT(ret)  __declspec(dllexport) ret __stdcall
+#     define CPPDOM_EXPORT(ret)  __declspec(dllexport) ret
 #     define CPPDOM_CLASS        __declspec(dllexport)
 #  else
-#     define CPPDOM_EXPORT(ret)  __declspec(dllimport) ret __stdcall
+//#     define CPPDOM_EXPORT(ret)  __declspec(dllimport) ret __stdcall
+#     define CPPDOM_EXPORT(ret)  __declspec(dllimport) ret
 #     define CPPDOM_CLASS        __declspec(dllimport)
 #  endif
 
