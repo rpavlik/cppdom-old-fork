@@ -119,16 +119,16 @@ namespace cppdom
    template <class T> inline void ignore_unused_variable_warning(const T&) { }
 
    // True if there are characters references: ex: &amp;
-   bool textContainsXmlEscaping(const std::string& data);
+   CPPDOM_EXPORT(bool) textContainsXmlEscaping(const std::string& data);
 
    // True if there are chars needing escaping
-   bool textNeedsXmlEscaping(const std::string& data, bool isCdata);
+   CPPDOM_EXPORT(bool) textNeedsXmlEscaping(const std::string& data, bool isCdata);
 
     // Remove escaping from xml text
-   std::string removeXmlEscaping(const std::string& data, bool isCdata);
+   CPPDOM_EXPORT(std::string) removeXmlEscaping(const std::string& data, bool isCdata);
 
    // Add escaping to xml text
-   std::string addXmlEscaping(const std::string& data, bool isCdata);
+   CPPDOM_EXPORT(std::string) addXmlEscaping(const std::string& data, bool isCdata);
 
    /** Method to split string base on seperator.
     *
@@ -788,7 +788,7 @@ namespace cppdom
     * @param toNode     Node to merge data onto.
     * @post All elements and attributes in fromNode will exist in toNode.
     */
-   void merge(NodePtr fromNode, NodePtr toNode);
+   CPPDOM_EXPORT(void) merge(NodePtr fromNode, NodePtr toNode);
    //@}
 }
 
