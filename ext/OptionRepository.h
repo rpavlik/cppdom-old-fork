@@ -17,7 +17,7 @@ namespace cppdom
  * The options system loads XML configuration files and takes full option
  * specifications as strings of the form:  option/option/.../attrib
  */
-class OptionRepository
+class CPPDOM_CLASS OptionRepository
 {
 public:
    /** Constructor.
