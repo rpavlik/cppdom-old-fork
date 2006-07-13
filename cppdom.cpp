@@ -44,17 +44,51 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
 
 // needed includes
 #include <cppdom/cppdom.h>
 #include <cppdom/xmlparser.h>
 #include <cppdom/predicates.h>
-#include <string>
+#include <cppdom/version.h>
 
 
 // namespace declaration
 namespace cppdom
 {
+
+// These helper macros are used to stringify a given macro
+#define CPPDOM_STR(s)             # s
+#define CPPDOM_XSTR(s)            CPPDOM_STR(s)
+
+// These helper macros are used to build up the CPPDOM_VERSION_STRING macro.
+#define CPPDOM_DOT(a,b)           a ## . ## b
+#define CPPDOM_XDOT(a,b)          CPPDOM_DOT(a,b)
+
+//--------------------------------------------------------------------------
+// Define the CPPDOM_VERSION_STRING macros
+//--------------------------------------------------------------------------
+
+// Create the CPPDOM_VERSION_STRING macro
+#define CPPDOM_VERSION_STRING \
+   CPPDOM_XDOT( \
+      CPPDOM_XDOT(CPPDOM_VERSION_MAJOR, CPPDOM_VERSION_MINOR), \
+      CPPDOM_VERSION_PATCH \
+   )
+
+   CPPDOM_EXPORT(const char*) getVersion()
+   {
+      return CPPDOM_XSTR(CPPDOM_VERSION_STRING);
+   }
+
+// Undef all the helper macros
+#undef CPPDOM_XSTR
+#undef CPPDOM_STR
+#undef CPPDOM_DOT
+#undef CPPDOM_XDOT
+
+// Undef the CPPDOM_VERSION_STRING temporary macro
+#undef CPPDOM_VERSION_STRING
 
    // True if there are characters references: ex: &amp;
    bool textContainsXmlEscaping(const std::string& data)
