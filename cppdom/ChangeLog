@@ -1,5 +1,7 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
+2006-07-13 patrickh     Implemented automatic linking on Windows.
+                        VERSION: 0.7.6
 2006-07-13 patrickh     Moved the declaration of cppdom::getVersion() to
                         cppdom.h.
 2006-07-11 allenb       Expose OptionRepository and cppdom methods in dll.
