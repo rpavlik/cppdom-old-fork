@@ -20,7 +20,6 @@ sources = Split("""
    cppdom.cpp
    xmlparser.cpp
    xmltokenizer.cpp
-   version.cpp
    ext/OptionRepository.cpp
 """)
 

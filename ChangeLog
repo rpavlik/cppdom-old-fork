@@ -1,10 +1,12 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
+2006-07-13 patrickh     Moved the declaration of cppdom::getVersion() to
+                        cppdom.h.
 2006-07-11 allenb       Expose OptionRepository and cppdom methods in dll.
 2006-07-05 allenb       More refactoring of build system.
                         It is not possible to specify all variants to build
                         and build them simultaneously.
-2006-06-30 allenb       Refatored the build system to support building on win32
+2006-06-30 allenb       Refatored the build system to support building on Win32
                         using SCons.  This requires an in-development version
                         of scons-addons to get the EnvironmentBuilder.
 2006-06-24 patrickh     Support building universal binaries on Mac OS X.
@@ -110,8 +112,8 @@ DATE        AUTHOR      CHANGE
 2002-05-06 subatomic    Added README and build instructions
 2002-05-05 subatomic    Brought the code up to coding standard (API changed!).
 2002-05-05 subatomic    Added build system based on Doozer gnumake tools
-                        support irix, linux, solaris, freebsd, win32 under
-                        cygwin, probably other too but untested see README.
+                        support irix, linux, solaris, freebsd, Win32 under
+                        Cygwin, probably other too but untested see README.
 2002-05-05 allenb       Added save_file method for document node.
 2002-05-01 subatomic    Added predicate.h, and two predicates
 2002-04-05 allenb       Fix EOF and -1 chars on Irix.
