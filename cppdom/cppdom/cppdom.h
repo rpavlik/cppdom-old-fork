@@ -115,6 +115,9 @@ namespace cppdom
 //! namespace of the cppdom project
 namespace cppdom
 {
+   // Declare a version string constant that can be used at run time.
+   CPPDOM_EXPORT(const char*) getVersion();
+
    // Helper methods
    template <class T> inline void ignore_unused_variable_warning(const T&) { }
 

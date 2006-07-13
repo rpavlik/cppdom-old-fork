@@ -203,9 +203,6 @@
 				RelativePath="..\cppdom\cppdom.cpp">
 			</File>
 			<File
-				RelativePath="..\cppdom\version.cpp">
-			</File>
-			<File
 				RelativePath="..\cppdom\xmlparser.cpp">
 			</File>
 			<File
