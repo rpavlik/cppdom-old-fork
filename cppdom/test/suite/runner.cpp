@@ -47,7 +47,7 @@
 
 #include <cppunit/ui/text/TestRunner.h>
 
-#include <cppdom/version.h>
+#include <cppdom/cppdom.h>
 
 #include <Suites.h>
 
