@@ -380,20 +380,19 @@ if not SConsAddons.Util.hasHelpFlag():
    # Setup the builder for cppdom-config
    if GetPlatform() != 'win32':
       env = common_env.Copy(BUILDERS = builders)
-      cppdom_config  = env.ConfigBuilder('cppdom-config', 'cppdom-config.in', submap=submap )
+      cppdom_config  = env.ConfigBuilder(pj(inst_paths['bin'],'cppdom-config'), 
+                                         'cppdom-config.in', submap=submap )
       env.AddPostAction (cppdom_config, Chmod('$TARGET', 0755))
+      env.Depends(cppdom_config, 'cppdom/version.h')
 
-      env.Depends('cppdom-config', 'cppdom/version.h')
-      env.Install(inst_paths['bin'], cppdom_config)      
 
    # Setup the builder for cppdom.pc
    if GetPlatform() != 'win32':
       env = common_env.Copy(BUILDERS = builders)
-      cppdom_pc  = env.ConfigBuilder("cppdom.pc", 'cppdom.pc.in', submap=submap)
+      cppdom_pc  = env.ConfigBuilder(pj(inst_paths['lib'],'pkgconfig',"cppdom.pc"), 
+                                     'cppdom.pc.in', submap=submap)
       env.AddPostAction (cppdom_pc, Chmod('$TARGET', 0644))
-
-      env.Install(pj(inst_paths['lib'],'pkgconfig'), cppdom_pc)
-      env.Depends('cppdom.pc', 'cppdom/version.h')
+      env.Depends(cppdom_pc, 'cppdom/version.h')
    
    common_env.Alias('install', inst_paths['base'])
 
