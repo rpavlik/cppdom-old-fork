@@ -17,7 +17,7 @@ namespace cppdom
  * The options system loads XML configuration files and takes full option
  * specifications as strings of the form:  option/option/.../attrib
  */
-class OptionRepository
+class CPPDOM_CLASS OptionRepository
 {
 public:
    /** Constructor.
@@ -43,6 +43,16 @@ public:
       }
       return t;
    }
+
+#if defined(_MSC_VER) && _MSC_VER == 1300
+   template<>
+   std::string getValue<std::string>(std::string option,
+                                     const std::string defaultValue)
+   {
+      std::string str_val = getOptionString(option);
+      return str_val;
+   }
+#endif
 
    /**
     * Set mData to the string value of val
@@ -99,14 +109,15 @@ protected:
    std::string          mOptionRootTag;   /** The tag for the root options element. default: options. */
 };
 
+#if ! defined(_MSC_VER) || _MSC_VER > 1300
 template<>
 inline std::string OptionRepository::getValue<std::string>(std::string option, const std::string defaultValue)
 {
    std::string str_val = getOptionString(option);
    return str_val;
 }
+#endif
 
 }
 
 #endif //OPTIONS_H
-

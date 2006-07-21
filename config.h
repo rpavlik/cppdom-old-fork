@@ -54,12 +54,50 @@
 
 // export/import #define's for building a win32 dll
 #  ifdef CPPDOM_EXPORTS
-#     define CPPDOM_EXPORT(ret)  __declspec(dllexport) ret __stdcall
+//#     define CPPDOM_EXPORT(ret)  __declspec(dllexport) ret __stdcall
+#     define CPPDOM_EXPORT(ret)  __declspec(dllexport) ret
 #     define CPPDOM_CLASS        __declspec(dllexport)
 #  else
-#     define CPPDOM_EXPORT(ret)  __declspec(dllimport) ret __stdcall
+//#     define CPPDOM_EXPORT(ret)  __declspec(dllimport) ret __stdcall
+#     define CPPDOM_EXPORT(ret)  __declspec(dllimport) ret
 #     define CPPDOM_CLASS        __declspec(dllimport)
-#  endif
+
+// Use automatic linking when building with Visual C++ and when requested to
+// do so. Define either CPPDOM_AUTO_LINK or CPPDOM_DYN_LINK to enable automatic
+// linking. The latter specifies that the dynamic library is the one to link
+// against automatically. If CPPDOM_DYN_LINK is not defined when using
+// automatic linking, then the static library is used.
+#     if defined(_MSC_VER) && \
+            (defined(CPPDOM_AUTO_LINK) || defined(CPPDOM_DYN_LINK))
+#        include "version.h"
+
+#        define CPPDOM_STRINGIZE(X) CPPDOM_DO_STRINGIZE(X)
+#        define CPPDOM_DO_STRINGIZE(X) #X
+#        define CPPDOM_VERSION_STR CPPDOM_STRINGIZE(CPPDOM_VERSION_MAJOR) "_" \
+                                   CPPDOM_STRINGIZE(CPPDOM_VERSION_MINOR) "_" \
+                                   CPPDOM_STRINGIZE(CPPDOM_VERSION_PATCH)
+
+#        if defined(_DEBUG)
+#           define CPPDOM_LIB_RT_OPT "_d"
+#        else
+#           define CPPDOM_LIB_RT_OPT ""
+#        endif
+
+#        if defined(CPPDOM_DYN_LINK)
+#           define CPPDOM_LIB_LINK_OPT ""
+#        else
+#           define CPPDOM_LIB_LINK_OPT "_s"
+#        endif
+
+#        pragma comment(lib, "cppdom" CPPDOM_LIB_RT_OPT CPPDOM_LIB_LINK_OPT "-" CPPDOM_VERSION_STR ".lib")
+
+#        undef CPPDOM_LIB_LINK_OPT
+#        undef CPPDOM_LIB_RT_OPT
+#        undef CPPDOM_VERSION_STR
+#        undef CPPDOM_DO_STRINGIZE
+#        undef CPPDOM_STRINGIZE
+#     endif /* defined(_MSC_VER) && (defined(CPPDOM_AUTO_LINK) || defined(CPPDOM_DYN_LINK)) */
+#  endif /* defined(CPPDOM_EXPORTS) */
 
 #else
 #  define CPPDOM_EXPORT(ret) ret

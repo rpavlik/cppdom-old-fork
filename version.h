@@ -39,8 +39,6 @@
 #ifndef CPPDOM_VERSION_H
 #define CPPDOM_VERSION_H
 
-#include "config.h"
-
 /** @file version.h
  * This file contains two useful items.
  *   - 1. The preprocessor friendly CPPDOM_VERSION "string". It is in the form
@@ -57,7 +55,7 @@
 // The major/minor/patch version (up to 3 digits each).
 #define CPPDOM_VERSION_MAJOR     0
 #define CPPDOM_VERSION_MINOR     7
-#define CPPDOM_VERSION_PATCH     5
+#define CPPDOM_VERSION_PATCH     6
 
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
@@ -122,14 +120,6 @@
       CPPDOM_XGLUE(CPPDOM_VERSION_MAJOR_FILLED, CPPDOM_VERSION_MINOR_FILLED), \
       CPPDOM_VERSION_PATCH_FILLED \
    )
-
-//--------------------------------------------------------------------------
-// Declare a version string constant that can be used at runtime.
-//--------------------------------------------------------------------------
-namespace cppdom
-{
-   CPPDOM_EXPORT(const char*) getVersion();
-}
 
 //--------------------------------------------------------------------------
 // Cleanup after ourselves and undef all internal macros.
