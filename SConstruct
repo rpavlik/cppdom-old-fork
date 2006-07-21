@@ -119,8 +119,9 @@ def CreateConfig(target, source, env):
       # Write out the target file with the new contents
       open(targets[0], 'w').write(contents)
       os.chmod(targets[0], 0755)
-   return 0
 
+def registerConfigBuilder(env):
+   env["BUILDERS"]["ConfigBuilder"] = Builder(action=Action(CreateConfig, varlist=['submap',]))
 
 # --- Platform specific environment factory methods --- #
 def BuildIRIXEnvironment():
@@ -154,13 +155,14 @@ def BuildIRIXEnvironment():
 #------------------------------------------------------------------------------
 EnsureSConsVersion(0,94)
 #SourceSignatures('MD5')
-SourceSignatures('timestamp')
+#SourceSignatures('timestamp')
 SConsignFile()
 
 # Figure out what version of CppDom we're using
 CPPDOM_VERSION = GetCppDomVersion()
+cppdom_version_str = '%i.%i.%i' % CPPDOM_VERSION
 Export('CPPDOM_VERSION')
-print 'Building CppDom Version: %i.%i.%i' % CPPDOM_VERSION
+print 'Building CppDom Version: %s' % cppdom_version_str
 
 platform = SConsAddons.Util.GetPlatform()
 unspecified_prefix = "use-instlinks"
@@ -228,6 +230,8 @@ if not SConsAddons.Util.hasHelpFlag():
    except LookupError, le:
       pass
 
+   registerConfigBuilder(common_env)
+
    buildDir = "build." + platform   
    
    # If defaulting to instlinks prefix:
@@ -242,6 +246,7 @@ if not SConsAddons.Util.hasHelpFlag():
    base_inst_paths = {}
    base_inst_paths['base'] = os.path.abspath(common_env['prefix'])
    base_inst_paths['lib'] = pj(base_inst_paths['base'], 'lib')
+   base_inst_paths['pkgconfig'] = pj(base_inst_paths['lib'], 'pkgconfig')
    base_inst_paths['bin'] = pj(base_inst_paths['base'], 'bin')
    if common_env['versioning'] == True:
       version_suffix = "-%s_%s_%s" % CPPDOM_VERSION
@@ -351,48 +356,54 @@ if not SConsAddons.Util.hasHelpFlag():
       for d in dirs:
          SConscript(pj(d,'SConscript'), build_dir=pj(full_build_dir, d), duplicate=0)
 
+      # Build up the provides vars for the .fpc files
+      inst_paths['pkgconfig'] = pj(inst_paths['lib'],'pkgconfig')
+      provides = "cppdom"
+      if combo["type"] != "optimized":
+         provides += "_%s"%combo["type"]
 
-   # ----- LOCAL building: one-time only things --- #
-   # Create the extra builders
-   # - Define a builder for the cppdom-config script
-   # - Define a builder for the cppdom.pc file
-   builders = {
-      'ConfigBuilder'   : Builder(action = CreateConfig),
-   }   
+      arch = "noarch"
+      if "32" == combo["arch"]:
+         arch = "i386"
+      elif "64" == combo["arch"]:
+         arch = "x86_64"      
 
-   # ------------------ Build -config and .pc files ----------------- #
-   # Build up substitution map
-   submap = {
-      '@prefix@'                    : base_inst_paths['base'],
-      '@exec_prefix@'               : '${prefix}',
-      '@cppdom_cxxflags@'           : '',
-      '@includedir@'                : base_inst_paths['include'],
-      '@cppdom_extra_cxxflags@'     : '',
-      '@cppdom_extra_include_dirs@' : '',
-      '@cppdom_libs@'               : "-l%s" % cppdom_shared_libname,
-      '@libdir@'                    : base_inst_paths['lib'],
-      '@lib_subdir@'                : 'lib',
-      '@VERSION_MAJOR@'             : str(CPPDOM_VERSION[0]),
-      '@VERSION_MINOR@'             : str(CPPDOM_VERSION[1]),
-      '@VERSION_PATCH@'             : str(CPPDOM_VERSION[2]),
-   }
+      # - Define a builder for the cppdom.pc file
+      # ------------------ Build -config and .pc files ----------------- #
+      # Build up substitution map
+      submap = {
+         '@provides@'                  : provides,
+         '@prefix@'                    : base_inst_paths['base'],
+         '@exec_prefix@'               : '${prefix}',
+         '@cppdom_cxxflags@'           : '',
+         '@includedir@'                : base_inst_paths['include'],
+         '@cppdom_extra_cxxflags@'     : '',
+         '@cppdom_extra_include_dirs@' : '',
+         '@cppdom_libs@'               : "-l%s" % cppdom_shared_libname,
+         '@libdir@'                    : base_inst_paths['lib'],
+         '@arch@'                      : arch,
+         '@version@'                   : cppdom_version_str
+      }
 
-   # Setup the builder for cppdom-config
-   if GetPlatform() != 'win32':
-      env = common_env.Copy(BUILDERS = builders)
-      cppdom_config  = env.ConfigBuilder(pj(inst_paths['bin'],'cppdom-config'), 
-                                         'cppdom-config.in', submap=submap )
-      env.AddPostAction (cppdom_config, Chmod('$TARGET', 0755))
-      env.Depends(cppdom_config, 'cppdom/version.h')
+      # Setup the builder for cppdom.pc
+      if GetPlatform() != 'win32':
+         name_parts = ['cppdom',cppdom_version_str,arch]
+         if combo["type"] != "optimized":
+            name_parts.append(combo["type"])
+         pc_filename = "-".join(name_parts) + ".fpc"
+         cppdom_pc  = baseEnv.ConfigBuilder(pj(inst_paths['pkgconfig'],pc_filename), 
+                                        'cppdom.fpc.in', submap=submap)
+         baseEnv.AddPostAction (cppdom_pc, Chmod('$TARGET', 0644))
+         baseEnv.Depends(cppdom_pc, 'cppdom/version.h')
 
+      ## Setup the builder for cppdom-config
+      #if GetPlatform() != 'win32':
+      #   env = common_env.Copy(BUILDERS = builders)
+      #   cppdom_config  = env.ConfigBuilder(pj(inst_paths['bin'],'cppdom-config'), 
+      #                                      'cppdom-config.in', submap=submap )
+      #   env.AddPostAction (cppdom_config, Chmod('$TARGET', 0755))
+      #   env.Depends(cppdom_config, 'cppdom/version.h')
 
-   # Setup the builder for cppdom.pc
-   if GetPlatform() != 'win32':
-      env = common_env.Copy(BUILDERS = builders)
-      cppdom_pc  = env.ConfigBuilder(pj(inst_paths['lib'],'pkgconfig',"cppdom.pc"), 
-                                     'cppdom.pc.in', submap=submap)
-      env.AddPostAction (cppdom_pc, Chmod('$TARGET', 0644))
-      env.Depends(cppdom_pc, 'cppdom/version.h')
    
    common_env.Alias('install', inst_paths['base'])
 
