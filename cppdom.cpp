@@ -111,6 +111,8 @@ namespace cppdom
    // Remove escaping from xml text
    std::string removeXmlEscaping(const std::string& data, bool isCdata)
    {
+      cppdom::ignore_unused_variable_warning(isCdata);
+      
       std::string ret_str;
       for(std::string::size_type i = 0; i < data.size(); ++i)
       {
