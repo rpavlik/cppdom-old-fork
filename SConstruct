@@ -16,6 +16,7 @@ import SCons
 import SConsAddons.Util
 import SConsAddons.Options as sca_opts
 import SConsAddons.Variants as sca_variants
+import SConsAddons.Builders
 import SConsAddons.Options.CppUnit
 import SConsAddons.Options.Boost
 from SConsAddons.EnvironmentBuilder import EnvironmentBuilder
@@ -44,38 +45,10 @@ def symlinkInstallFunc(dest, source, env):
    return 0
 
    
-# ------ CUSTOM BUILDERS ------------- #
-def CreateConfig(target, source, env):
-   """ Config script builder 
-      Creates the prefix-config file users use to compile against this library 
-   """
-   targets = map(lambda x: str(x), target)
-   sources = map(lambda x: str(x), source)
-
-   submap = env['submap']
-
-   # Build each target from its source
-   for i in range(len(targets)):
-      print "Generating config file " + targets[i]
-      contents = open(sources[i], 'r').read()
-
-      # Go through the substitution dictionary and modify the contents read in
-      # from the source file
-      for key, value in submap.items():
-         contents = re.sub(re.escape(key), value, contents)
-
-      # Write out the target file with the new contents
-      open(targets[0], 'w').write(contents)
-      os.chmod(targets[0], 0755)
-
-def registerConfigBuilder(env):
-   env["BUILDERS"]["ConfigBuilder"] = Builder(action=Action(CreateConfig, varlist=['submap',]))
-
-
 #------------------------------------------------------------------------------
 # Main build setup
 #------------------------------------------------------------------------------
-EnsureSConsVersion(0,94)
+EnsureSConsVersion(0,96)
 #SourceSignatures('MD5')
 #SourceSignatures('timestamp')
 SConsignFile()
@@ -95,18 +68,10 @@ if GetPlatform() == "win32":
    common_env = Environment()
 else:
    common_env = Environment(ENV = os.environ)
-registerConfigBuilder(common_env)
+SConsAddons.Builders.registerSubstBuilder(common_env)
 
+# Create variant helper and builder
 variant_helper = sca_variants.VariantsHelper()
-
-
-# Variant setup (get defaults)
-default_types    = ["debug","optimized"]
-if GetPlatform() == "win32":
-   default_types.append("hybrid")
-default_libtypes = ["static","shared"]
-default_archs    = ["ia32","x64"]
-
 base_bldr = EnvironmentBuilder()
 
 # --------------- #
@@ -120,11 +85,8 @@ boost_options = SConsAddons.Options.Boost.Boost("boost","1.31.0",required=0)
 opts.AddOption(sca_opts.SeparatorOption("\nPackage Options"))
 opts.AddOption( cppunit_options )
 opts.AddOption( boost_options )
-# Variant options 
-opts.AddOption(sca_opts.SeparatorOption("\nBuild Variants"))
-opts.Add(sca_opts.ListOption('types','Types of run-times to build.(comma separated list)',default_types,default_types))
-opts.Add(sca_opts.ListOption('libtypes','Library types to build.(comma separated list)',default_libtypes,default_libtypes))
-opts.Add(sca_opts.ListOption('archs','Run-time architectures to build against.(comma separated list)',default_archs,default_archs))
+base_bldr.addOptions(opts)
+variant_helper.addOptions(opts)
 opts.AddOption(sca_opts.SeparatorOption("\nOther settings"))
 opts.Add('prefix', 'Installation prefix', unspecified_prefix)
 opts.Add('build_test', 'Build the test programs', 'yes')
@@ -133,7 +95,6 @@ opts.Add(sca_opts.BoolOption('versioning',
 if common_env.has_key("MSVS"):
    opts.Add('MSVS_VERSION', 'Set to specific version of MSVS to use. %s'%str(common_env['MSVS']['VERSIONS']), 
             common_env['MSVS']['VERSION'])
-base_bldr.addOptions(opts)
 
 opts.Process(common_env)
 
@@ -159,6 +120,7 @@ if not SConsAddons.Util.hasHelpFlag():
       pass
    
    # -- Common builder settings
+   variant_helper.readOptions(common_env)
    base_bldr.readOptions(common_env)
    base_bldr.enableWarnings()   
    
@@ -187,18 +149,15 @@ if not SConsAddons.Util.hasHelpFlag():
       
    # Define the variants to use   
    # - variant[key] - ([option_list,], is alternative)
-   variants = {}
-   variants["type"]    = (common_env["types"], True)
-   variants["libtype"] = (common_env["libtypes"], False)
-   variants["arch"]    = (common_env["archs"], True)
+   variants = variant_helper.variants   
 
    # Return list of combos
    # [ {"var":"option", "var2":["op1","op2"], .. }
    var_combos = sca_variants.zipVariants(variants)
    
-   print "types: ", common_env["types"] 
-   print "libtypes: ", common_env["libtypes"] 
-   print "archs: ", common_env["archs"] 
+   print "types: ", variants["type"] 
+   print "libtypes: ", variants["libtype"] 
+   print "archs: ", variants["arch"] 
    
    # Apply any common package options
    # Update environment for boost options
@@ -311,7 +270,7 @@ if not SConsAddons.Util.hasHelpFlag():
          if combo["type"] != "optimized":
             name_parts.append(combo["type"])
          pc_filename = "-".join(name_parts) + ".fpc"
-         cppdom_pc  = baseEnv.ConfigBuilder(pj(inst_paths['pkgconfig'],pc_filename), 
+         cppdom_pc  = baseEnv.SubstBuilder(pj(inst_paths['pkgconfig'],pc_filename), 
                                         'cppdom.fpc.in', submap=submap)
          baseEnv.AddPostAction (cppdom_pc, Chmod('$TARGET', 0644))
          baseEnv.Depends(cppdom_pc, 'cppdom/version.h')
