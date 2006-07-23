@@ -15,6 +15,7 @@ import SCons.Environment
 import SCons
 import SConsAddons.Util
 import SConsAddons.Options as sca_opts
+import SConsAddons.Variants as sca_variants
 import SConsAddons.Options.CppUnit
 import SConsAddons.Options.Boost
 from SConsAddons.EnvironmentBuilder import EnvironmentBuilder
@@ -42,59 +43,6 @@ def symlinkInstallFunc(dest, source, env):
    os.symlink(pj(os.getcwd(), source), dest)
    return 0
 
-def zipVariants(variantMap):
-   """ This method takes a map of variants and items within each variant and returns
-       a list of all combinations of ways that the variants can be combined.
-
-       The input format is:
-       { key : ([option_list,], is_alternative), }
-       - option_list is a list of all items for this variant.
-       - is_alternative is a flag saying wether we just need to choose one item or if all
-         items can be in the same variant combination
-
-       The return format is:         
-       [ {"var":"option", "var2":["op1","op2"]}, .. }
-       
-       Each entry in the list is a dictionary that fully specfies a combination of
-       variant keys and associated items.
-    """
-          
-   # List of (key,[varlist,])
-   alt_items = [ (i[0],i[1][0]) for i in variantMap.iteritems() if i[1][1] == True]
-   always_items = [ (i[0],i[1][0]) for i in variantMap.iteritems() if i[1][1] == False]
-   assert len(alt_items) + len(always_items) == len(variantMap)
-   
-   alt_item_sizes = [len(i[1]) for i in alt_items]    # Length of the alt lists
-   
-   # Build up list of
-   # [ (key,'option"), (key2,"option"), ...]
-   cur_combos=[[]]
-   for variant in alt_items:
-      new_combos = []
-      variant_key = variant[0]
-      option_list = variant[1]
-      for option in option_list:
-         for i in cur_combos:
-            new_combos.append(i+[(variant_key,option)])
-      cur_combos = new_combos
-   
-   #print cur_combos
-   
-   # Now turn the list of combo lists into a list of
-   # combo dictionaries
-   ret_combos = []
-   for c in cur_combos:
-      combo = {}
-      for i in c:
-         combo[i[0]] = i[1]
-      for i in always_items:
-         combo[i[0]] = i[1]
-      ret_combos.append(combo)
-
-   #import pprint
-   #pprint.pprint(ret_combos)
-   
-   return ret_combos
    
 # ------ CUSTOM BUILDERS ------------- #
 def CreateConfig(target, source, env):
@@ -122,32 +70,6 @@ def CreateConfig(target, source, env):
 
 def registerConfigBuilder(env):
    env["BUILDERS"]["ConfigBuilder"] = Builder(action=Action(CreateConfig, varlist=['submap',]))
-
-# --- Platform specific environment factory methods --- #
-def BuildIRIXEnvironment():
-   "Builds a base environment for other modules to build on set up for IRIX"
-   global optimize, profile, builders
-
-   CXXFLAGS = ['-n32', '-mips3', '-LANG:std', '-w2']
-   LINKFLAGS = CXXFLAGS
-
-   # Enable profiling?
-   if profile != 'no':
-      CXXFLAGS.extend([])
-      LINKFLAGS.extend([])
-
-   # Debug or optimize build?
-   if optimize != 'no':
-      CXXFLAGS.extend(['-DNDEBUG', '-O2'])
-   else:
-      CXXFLAGS.extend(['-D_DEBUG', '-g', '-gslim'])
-
-   return Environment(
-      ENV         = os.environ,
-      CXXFLAGS    = CXXFLAGS,
-      LINKFLAGS   = LINKFLAGS
-   )
-
 
 
 #------------------------------------------------------------------------------
@@ -275,7 +197,7 @@ if not SConsAddons.Util.hasHelpFlag():
 
    # Return list of combos
    # [ {"var":"option", "var2":["op1","op2"], .. }
-   var_combos = zipVariants(variants)
+   var_combos = sca_variants.zipVariants(variants)
    
    # ---- FOR EACH VARIANT ----- #
    variant_pass = -1                            # Id of the pass, useful for one-time things
@@ -312,11 +234,7 @@ if not SConsAddons.Util.hasHelpFlag():
          env_bldr.darwin_setSdk(common_env["sdk"])
    
       # --- Build environment --- #   
-      if GetPlatform() == 'irix':
-         baseEnv = BuildIRIXEnvironment()
-         opts.Apply(baseEnv)
-      else:
-         baseEnv = env_bldr.applyToEnvironment(common_env.Copy(), variant=combo,options=opts)      
+      baseEnv = env_bldr.applyToEnvironment(common_env.Copy(), variant=combo,options=opts)      
 
       # Determine the build dir for this variant
       dir_parts = ['%s-%s'%(i[0],i[1]) for i in combo.iteritems() if not isinstance(i[1],(types.ListType))]      
