@@ -97,6 +97,9 @@ else:
    common_env = Environment(ENV = os.environ)
 registerConfigBuilder(common_env)
 
+variant_helper = sca_variants.VariantsHelper()
+
+
 # Variant setup (get defaults)
 default_types    = ["debug","optimized"]
 if GetPlatform() == "win32":
