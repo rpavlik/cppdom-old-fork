@@ -88,24 +88,27 @@ print 'Building CppDom Version: %s' % cppdom_version_str
 
 platform = SConsAddons.Util.GetPlatform()
 unspecified_prefix = "use-instlinks"
-#default_libdir = 'lib'
+buildDir = "build." + platform      
+option_filename = "config.cache." + platform
 
 if GetPlatform() == "win32":
    common_env = Environment()
 else:
    common_env = Environment(ENV = os.environ)
+registerConfigBuilder(common_env)
 
 # Variant setup (get defaults)
 default_types    = ["debug","optimized"]
 if GetPlatform() == "win32":
    default_types.append("hybrid")
 default_libtypes = ["static","shared"]
-default_archs    = ["32","64"]
+default_archs    = ["ia32","x64"]
+
+base_bldr = EnvironmentBuilder()
 
 # --------------- #
 # --- OPTIONS --- #
 # --------------- #
-option_filename = "config.cache." + platform
 opts = sca_opts.Options(files = [option_filename, 'options.custom'],
                                    args= ARGUMENTS)
 
@@ -124,11 +127,10 @@ opts.Add('prefix', 'Installation prefix', unspecified_prefix)
 opts.Add('build_test', 'Build the test programs', 'yes')
 opts.Add(sca_opts.BoolOption('versioning', 
                              'If no then build only libraries and headers without versioning', True))
-opts.Add(sca_opts.BoolOption('universal', 'Build universal binaries (Mac OS X only)',True))
-opts.Add('sdk', 'Platform SDK (Mac OS X only)', '')
 if common_env.has_key("MSVS"):
    opts.Add('MSVS_VERSION', 'Set to specific version of MSVS to use. %s'%str(common_env['MSVS']['VERSIONS']), 
             common_env['MSVS']['VERSION'])
+base_bldr.addOptions(opts)
 
 opts.Process(common_env)
 
@@ -152,10 +154,10 @@ if not SConsAddons.Util.hasHelpFlag():
       opts.Save(option_filename, common_env)
    except LookupError, le:
       pass
-
-   registerConfigBuilder(common_env)
-
-   buildDir = "build." + platform   
+   
+   # -- Common builder settings
+   base_bldr.readOptions(common_env)
+   base_bldr.enableWarnings()   
    
    # If defaulting to instlinks prefix:
    #  - Use symlinks
@@ -199,7 +201,7 @@ if not SConsAddons.Util.hasHelpFlag():
    # Update environment for boost options
    if boost_options.isAvailable():
       boost_options.apply(common_env)
-   
+  
    # ---- FOR EACH VARIANT ----- #
    variant_pass = -1                            # Id of the pass, useful for one-time things
    for combo in var_combos:
@@ -207,35 +209,26 @@ if not SConsAddons.Util.hasHelpFlag():
       inst_paths = copy.copy(base_inst_paths)
       
       # -- Setup Environment builder --- #
-      env_bldr = EnvironmentBuilder()      
-      # xxx: loop invariant
-      env_bldr.enableWarnings(EnvironmentBuilder.MINIMAL)
-   
+      env_bldr = base_bldr.clone()
+            
       # Process modifications for variant combo
       # xxx: standard
       if combo["type"] == "debug":
          env_bldr.enableDebug()
          env_bldr.setMsvcRuntime(EnvironmentBuilder.MSVC_MT_DBG_DLL_RT)
       elif combo["type"] == "optimized":
-         env_bldr.enableOpt(EnvironmentBuilder.STANDARD)
+         env_bldr.enableOpt()
          env_bldr.setMsvcRuntime(EnvironmentBuilder.MSVC_MT_DLL_RT)
       elif combo["type"] == "hybrid":
          env_bldr.enableDebug()
          env_bldr.setMsvcRuntime(EnvironmentBuilder.MSVC_MT_DLL_RT)
       
-      if "32" == combo["arch"]:
+      if "ia32" == combo["arch"]:
          env_bldr.setCpuArch(EnvironmentBuilder.IA32_ARCH)
-      elif "64" == combo["arch"]:
+      elif "x64" == combo["arch"]:
          env_bldr.setCpuArch(EnvironmentBuilder.X64_ARCH)
          inst_paths['lib'] = inst_paths['lib'] + '64'
          
-      # xxx: loop invariant   
-      if common_env["universal"] == True:
-         env_bldr.darwin_enableUniversalBinaries();
-      
-      # xxx: loop invariant
-      if common_env["sdk"] != "":
-         env_bldr.darwin_setSdk(common_env["sdk"])
    
       # --- Build environment --- #   
       baseEnv = env_bldr.applyToEnvironment(common_env.Copy(), variant=combo,options=opts)      
@@ -266,7 +259,7 @@ if not SConsAddons.Util.hasHelpFlag():
       if "shared" in combo["libtype"]:
          cppdom_app_libname = cppdom_shared_libname
       elif "static" in combo["libtype"]:
-         cppdom_app_libname = cppdom_static_libname, sources
+         cppdom_app_libname = cppdom_static_libname
       
       Export('baseEnv','inst_paths','opts', 'variant_pass','combo',
              'cppunit_options', 'boost_options', 
@@ -287,9 +280,9 @@ if not SConsAddons.Util.hasHelpFlag():
          provides += "_%s"%combo["type"]
 
       arch = "noarch"
-      if "32" == combo["arch"]:
+      if "ia32" == combo["arch"]:
          arch = "i386"
-      elif "64" == combo["arch"]:
+      elif "x64" == combo["arch"]:
          arch = "x86_64"      
 
       # - Define a builder for the cppdom.pc file
