@@ -95,14 +95,16 @@ if GetPlatform() == "win32":
 else:
    common_env = Environment(ENV = os.environ)
 
-# Default variants
+# Variant setup (get defaults)
 default_types    = ["debug","optimized"]
 if GetPlatform() == "win32":
    default_types.append("hybrid")
 default_libtypes = ["static","shared"]
 default_archs    = ["32","64"]
- 
+
+# --------------- #
 # --- OPTIONS --- #
+# --------------- #
 option_filename = "config.cache." + platform
 opts = sca_opts.Options(files = [option_filename, 'options.custom'],
                                    args= ARGUMENTS)
@@ -112,17 +114,16 @@ boost_options = SConsAddons.Options.Boost.Boost("boost","1.31.0",required=0)
 opts.AddOption(sca_opts.SeparatorOption("\nPackage Options"))
 opts.AddOption( cppunit_options )
 opts.AddOption( boost_options )
+# Variant options 
 opts.AddOption(sca_opts.SeparatorOption("\nBuild Variants"))
 opts.Add(sca_opts.ListOption('types','Types of run-times to build.(comma separated list)',default_types,default_types))
 opts.Add(sca_opts.ListOption('libtypes','Library types to build.(comma separated list)',default_libtypes,default_libtypes))
 opts.Add(sca_opts.ListOption('archs','Run-time architectures to build against.(comma separated list)',default_archs,default_archs))
 opts.AddOption(sca_opts.SeparatorOption("\nOther settings"))
 opts.Add('prefix', 'Installation prefix', unspecified_prefix)
-#opts.Add('libdir', 'Library installation directory under <prefix>', default_libdir)
 opts.Add('build_test', 'Build the test programs', 'yes')
 opts.Add(sca_opts.BoolOption('versioning', 
                              'If no then build only libraries and headers without versioning', True))
-opts.Add('MakeDist', 'If true, make the distribution packages as part of the build', 'no')
 opts.Add(sca_opts.BoolOption('universal', 'Build universal binaries (Mac OS X only)',True))
 opts.Add('sdk', 'Platform SDK (Mac OS X only)', '')
 if common_env.has_key("MSVS"):
@@ -164,7 +165,7 @@ if not SConsAddons.Util.hasHelpFlag():
          common_env['INSTALL'] = symlinkInstallFunc
       common_env['prefix'] = pj( Dir('.').get_abspath(), buildDir, 'instlinks')
    
-   # Setup installation paths
+   # --- Setup installation paths --- #
    base_inst_paths = {}
    base_inst_paths['base'] = os.path.abspath(common_env['prefix'])
    base_inst_paths['lib'] = pj(base_inst_paths['base'], 'lib')
@@ -185,6 +186,10 @@ if not SConsAddons.Util.hasHelpFlag():
    variants["type"]    = (common_env["types"], True)
    variants["libtype"] = (common_env["libtypes"], False)
    variants["arch"]    = (common_env["archs"], True)
+
+   # Return list of combos
+   # [ {"var":"option", "var2":["op1","op2"], .. }
+   var_combos = sca_variants.zipVariants(variants)
    
    print "types: ", common_env["types"] 
    print "libtypes: ", common_env["libtypes"] 
@@ -194,23 +199,20 @@ if not SConsAddons.Util.hasHelpFlag():
    # Update environment for boost options
    if boost_options.isAvailable():
       boost_options.apply(common_env)
-
-   # Return list of combos
-   # [ {"var":"option", "var2":["op1","op2"], .. }
-   var_combos = sca_variants.zipVariants(variants)
    
    # ---- FOR EACH VARIANT ----- #
    variant_pass = -1                            # Id of the pass, useful for one-time things
    for combo in var_combos:
-      variant_pass += 1
+      variant_pass += 1                  # xxx: standard
       inst_paths = copy.copy(base_inst_paths)
       
       # -- Setup Environment builder --- #
-      env_bldr = EnvironmentBuilder()
-      #env_bldr.enableWarnings(EnvironmentBuilder.MAXIMUM)
+      env_bldr = EnvironmentBuilder()      
+      # xxx: loop invariant
       env_bldr.enableWarnings(EnvironmentBuilder.MINIMAL)
    
       # Process modifications for variant combo
+      # xxx: standard
       if combo["type"] == "debug":
          env_bldr.enableDebug()
          env_bldr.setMsvcRuntime(EnvironmentBuilder.MSVC_MT_DBG_DLL_RT)
@@ -227,9 +229,11 @@ if not SConsAddons.Util.hasHelpFlag():
          env_bldr.setCpuArch(EnvironmentBuilder.X64_ARCH)
          inst_paths['lib'] = inst_paths['lib'] + '64'
          
+      # xxx: loop invariant   
       if common_env["universal"] == True:
          env_bldr.darwin_enableUniversalBinaries();
       
+      # xxx: loop invariant
       if common_env["sdk"] != "":
          env_bldr.darwin_setSdk(common_env["sdk"])
    
@@ -237,10 +241,12 @@ if not SConsAddons.Util.hasHelpFlag():
       baseEnv = env_bldr.applyToEnvironment(common_env.Copy(), variant=combo,options=opts)      
 
       # Determine the build dir for this variant
+      # xxx: common
       dir_parts = ['%s-%s'%(i[0],i[1]) for i in combo.iteritems() if not isinstance(i[1],(types.ListType))]      
       full_build_dir = pj(buildDir,"--".join(dir_parts))
       
       # Build up library name and paths to use
+      # xxx: common
       (static_lib_suffix,shared_lib_suffix) = ("","")
       if GetPlatform() == "win32":   
          if combo["type"] == "debug":
