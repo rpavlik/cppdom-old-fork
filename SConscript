@@ -27,7 +27,7 @@ sources = Split("""
 if boost_options.isAvailable():
    sources.append("SpiritParser.cpp")
 
-cppdom_lib_env = baseEnv.Copy()
+cppdom_lib_env = build_env.Copy()
 cppdom_lib_env.Append(CPPPATH = [inst_paths['include'],],
                       CPPDEFINES=["CPPDOM_EXPORTS",])
 
