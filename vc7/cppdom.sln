@@ -1,14 +1,14 @@
-Microsoft Visual Studio Solution File, Format Version 8.00
+Microsoft Visual Studio Solution File, Format Version 7.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cppdom", "cppdom.vcproj", "{B2999048-3E24-41EC-B0DD-B0F8607C5F00}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
-		Debug = Debug
-		Debug - DLL = Debug - DLL
-		Release = Release
-		Release - DLL = Release - DLL
+		ConfigName.0 = Debug
+		ConfigName.1 = Debug - DLL
+		ConfigName.2 = Release
+		ConfigName.3 = Release - DLL
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{B2999048-3E24-41EC-B0DD-B0F8607C5F00}.Debug.ActiveCfg = Debug|Win32
