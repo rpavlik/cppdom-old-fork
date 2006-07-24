@@ -37,13 +37,6 @@ def GetCppDomVersion():
    patch = re.compile('.*(#define *CPPDOM_VERSION_PATCH *(\d+)).*', re.DOTALL).sub(r'\2', contents)
    return (int(major), int(minor), int(patch))
 
-def symlinkInstallFunc(dest, source, env):
-   """Replacement function for install so it can install source
-      to destination by sym linking it.
-   """
-   os.symlink(pj(os.getcwd(), source), dest)
-   return 0
-
    
 #------------------------------------------------------------------------------
 # Main build setup
@@ -136,7 +129,7 @@ if not SConsAddons.Util.hasHelpFlag():
    #  - Manually set the used prefix to the instlinks of the build dir
    if common_env['prefix'] == unspecified_prefix:
       if hasattr(os,'symlink'):
-         common_env['INSTALL'] = symlinkInstallFunc
+         common_env['INSTALL'] = SConsAddons.Util.symlinkInstallFunc
       common_env['prefix'] = pj( Dir('.').get_abspath(), buildDir, 'instlinks')
    
    # --- Setup installation paths --- #
