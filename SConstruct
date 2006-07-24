@@ -51,7 +51,7 @@ def symlinkInstallFunc(dest, source, env):
 EnsureSConsVersion(0,96)
 #SourceSignatures('MD5')
 #SourceSignatures('timestamp')
-SConsignFile()
+SConsignFile('.sconsign.'+GetPlatform())
 
 # Figure out what version of CppDom we're using
 CPPDOM_VERSION = GetCppDomVersion()
@@ -69,6 +69,8 @@ if GetPlatform() == "win32":
 else:
    common_env = Environment(ENV = os.environ)
 SConsAddons.Builders.registerSubstBuilder(common_env)
+common_env["CONFIGUREDIR"] = '.sconf_temp_'+platform
+common_env["CONFIGURELOG"] = 'sconf.log_'+platform
 
 # Create variant helper and builder
 variant_helper = sca_variants.VariantsHelper()
