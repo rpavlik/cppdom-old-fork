@@ -16,7 +16,7 @@ sources = Split("""
 if boost_options.isAvailable():
    sources.append("TestCases/SpiritTest.cpp")
 
-env = baseEnv.Copy()
+env = build_env.Copy()
 env.Append(CPPPATH = [inst_paths['include'], '#test', pj('#test','suite')],
                 LIBPATH = [inst_paths['lib'],],
                 LIBS = [cppdom_app_libname])

@@ -123,7 +123,12 @@ if not SConsAddons.Util.hasHelpFlag():
    variant_helper.readOptions(common_env)
    base_bldr.readOptions(common_env)
    base_bldr.enableWarnings()   
-   
+  
+ # Apply any common package options
+   # Update environment for boost options
+   if boost_options.isAvailable():
+      boost_options.apply(common_env)    
+     
    # If defaulting to instlinks prefix:
    #  - Use symlinks
    #  - Manually set the used prefix to the instlinks of the build dir
@@ -147,73 +152,25 @@ if not SConsAddons.Util.hasHelpFlag():
       base_inst_paths['include'] = pj(base_inst_paths['base'], 'include')
    print "using prefix: ", base_inst_paths['base']         
       
-   # Define the variants to use   
-   # - variant[key] - ([option_list,], is alternative)
-   variants = variant_helper.variants   
+   print "types: ",    variant_helper.variants["type"] 
+   print "libtypes: ", variant_helper.variants["libtype"] 
+   print "archs: ",    variant_helper.variants["arch"] 
+   
+   sub_dirs = ['cppdom']
+   if common_env['build_test'] == 'yes':
+      sub_dirs.append('test')
+   
+   # ---- FOR EACH VARIANT ----- #   
+   for combo in variant_helper.iterate(locals(), base_bldr, common_env):            
+      #baseEnv = env_bldr.applyToEnvironment(common_env.Copy(), variant=combo,options=opts)      
+      print "   Processing combo: ", ", ".join(['%s:%s'%(i[0],i[1]) for i in combo.iteritems()])
 
-   # Return list of combos
-   # [ {"var":"option", "var2":["op1","op2"], .. }
-   var_combos = sca_variants.zipVariants(variants)
-   
-   print "types: ", variants["type"] 
-   print "libtypes: ", variants["libtype"] 
-   print "archs: ", variants["arch"] 
-   
-   # Apply any common package options
-   # Update environment for boost options
-   if boost_options.isAvailable():
-      boost_options.apply(common_env)
-  
-   # ---- FOR EACH VARIANT ----- #
-   variant_pass = -1                            # Id of the pass, useful for one-time things
-   for combo in var_combos:
-      variant_pass += 1                  # xxx: standard
       inst_paths = copy.copy(base_inst_paths)
-      
-      # -- Setup Environment builder --- #
-      env_bldr = base_bldr.clone()
-            
-      # Process modifications for variant combo
-      # xxx: standard
-      if combo["type"] == "debug":
-         env_bldr.enableDebug()
-         env_bldr.setMsvcRuntime(EnvironmentBuilder.MSVC_MT_DBG_DLL_RT)
-      elif combo["type"] == "optimized":
-         env_bldr.enableOpt()
-         env_bldr.setMsvcRuntime(EnvironmentBuilder.MSVC_MT_DLL_RT)
-      elif combo["type"] == "hybrid":
-         env_bldr.enableDebug()
-         env_bldr.setMsvcRuntime(EnvironmentBuilder.MSVC_MT_DLL_RT)
-      
-      if "ia32" == combo["arch"]:
-         env_bldr.setCpuArch(EnvironmentBuilder.IA32_ARCH)
-      elif "x64" == combo["arch"]:
-         env_bldr.setCpuArch(EnvironmentBuilder.X64_ARCH)
+      if GetPlatform() != "win32" and "debug" == combo["type"]:
+         inst_paths["lib"] = pj(inst_paths["lib"],"debug")      
+      if "x64" == combo["arch"]:
          inst_paths['lib'] = inst_paths['lib'] + '64'
-         
-   
-      # --- Build environment --- #   
-      baseEnv = env_bldr.applyToEnvironment(common_env.Copy(), variant=combo,options=opts)      
-
-      # Determine the build dir for this variant
-      # xxx: common
-      dir_parts = ['%s-%s'%(i[0],i[1]) for i in combo.iteritems() if not isinstance(i[1],(types.ListType))]      
-      full_build_dir = pj(buildDir,"--".join(dir_parts))
       
-      # Build up library name and paths to use
-      # xxx: common
-      (static_lib_suffix,shared_lib_suffix) = ("","")
-      if GetPlatform() == "win32":   
-         if combo["type"] == "debug":
-            (static_lib_suffix,shared_lib_suffix) = ("_d_s","_d")
-         elif combo["type"] == "optimized":
-            (static_lib_suffix,shared_lib_suffix) = ("_s","")
-         elif combo["type"] == "hybrid":
-            (static_lib_suffix,shared_lib_suffix) = ("_h_s","_h")
-      else:
-         if combo["type"] == "debug":
-            inst_paths["lib"] = pj(inst_paths["lib"],"debug")      
-            
       cppdom_shared_libname = 'cppdom' + shared_lib_suffix + version_suffix
       cppdom_static_libname = 'cppdom' + static_lib_suffix + version_suffix
       
@@ -223,16 +180,13 @@ if not SConsAddons.Util.hasHelpFlag():
       elif "static" in combo["libtype"]:
          cppdom_app_libname = cppdom_static_libname
       
-      Export('baseEnv','inst_paths','opts', 'variant_pass','combo',
+      Export('build_env','inst_paths','opts', 'variant_pass','combo',
              'cppunit_options', 'boost_options', 
              'cppdom_shared_libname','cppdom_static_libname', 'cppdom_app_libname')
-
-      dirs = ['cppdom']
-      if common_env['build_test'] == 'yes':
-         dirs.append('test')
-
+      
       # Process subdirectories
-      for d in dirs:
+      full_build_dir = pj(buildDir,combo_dir)      
+      for d in sub_dirs:
          SConscript(pj(d,'SConscript'), build_dir=pj(full_build_dir, d), duplicate=0)
 
       # Build up the provides vars for the .fpc files
@@ -270,10 +224,10 @@ if not SConsAddons.Util.hasHelpFlag():
          if combo["type"] != "optimized":
             name_parts.append(combo["type"])
          pc_filename = "-".join(name_parts) + ".fpc"
-         cppdom_pc  = baseEnv.SubstBuilder(pj(inst_paths['pkgconfig'],pc_filename), 
+         cppdom_pc  = build_env.SubstBuilder(pj(inst_paths['pkgconfig'],pc_filename), 
                                         'cppdom.fpc.in', submap=submap)
-         baseEnv.AddPostAction (cppdom_pc, Chmod('$TARGET', 0644))
-         baseEnv.Depends(cppdom_pc, 'cppdom/version.h')
+         build_env.AddPostAction (cppdom_pc, Chmod('$TARGET', 0644))
+         build_env.Depends(cppdom_pc, 'cppdom/version.h')
 
       ## Setup the builder for cppdom-config
       #if GetPlatform() != 'win32':
