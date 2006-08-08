@@ -187,8 +187,9 @@ if not SConsAddons.Util.hasHelpFlag():
       # Build up the provides vars for the .fpc files
       inst_paths['pkgconfig'] = pj(inst_paths['lib'],'pkgconfig')
       provides = "cppdom"
-      if combo["type"] != "optimized":
-         provides += "_%s"%combo["type"]
+      # XXX: provides data
+      #if combo["type"] != "optimized":
+      #   provides += "_%s"%combo["type"]
 
       arch = "noarch"
       if "ia32" == combo["arch"]:
