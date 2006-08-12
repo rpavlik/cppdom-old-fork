@@ -10,6 +10,7 @@ parser.add_option("--version",action="store_true",help="Print the installed CppD
 parser.add_option("--cxxflags",action="store_true",help="Pring the CppDom-specific flags for the C++ compiler.")
 parser.add_option("--libs",action="store_true",help="Pring the CppDom specific libraries.")
 parser.add_option("--all",action="store_true",help="Print all the flags used for compiling or linking.")
+parser.add_option("--basedir",action="store_true",help="For compatibility. (disabled in this wrapper)")
 
 (options, pos_args) = parser.parse_args()
 
