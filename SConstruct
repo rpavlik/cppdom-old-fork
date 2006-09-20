@@ -136,7 +136,7 @@ if not SConsAddons.Util.hasHelpFlag():
    base_inst_paths = {}
    base_inst_paths['base'] = os.path.abspath(common_env['prefix'])
    base_inst_paths['lib'] = pj(base_inst_paths['base'], 'lib')
-   base_inst_paths['pkgconfig'] = pj(base_inst_paths['lib'], 'pkgconfig')
+   base_inst_paths['flagpoll'] = pj(base_inst_paths['lib'], 'flagpoll')
    base_inst_paths['bin'] = pj(base_inst_paths['base'], 'bin')
    if common_env['versioning'] == True:
       version_suffix = "-%s_%s_%s" % CPPDOM_VERSION
@@ -185,7 +185,7 @@ if not SConsAddons.Util.hasHelpFlag():
          SConscript(pj(d,'SConscript'), build_dir=pj(full_build_dir, d), duplicate=0)
 
       # Build up the provides vars for the .fpc files
-      inst_paths['pkgconfig'] = pj(inst_paths['lib'],'pkgconfig')
+      inst_paths['flagpoll'] = pj(inst_paths['lib'],'flagpoll')
       provides = "cppdom"
       # XXX: provides data
       #if combo["type"] != "optimized":
@@ -220,7 +220,7 @@ if not SConsAddons.Util.hasHelpFlag():
          if combo["type"] != "optimized":
             name_parts.append(combo["type"])
          pc_filename = "-".join(name_parts) + ".fpc"
-         cppdom_pc  = build_env.SubstBuilder(pj(inst_paths['pkgconfig'],pc_filename), 
+         cppdom_pc  = build_env.SubstBuilder(pj(inst_paths['flagpoll'],pc_filename), 
                                         'cppdom.fpc.in', submap=submap)
          build_env.AddPostAction (cppdom_pc, Chmod('$TARGET', 0644))
          build_env.Depends(cppdom_pc, 'cppdom/version.h')
