@@ -60,7 +60,6 @@ option_filename = "config.cache." + platform
 if GetPlatform() == "win32":
    if ARGUMENTS.has_key("MSVS_VERSION"):
       common_env = Environment(MSVS_VERSION = ARGUMENTS["MSVS_VERSION"])
-      common_env['WINDOWS_INSERT_MANIFEST'] = True
    else:
       common_env = Environment()
 else:
