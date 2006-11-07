@@ -1,5 +1,8 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
+2006-11-07 patrickh     Do not put headers into a versioned directory on
+                        Windows.
+                        VERSION: 0.7.7
 2006-07-13 patrickh     Implemented automatic linking on Windows.
                         VERSION: 0.7.6
 2006-07-13 patrickh     Moved the declaration of cppdom::getVersion() to

@@ -138,13 +138,19 @@ if not SConsAddons.Util.hasHelpFlag():
    base_inst_paths['lib'] = pj(base_inst_paths['base'], 'lib')
    base_inst_paths['flagpoll'] = pj(base_inst_paths['lib'], 'flagpoll')
    base_inst_paths['bin'] = pj(base_inst_paths['base'], 'bin')
-   if common_env['versioning'] == True:
+   include_dir = pj(base_inst_paths['base'], 'include')
+
+   if common_env['versioning']:
       version_suffix = "-%s_%s_%s" % CPPDOM_VERSION
-      base_inst_paths['include'] = pj(base_inst_paths['base'], 'include', 
-                                 "cppdom-%s.%s.%s" % CPPDOM_VERSION)
+
+      # We do not use a versioned header directory on Windows.
+      if not sys.platform.startswith('win'):
+         include_dir = pj(base_inst_paths['base'], 'include', 
+                          "cppdom-%s.%s.%s" % CPPDOM_VERSION)
    else:
       version_suffix = ''
-      base_inst_paths['include'] = pj(base_inst_paths['base'], 'include')
+
+   base_inst_paths['include'] = include_dir
    print "using prefix: ", base_inst_paths['base']         
       
    print "types: ",    variant_helper.variants["type"] 
