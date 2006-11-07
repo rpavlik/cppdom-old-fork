@@ -33,7 +33,13 @@ cppdom_lib_env.Append(CPPPATH = [inst_paths['include'],],
 
 # If should not do static only, then create static and shared libraries
 if "shared" in combo["libtype"]:
-   cppdom_lib = cppdom_lib_env.SharedLibrary(cppdom_shared_libname, sources)   
+   shlinkcom = cppdom_lib_env['SHLINKCOM']
+   # When using Visual C++ 8.0 or newer, embed the manifest in the DLL.
+   if float(cppdom_lib_env['MSVS_VERSION']) >= 8.0:
+      shlinkcom = [shlinkcom,
+                   'mt.exe -manifest ${TARGET}.manifest -outputresource:$TARGET;2']
+   cppdom_lib = cppdom_lib_env.SharedLibrary(cppdom_shared_libname, sources,
+                                             SHLINKCOM = shlinkcom)
    cppdom_lib_env.Install(inst_paths['lib'], cppdom_lib)
 
 if "static" in combo["libtype"]:
