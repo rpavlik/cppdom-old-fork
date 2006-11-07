@@ -58,7 +58,11 @@ buildDir = "build." + platform
 option_filename = "config.cache." + platform
 
 if GetPlatform() == "win32":
-   common_env = Environment()
+   if ARGUMENTS.has_key("MSVS_VERSION"):
+      common_env = Environment(MSVS_VERSION = ARGUMENTS["MSVS_VERSION"])
+      common_env['WINDOWS_INSERT_MANIFEST'] = True
+   else:
+      common_env = Environment()
 else:
    common_env = Environment(ENV = os.environ)
 SConsAddons.Builders.registerSubstBuilder(common_env)
@@ -87,9 +91,9 @@ opts.Add('prefix', 'Installation prefix', unspecified_prefix)
 opts.Add('build_test', 'Build the test programs', 'yes')
 opts.Add(sca_opts.BoolOption('versioning', 
                              'If no then build only libraries and headers without versioning', True))
-if common_env.has_key("MSVS"):
-   opts.Add('MSVS_VERSION', 'Set to specific version of MSVS to use. %s'%str(common_env['MSVS']['VERSIONS']), 
-            common_env['MSVS']['VERSION'])
+#if common_env.has_key("MSVS"):
+#   opts.Add('MSVS_VERSION', 'Set to specific version of MSVS to use. %s'%str(common_env['MSVS']['VERSIONS']), 
+#            common_env['MSVS']['VERSION'])
 
 opts.Process(common_env)
 
@@ -156,7 +160,7 @@ if not SConsAddons.Util.hasHelpFlag():
    print "types: ",    variant_helper.variants["type"] 
    print "libtypes: ", variant_helper.variants["libtype"] 
    print "archs: ",    variant_helper.variants["arch"] 
-   
+
    sub_dirs = ['cppdom']
    if common_env['build_test'] == 'yes':
       sub_dirs.append('test')
