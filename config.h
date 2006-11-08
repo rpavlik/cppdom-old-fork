@@ -77,7 +77,7 @@
                                    CPPDOM_STRINGIZE(CPPDOM_VERSION_MINOR) "_" \
                                    CPPDOM_STRINGIZE(CPPDOM_VERSION_PATCH)
 
-#        if defined(_DEBUG)
+#        if defined(_DEBUG) && !defined(_USE_RELEASE_RUNTIME)
 #           define CPPDOM_LIB_RT_OPT "_d"
 #        else
 #           define CPPDOM_LIB_RT_OPT ""
