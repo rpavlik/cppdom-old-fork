@@ -35,7 +35,7 @@ cppdom_lib_env.Append(CPPPATH = [inst_paths['include'],],
 if "shared" in combo["libtype"]:
    shlinkcom = cppdom_lib_env['SHLINKCOM']
    # When using Visual C++ 8.0 or newer, embed the manifest in the DLL.
-   if float(cppdom_lib_env['MSVS_VERSION']) >= 8.0:
+   if cppdom_lib_env.has_key('MSVS_VERSION') and float(cppdom_lib_env['MSVS_VERSION']) >= 8.0:
       shlinkcom = [shlinkcom,
                    'mt.exe -manifest ${TARGET}.manifest -outputresource:$TARGET;2']
    cppdom_lib = cppdom_lib_env.SharedLibrary(cppdom_shared_libname, sources,
