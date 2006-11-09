@@ -37,13 +37,20 @@ The header files and libraries needed for developing programs using CppDOM.
 rm -rf %{buildroot}
 %setup -q
 
+%ifarch x86_64
+%define arch x64
+%else
+%ifarch i386 i486 i586 i686
+%define arch ia32
+%endif
+%endif
+
 %build
-lib_subdir=`echo %{_libdir} | sed -e "s|%{_prefix}/\(.*\)|\1|"`
 CXXFLAGS="$RPM_OPT_FLAGS"
 LINKFLAGS="$RPM_OPT_FLAGS"
 export CXXFLAGS
 export LINKFLAGS
-scons prefix=%{buildroot}%{_prefix} libdir=$lib_subdir optimize=yes build_test=no
+scons prefix=%{buildroot}%{_prefix} var_arch=%{arch} var_type=optimized build_test=no
 
 %install
 [ -z %{buildroot} ] || rm -rf %{buildroot}
@@ -53,7 +60,7 @@ CXXFLAGS="$RPM_OPT_FLAGS"
 LINKFLAGS="$RPM_OPT_FLAGS" 
 export CXXFLAGS
 export LINKFLAGS
-scons prefix=%{buildroot}%{_prefix} libdir=$lib_subdir build_test=no install
+scons prefix=%{buildroot}%{_prefix} var_arch=%{arch} var_type=optimized build_test=no install
 sed -i -e 's|%{buildroot}||g' %{buildroot}%{_libdir}/flagpoll/*.fpc
 sed -i -e 's|%{buildroot}||g' %{buildroot}%{_bindir}/cppdom-config
 # Remove all stupid scons temp files
@@ -76,8 +83,11 @@ find %{buildroot}%{_prefix} -name .sconsign -exec rm {} \;
 %files devel
 %defattr(-, root, root)
 %{_bindir}/cppdom-config
-%{_includedir}/cppdom/*.h
-%{_includedir}/cppdom/ext/*.h
+%dir %{_includedir}/cppdom-%{version}/
+%dir %{_includedir}/cppdom-%{version}/cppdom/
+%{_includedir}/cppdom-%{version}/cppdom/*.h
+%dir %{_includedir}/cppdom-%{version}/cppdom/ext/
+%{_includedir}/cppdom-%{version}/cppdom/ext/*.h
 %{_libdir}/*.a
 %{_libdir}/flagpoll
 
