@@ -93,6 +93,9 @@ find %{buildroot}%{_prefix} -name .sconsign -exec rm {} \;
 
 %changelog
 * Thu Nov 09 2006 Patrick Hartling
+- Updated for the new world order
+
+* Thu Nov 09 2006 Patrick Hartling
 - Fixed bad paths in the .fpc file and in cppdom-config
 
 * Wed Apr 12 2006 Patrick Hartling
