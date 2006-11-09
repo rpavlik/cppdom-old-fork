@@ -206,7 +206,7 @@ if not SConsAddons.Util.hasHelpFlag():
       elif "x64" == combo["arch"]:
          arch = "x86_64"      
 
-      # - Define a builder for the cppdom.pc file
+      # - Define a builder for the cppdom.fpc file
       # ------------------ Build -config and .pc files ----------------- #
       # Build up substitution map
       submap = {
@@ -223,7 +223,7 @@ if not SConsAddons.Util.hasHelpFlag():
          '@version@'                   : cppdom_version_str
       }
 
-      # Setup the builder for cppdom.pc
+      # Setup the builder for cppdom.fpc
       if GetPlatform() != 'win32':
          name_parts = ['cppdom',cppdom_version_str,arch]
          if combo["type"] != "optimized":
