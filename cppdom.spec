@@ -43,7 +43,7 @@ CXXFLAGS="$RPM_OPT_FLAGS"
 LINKFLAGS="$RPM_OPT_FLAGS"
 export CXXFLAGS
 export LINKFLAGS
-scons prefix=%{buildroot}/usr libdir=$lib_subdir optimize=yes build_test=no
+scons prefix=%{buildroot}%{_prefix} libdir=$lib_subdir optimize=yes build_test=no
 
 %install
 [ -z %{buildroot} ] || rm -rf %{buildroot}
@@ -54,6 +54,8 @@ LINKFLAGS="$RPM_OPT_FLAGS"
 export CXXFLAGS
 export LINKFLAGS
 scons prefix=%{buildroot}%{_prefix} libdir=$lib_subdir build_test=no install
+sed -i -e 's|%{buildroot}||g' %{buildroot}%{_libdir}/flagpoll/*.fpc
+sed -i -e 's|%{buildroot}||g' %{buildroot}%{_bindir}/cppdom-config
 # Remove all stupid scons temp files
 find %{buildroot}%{_prefix} -name .sconsign -exec rm {} \;
 
@@ -77,8 +79,12 @@ find %{buildroot}%{_prefix} -name .sconsign -exec rm {} \;
 %{_includedir}/cppdom/*.h
 %{_includedir}/cppdom/ext/*.h
 %{_libdir}/*.a
+%{_libdir}/flagpoll
 
 %changelog
+* Thu Nov 09 2006 Patrick Hartling
+- Fixed bad paths in the .fpc file and in cppdom-config
+
 * Wed Apr 12 2006 Patrick Hartling
 - Updated to handle multi-architecture installations.
 
