@@ -26,8 +26,8 @@ up long term.
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-__revision__ = "__FILE__ __REVISION__ __DATE__ __DEVELOPER__"
 from __future__ import generators
+__revision__ = "__FILE__ __REVISION__ __DATE__ __DEVELOPER__"
 
 import os
 import sys
