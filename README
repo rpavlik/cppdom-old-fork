@@ -7,25 +7,6 @@ Dependencies
 - CppUnit (optional for test suite): See cppunit.sf.net
 - (optional) SConsAddons - Addon library for the build system.  https://realityforge.vrsource.org/SconsAddons
 
-Building on Windows
-===================
-Open the file vc7\cppdom.sln using Visual Studio (version 2002 or newer
-is required).  Build the desired targets (usually "Debug - DLL" and
-"Release - DLL").  The compiled files will be in the 'lib' subdirectory of
-the source tree.
-
-Installation must be performed by hand.  The following commands show a
-possible way to install everything correctly:
-
-   mkdir C:\cppdom\include\cppdom
-   mkdir C:\cppdom\lib
-   copy cppdom\*.h C:\cppdom\include\cppdom
-   copy lib\*.lib C:\cppdom\lib
-   copy lib\*.dll C:\cppdom\lib
-
-NOTE: Compiling the OPTIONAL Spirit-based parser (see cppdom\SpiritParser.cpp)
-is not currently supported by the Visual Studio solution vc7\cppdom.sln.
-
 Building
 ========
 CppDom uses the scons build system.  You can download scons from www.scons.org.
@@ -48,3 +29,17 @@ dependencies are located.
 type 'scons' to build cppdom shared lib.
 type 'scons install' to install on the system
 type 'scons install prefix=$HOME/software' to install in your account
+
+Universal Binaries
+==================
+
+To build the CppDOM libraries as univeral binaries (Mac OS X only), use the
+following command:
+
+   scons darwin_universal=yes var_arch=universal var_type=optimized
+
+This will default to using the Mac OS X 10.4 universal SDK in
+/Developer/SDKs/MacOSX10.4.u.sdk. To override this, add the following
+option to the above command line:
+
+   darwin_sdk=/path/to/platform/sdk
