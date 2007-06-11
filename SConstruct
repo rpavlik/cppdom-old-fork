@@ -210,14 +210,14 @@ if not SConsAddons.Util.hasHelpFlag():
       # Build up substitution map
       submap = {
          '@provides@'                  : provides,
-         '@prefix@'                    : base_inst_paths['base'],
+         '@prefix@'                    : inst_paths['base'],
          '@exec_prefix@'               : '${prefix}',
          '@cppdom_cxxflags@'           : '',
-         '@includedir@'                : base_inst_paths['include'],
+         '@includedir@'                : inst_paths['include'],
          '@cppdom_extra_cxxflags@'     : '',
          '@cppdom_extra_include_dirs@' : '',
          '@cppdom_libs@'               : "-l%s" % cppdom_shared_libname,
-         '@libdir@'                    : base_inst_paths['lib'],
+         '@libdir@'                    : inst_paths['lib'],
          '@arch@'                      : arch,
          '@version@'                   : cppdom_version_str
       }
