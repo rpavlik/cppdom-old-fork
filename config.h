@@ -46,9 +46,8 @@
 #define CPPDOM_CONFIG_H
 
 // -----------------------------------
-// win32 DLL configuration
-#if (defined(WIN32) || defined(WIN64)) && \
-    (defined(CPPDOM_AUTO_LINK) || defined(CPPDOM_DYN_LINK))
+// win32
+#if defined(WIN32) || defined(WIN64)
 
 // switch some warnings off
 #  pragma warning( disable: 4786 4275 4251 )
@@ -59,9 +58,15 @@
 #     define CPPDOM_EXPORT(ret)  __declspec(dllexport) ret
 #     define CPPDOM_CLASS        __declspec(dllexport)
 #  else
-//#     define CPPDOM_EXPORT(ret)  __declspec(dllimport) ret __stdcall
-#     define CPPDOM_EXPORT(ret)  __declspec(dllimport) ret
-#     define CPPDOM_CLASS        __declspec(dllimport)
+// Only define the dllimport bits if dynamic linking has been requested.
+#     if defined(CPPDOM_DYN_LINK)
+//#        define CPPDOM_EXPORT(ret)  __declspec(dllimport) ret __stdcall
+#        define CPPDOM_EXPORT(ret)  __declspec(dllimport) ret
+#        define CPPDOM_CLASS        __declspec(dllimport)
+#     else
+#        define CPPDOM_EXPORT(ret) ret
+#        define CPPDOM_CLASS
+#     endif
 
 // Use automatic linking when building with Visual C++ and when requested to
 // do so. Define either CPPDOM_AUTO_LINK or CPPDOM_DYN_LINK to enable automatic
@@ -100,7 +105,7 @@
 #     endif /* defined(_MSC_VER) && (defined(CPPDOM_AUTO_LINK) || defined(CPPDOM_DYN_LINK)) */
 #  endif /* defined(CPPDOM_EXPORTS) */
 
-// UNIX handling and static linking on Windows.
+// Non-Windows handling.
 #else
 #  define CPPDOM_EXPORT(ret) ret
 #  define CPPDOM_CLASS
