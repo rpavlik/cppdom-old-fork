@@ -15,6 +15,9 @@ tests = Split("""
    parsetest
 """)
 
+if "shared" in combo["libtype"]:
+   test_env.AppendUnique(CPPDEFINES = ["CPPDOM_DYN_LINK"])
+
 for t in tests:
    test_prog = test_env.Program(t, t+'.cpp')
 

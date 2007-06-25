@@ -28,8 +28,7 @@ if boost_options.isAvailable():
    sources.append("SpiritParser.cpp")
 
 cppdom_lib_env = build_env.Copy()
-cppdom_lib_env.Append(CPPPATH = [inst_paths['include'],],
-                      CPPDEFINES=["CPPDOM_EXPORTS",])
+cppdom_lib_env.Append(CPPPATH = [inst_paths['include'],])
 
 # If should not do static only, then create static and shared libraries
 if "shared" in combo["libtype"]:
@@ -38,13 +37,16 @@ if "shared" in combo["libtype"]:
    if cppdom_lib_env.has_key('MSVS_VERSION') and float(cppdom_lib_env['MSVS_VERSION']) >= 8.0:
       shlinkcom = [shlinkcom,
                    'mt.exe -manifest ${TARGET}.manifest -outputresource:$TARGET;2']
-   cppdom_lib = cppdom_lib_env.SharedLibrary(cppdom_shared_libname, sources,
-                                             SHLINKCOM = shlinkcom)
-   cppdom_lib_env.Install(inst_paths['lib'], cppdom_lib)
+   cppdom_shared_lib_env = cppdom_lib_env.Copy()
+   cppdom_shared_lib_env.AppendUnique(CPPDEFINES = ["CPPDOM_EXPORTS", "CPPDOM_DYN_LINK"])
+   cppdom_lib = cppdom_shared_lib_env.SharedLibrary(cppdom_shared_libname, sources,
+                                                    SHLINKCOM = shlinkcom)
+   cppdom_shared_lib_env.Install(inst_paths['lib'], cppdom_lib)
 
 if "static" in combo["libtype"]:
-   cppdom_static_lib = cppdom_lib_env.StaticLibrary(cppdom_static_libname, sources)
-   cppdom_lib_env.Install(inst_paths['lib'], cppdom_static_lib)
+   cppdom_static_lib_env = cppdom_lib_env.Copy()
+   cppdom_static_lib = cppdom_static_lib_env.StaticLibrary(cppdom_static_libname, sources)
+   cppdom_static_lib_env.Install(inst_paths['lib'], cppdom_static_lib)
 
 if variant_pass == 0:
    header_path = pj(inst_paths['include'],'cppdom')
