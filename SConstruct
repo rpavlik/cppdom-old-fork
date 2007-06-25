@@ -205,6 +205,19 @@ if not SConsAddons.Util.hasHelpFlag():
       elif "x64" == combo["arch"]:
          arch = "x86_64"      
 
+      cppdom_cxxflags = ''
+      cppdom_libs = "-l%s" % cppdom_shared_libname
+
+      # Use automatic linking on Windows.
+      if GetPlatform() == 'win32':
+         cppdom_libs     = ''
+         cppdom_cxxflags = '/DCPPDOM_AUTO_LINK'
+
+         if "debug" in combo["type"] or "hybrid" in combo["type"]:
+            cppdom_cxxflags += ' /DCPPDOM_DEBUG'
+         if "shared" in combo["libtype"]:
+            cppdom_cxxflags += ' /DCPPDOM_DYN_LINK'
+
       # - Define a builder for the cppdom.fpc file
       # ------------------ Build -config and .pc files ----------------- #
       # Build up substitution map
@@ -212,20 +225,25 @@ if not SConsAddons.Util.hasHelpFlag():
          '@provides@'                  : provides,
          '@prefix@'                    : inst_paths['base'],
          '@exec_prefix@'               : '${prefix}',
-         '@cppdom_cxxflags@'           : '',
+         '@cppdom_cxxflags@'           : cppdom_cxxflags,
          '@includedir@'                : inst_paths['include'],
          '@cppdom_extra_cxxflags@'     : '',
          '@cppdom_extra_include_dirs@' : '',
-         '@cppdom_libs@'               : "-l%s" % cppdom_shared_libname,
+         '@cppdom_libs@'               : cppdom_libs,
          '@libdir@'                    : inst_paths['lib'],
          '@arch@'                      : arch,
          '@version@'                   : cppdom_version_str
       }
 
       # Setup the builder for cppdom.fpc
+      # XXX: This generates multiple cppdom*.fpc files instead of putting all
+      # the variation of debug/optimized/hybrid and static/shared into one
+      # architecture-specific file!
       name_parts = ['cppdom',cppdom_version_str,arch]
       if combo["type"] != "optimized":
          name_parts.append(combo["type"])
+      if GetPlatform() == 'win32':
+         name_parts.append(combo["libtype"])
       pc_filename = "-".join(name_parts) + ".fpc"
       cppdom_pc   = build_env.SubstBuilder(pj(inst_paths['flagpoll'],
                                               pc_filename),
