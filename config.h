@@ -46,8 +46,9 @@
 #define CPPDOM_CONFIG_H
 
 // -----------------------------------
-// win32 configuration
-#if defined(WIN32) || defined(WIN64)
+// win32 DLL configuration
+#if (defined(WIN32) || defined(WIN64)) && \
+    (defined(CPPDOM_AUTO_LINK) || defined(CPPDOM_DYN_LINK))
 
 // switch some warnings off
 #  pragma warning( disable: 4786 4275 4251 )
@@ -99,6 +100,7 @@
 #     endif /* defined(_MSC_VER) && (defined(CPPDOM_AUTO_LINK) || defined(CPPDOM_DYN_LINK)) */
 #  endif /* defined(CPPDOM_EXPORTS) */
 
+// UNIX handling and static linking on Windows.
 #else
 #  define CPPDOM_EXPORT(ret) ret
 #  define CPPDOM_CLASS
