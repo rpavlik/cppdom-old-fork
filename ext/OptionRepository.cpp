@@ -136,6 +136,7 @@ void OptionRepository::loadOptionsFile(std::string filename)
 
 void OptionRepository::saveOptionsFile(std::string filename)
 {
+   mDocRoot->getPiList().clear();
    mDocRoot->saveFile(filename);
 }
 
