@@ -83,8 +83,12 @@
                                    CPPDOM_STRINGIZE(CPPDOM_VERSION_MINOR) "_" \
                                    CPPDOM_STRINGIZE(CPPDOM_VERSION_PATCH)
 
-#        if defined(_DEBUG) && !defined(_USE_RELEASE_RUNTIME)
-#           define CPPDOM_LIB_RT_OPT "_d"
+#        if defined(CPPDOM_DEBUG)
+#           if defined(_DEBUG)
+#              define CPPDOM_LIB_RT_OPT "_d"
+#           else
+#              define CPPDOM_LIB_RT_OPT "_h"
+#           endif
 #        else
 #           define CPPDOM_LIB_RT_OPT ""
 #        endif
@@ -109,10 +113,6 @@
 #else
 #  define CPPDOM_EXPORT(ret) ret
 #  define CPPDOM_CLASS
-#endif
-
-#ifdef _DEBUG
-#define CPPDOM_DEBUG
 #endif
 
 // -----------------------------------

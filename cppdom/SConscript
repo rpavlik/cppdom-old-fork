@@ -30,6 +30,9 @@ if boost_options.isAvailable():
 cppdom_lib_env = build_env.Copy()
 cppdom_lib_env.Append(CPPPATH = [inst_paths['include'],])
 
+if "debug" in combo["type"] or "hybrid" in combo["type"]:
+   cppdom_lib_env.AppendUnique(CPPDEFINES = ["CPPDOM_DEBUG"])
+
 # If should not do static only, then create static and shared libraries
 if "shared" in combo["libtype"]:
    shlinkcom = cppdom_lib_env['SHLINKCOM']
