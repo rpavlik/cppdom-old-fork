@@ -250,19 +250,9 @@ if not SConsAddons.Util.hasHelpFlag():
                                            'cppdom.fpc.in', submap = submap)
       build_env.AddPostAction(cppdom_pc, Chmod('$TARGET', 0644))
       build_env.Depends(cppdom_pc, 'cppdom/version.h')
-
-      ## Setup the builder for cppdom-config
-      #if GetPlatform() != 'win32':
-      #   env = common_env.Copy(BUILDERS = builders)
-      #   cppdom_config  = env.ConfigBuilder(pj(inst_paths['bin'],'cppdom-config'), 
-      #                                      'cppdom-config.in', submap=submap )
-      #   env.AddPostAction (cppdom_config, Chmod('$TARGET', 0755))
-      #   env.Depends(cppdom_config, 'cppdom/version.h')
-
    
    common_env.Install(inst_paths['bin'],'cppdom-config')
    common_env.Alias('install', inst_paths['base'])
 
    # Close up with aliases and defaults   
    Default('.')
-
