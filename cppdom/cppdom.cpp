@@ -826,6 +826,18 @@ namespace cppdom
       return mParent;
    }
 
+   std::string Node::getPath()
+   {
+      std::string path(getName());
+      Node* parent = getParent();
+      while (parent != NULL)
+      {
+         path = parent->getName() + "/" + path;
+         parent = parent->getParent();
+      }
+      return path;
+   }
+
    /** \exception throws cppdom::Error when a streaming or parsing error occur */
    void Node::load(std::istream& in, ContextPtr& context)
    {
