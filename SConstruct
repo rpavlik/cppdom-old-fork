@@ -223,15 +223,15 @@ if not SConsAddons.Util.hasHelpFlag():
       }
 
       # Setup the builder for cppdom.fpc
-      if GetPlatform() != 'win32':
-         name_parts = ['cppdom',cppdom_version_str,arch]
-         if combo["type"] != "optimized":
-            name_parts.append(combo["type"])
-         pc_filename = "-".join(name_parts) + ".fpc"
-         cppdom_pc  = build_env.SubstBuilder(pj(inst_paths['flagpoll'],pc_filename), 
-                                        'cppdom.fpc.in', submap=submap)
-         build_env.AddPostAction (cppdom_pc, Chmod('$TARGET', 0644))
-         build_env.Depends(cppdom_pc, 'cppdom/version.h')
+      name_parts = ['cppdom',cppdom_version_str,arch]
+      if combo["type"] != "optimized":
+         name_parts.append(combo["type"])
+      pc_filename = "-".join(name_parts) + ".fpc"
+      cppdom_pc   = build_env.SubstBuilder(pj(inst_paths['flagpoll'],
+                                              pc_filename),
+                                           'cppdom.fpc.in', submap = submap)
+      build_env.AddPostAction(cppdom_pc, Chmod('$TARGET', 0644))
+      build_env.Depends(cppdom_pc, 'cppdom/version.h')
 
       ## Setup the builder for cppdom-config
       #if GetPlatform() != 'win32':
