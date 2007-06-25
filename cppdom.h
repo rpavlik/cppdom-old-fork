@@ -624,6 +624,11 @@ namespace cppdom
        */
       Node* getParent() const;
 
+      /**
+       * Returns the full path of this node.
+       */
+      std::string getPath();
+
       void addChild(NodePtr& node);
       bool removeChild(NodePtr& node);
       bool removeChild(std::string& childName);
