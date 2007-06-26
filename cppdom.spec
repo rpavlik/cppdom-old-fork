@@ -13,6 +13,7 @@ Group: Development/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 License: LGPL
 BuildPrereq: scons >= 0.96.1
+BuildPrereq: doxygen
 Vendor: xml-cppdom Project
 Provides: cppdom = %{version}-%{release}
 
@@ -32,6 +33,13 @@ Requires: flagpoll >= 0.8.1
 %description devel
 The header files and libraries needed for developing programs using CppDOM.
 
+%package doc
+Summary: CppDOM documentation
+Group: Development/C++
+
+%description doc
+CppDOM API documentation in HTML form.
+
 %prep
 rm -rf %{buildroot}
 %setup -q
@@ -50,6 +58,8 @@ LINKFLAGS="$RPM_OPT_FLAGS"
 export CXXFLAGS
 export LINKFLAGS
 scons prefix=%{buildroot}%{_prefix} var_arch=%{arch} var_type=optimized build_test=no
+cd doc && doxygen cppdom.doxy
+cd ..
 
 %install
 [ -z %{buildroot} ] || rm -rf %{buildroot}
@@ -60,10 +70,15 @@ LINKFLAGS="$RPM_OPT_FLAGS"
 export CXXFLAGS
 export LINKFLAGS
 scons prefix=%{buildroot}%{_prefix} var_arch=%{arch} var_type=optimized build_test=no install
+mkdir -p %{buildroot}%{_docdir}/cppdom-%{version}
+mv doc/html %{buildroot}%{_docdir}/cppdom-%{version}
 sed -i -e 's|%{buildroot}||g' %{buildroot}%{_libdir}/flagpoll/*.fpc
 sed -i -e 's|%{buildroot}||g' %{buildroot}%{_bindir}/cppdom-config
 # Remove all stupid scons temp files
 find %{buildroot}%{_prefix} -name .sconsign -exec rm {} \;
+for f in README AUTHORS ChangeLog COPYING ; do
+   cp $f %{buildroot}%{_docdir}/cppdom-%{version}
+done
 
 %clean
 [ -z %{buildroot} ] || rm -rf %{buildroot}
@@ -77,7 +92,11 @@ find %{buildroot}%{_prefix} -name .sconsign -exec rm {} \;
 %files
 %defattr(-, root, root)
 %{_libdir}/*.so
-%doc README AUTHORS ChangeLog COPYING
+%dir %{_docdir}/cppdom-%{version}/
+%doc %{_docdir}/cppdom-%{version}/README
+%doc %{_docdir}/cppdom-%{version}/AUTHORS
+%doc %{_docdir}/cppdom-%{version}/ChangeLog
+%doc %{_docdir}/cppdom-%{version}/COPYING
 
 %files devel
 %defattr(-, root, root)
@@ -90,9 +109,14 @@ find %{buildroot}%{_prefix} -name .sconsign -exec rm {} \;
 %{_libdir}/*.a
 %{_libdir}/flagpoll
 
+%files doc
+%dir %{_docdir}/cppdom-%{version}/
+%doc %{_docdir}/cppdom-%{version}/html
+
 %changelog
 * Tue Jun 26 2007 Patrick Hartling <patrick@infiscape.com> 0.7.8-1
 - Updated to version 0.7.8.
+- Include rendered API documentation in the new cppdom-doc package.
 
 * Tue Jun 26 2007 Patrick Hartling <patrick@infiscape.com> 0.7.7-2
 - Added flagpoll as a requirement for cppdom-devel
