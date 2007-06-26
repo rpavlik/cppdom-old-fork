@@ -83,6 +83,11 @@
                                    CPPDOM_STRINGIZE(CPPDOM_VERSION_MINOR) "_" \
                                    CPPDOM_STRINGIZE(CPPDOM_VERSION_PATCH)
 
+// Defining _DEBUG implies the need for CPPDOM_DEBUG.
+#        if defined(_DEBUG) && ! defined(CPPDOM_DEBUG)
+#           define CPPDOM_DEBUG
+#        endif
+
 #        if defined(CPPDOM_DEBUG)
 #           if defined(_DEBUG)
 #              define CPPDOM_LIB_RT_OPT "_d"
