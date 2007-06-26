@@ -1,7 +1,7 @@
 # Spec file for cppdom.
 %define name    cppdom
 %define version 0.7.7
-%define release 1
+%define release 2
 
 Name: %{name}
 Summary: A C++ based XML loader and writer with an internal DOM representation.
@@ -15,7 +15,6 @@ License: LGPL
 BuildPrereq: scons >= 0.96.1
 Vendor: xml-cppdom Project
 Provides: cppdom = %{version}-%{release}
-Obsoletes: cppdom < %{version}-%{release}
 
 %description
 CppDOM is a C++ based XML loader and writer with an internal DOM
@@ -28,7 +27,7 @@ Summary: Header files and libraries needed for CppDOM development
 Group: Development/C++
 Requires: cppdom = %{version}-%{release}
 Provides: cppdom-devel = %{version}-%{release}
-Conflicts: cppdom-devel < %{version}-%{release}
+Requires: flagpoll >= 0.8.1
 
 %description devel
 The header files and libraries needed for developing programs using CppDOM.
@@ -92,16 +91,21 @@ find %{buildroot}%{_prefix} -name .sconsign -exec rm {} \;
 %{_libdir}/flagpoll
 
 %changelog
-* Thu Nov 09 2006 Patrick Hartling
+* Tue Jun 26 2007 Patrick Hartling <patrick@infiscape.com> 0.7.7-2
+- Added flagpoll as a requirement for cppdom-devel
+- Removed Conflicts directives since this can be installed in parallel with
+  other CppDOM releases.
+
+* Thu Nov 09 2006 Patrick Hartling <patrick@infiscape.com>
 - Updated for the new world order
 
-* Thu Nov 09 2006 Patrick Hartling
+* Thu Nov 09 2006 Patrick Hartling <patrick@infiscape.com>
 - Fixed bad paths in the .fpc file and in cppdom-config
 
-* Wed Apr 12 2006 Patrick Hartling
+* Wed Apr 12 2006 Patrick Hartling <patrick@infiscape.com>
 - Updated to handle multi-architecture installations.
 
-* Mon Jun 06 2005 Aron Bierbaum
+* Mon Jun 06 2005 Aron Bierbaum <aronb@infiscape.com>
 - Total rewrite
 
 * Thu Mar 13 2003 Allen Bierbaum
