@@ -1,5 +1,7 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
+2007-06-26 patrickh     Made many build fixes and improvements on Windows.
+                        VERSION: 0.7.8
 2006-11-07 patrickh     Do not put headers into a versioned directory on
                         Windows.
                         VERSION: 0.7.7

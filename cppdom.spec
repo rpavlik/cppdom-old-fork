@@ -1,7 +1,7 @@
 # Spec file for cppdom.
 %define name    cppdom
-%define version 0.7.7
-%define release 2
+%define version 0.7.8
+%define release 1
 
 Name: %{name}
 Summary: A C++ based XML loader and writer with an internal DOM representation.
@@ -91,6 +91,9 @@ find %{buildroot}%{_prefix} -name .sconsign -exec rm {} \;
 %{_libdir}/flagpoll
 
 %changelog
+* Tue Jun 26 2007 Patrick Hartling <patrick@infiscape.com> 0.7.8-1
+- Updated to version 0.7.8.
+
 * Tue Jun 26 2007 Patrick Hartling <patrick@infiscape.com> 0.7.7-2
 - Added flagpoll as a requirement for cppdom-devel
 - Removed Conflicts directives since this can be installed in parallel with
