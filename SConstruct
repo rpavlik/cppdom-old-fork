@@ -61,6 +61,7 @@ if GetPlatform() == "win32":
       common_env = Environment(MSVS_VERSION = ARGUMENTS["MSVS_VERSION"])
    else:
       common_env = Environment()
+   print "Using MSVS version", common_env["MSVS"]["VERSION"]
 else:
    common_env = Environment(ENV = os.environ)
 SConsAddons.Builders.registerSubstBuilder(common_env)
