@@ -37,7 +37,10 @@ if "debug" in combo["type"] or "hybrid" in combo["type"]:
 if "shared" in combo["libtype"]:
    shlinkcom = cppdom_lib_env['SHLINKCOM']
    # When using Visual C++ 8.0 or newer, embed the manifest in the DLL.
-   if cppdom_lib_env.has_key('MSVS_VERSION') and float(cppdom_lib_env['MSVS_VERSION']) >= 8.0:
+   # NOTE: The [:3] bit used before passing the MSVS_VERSION value to float()
+   # is to handle the case of Visual C++ Express Edition which appends "Exp"
+   # to the version number.
+   if cppdom_lib_env.has_key('MSVS_VERSION') and float(cppdom_lib_env['MSVS_VERSION'][:3]) >= 8.0:
       shlinkcom = [shlinkcom,
                    'mt.exe -manifest ${TARGET}.manifest -outputresource:$TARGET;2']
    cppdom_shared_lib_env = cppdom_lib_env.Copy()
