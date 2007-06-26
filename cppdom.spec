@@ -6,7 +6,7 @@
 Name: %{name}
 Summary: A C++ based XML loader and writer with an internal DOM representation.
 Version: %{version}
-Release: %{release}
+Release: %{release}%{?dist}
 Source: %{name}-%{version}.tar.gz
 URL: http://www.sf.net/projects/xml-cppdom/
 Group: Development/Libraries
