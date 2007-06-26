@@ -41,7 +41,7 @@ if "shared" in combo["libtype"]:
       shlinkcom = [shlinkcom,
                    'mt.exe -manifest ${TARGET}.manifest -outputresource:$TARGET;2']
    cppdom_shared_lib_env = cppdom_lib_env.Copy()
-   cppdom_shared_lib_env.AppendUnique(CPPDEFINES = ["CPPDOM_EXPORTS", "CPPDOM_DYN_LINK"])
+   cppdom_shared_lib_env.AppendUnique(CPPDEFINES = ["CPPDOM_EXPORTS"])
    cppdom_lib = cppdom_shared_lib_env.SharedLibrary(cppdom_shared_libname, sources,
                                                     SHLINKCOM = shlinkcom)
    cppdom_shared_lib_env.Install(inst_paths['lib'], cppdom_lib)
