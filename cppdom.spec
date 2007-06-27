@@ -13,7 +13,6 @@ Group: Development/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 License: LGPL
 BuildPrereq: scons >= 0.96.1
-BuildPrereq: doxygen
 Vendor: xml-cppdom Project
 Provides: cppdom = %{version}-%{release}
 
@@ -33,9 +32,23 @@ Requires: flagpoll >= 0.8.1
 %description devel
 The header files and libraries needed for developing programs using CppDOM.
 
+%package config
+Summary: The cppdom-config script that calls flagpoll
+Group: Development/C++
+Requires: cppdom-devel
+Requires: flagpoll >= 0.8.1
+Requires: python
+
+%description config
+The cppdom-config Python script that provides backwards compability for older
+packages not using Flagpoll for getting compiler options necessary for
+building against CppDOM.
+
 %package doc
 Summary: CppDOM documentation
 Group: Development/C++
+BuildPrereq: doxygen
+BuildPrereq: graphviz
 
 %description doc
 CppDOM API documentation in HTML form.
@@ -109,7 +122,12 @@ done
 %{_libdir}/*.a
 %{_libdir}/flagpoll
 
+%files config
+%defattr(-, root, root)
+%{_bindir}/cppdom-config
+
 %files doc
+%defattr(-, root, root)
 %dir %{_docdir}/cppdom-%{version}/
 %doc %{_docdir}/cppdom-%{version}/html
 
@@ -117,6 +135,8 @@ done
 * Tue Jun 26 2007 Patrick Hartling <patrick@infiscape.com> 0.7.8-1
 - Updated to version 0.7.8.
 - Include rendered API documentation in the new cppdom-doc package.
+- Package cppdom-config separately so that multiple versions of the cppdom
+  package can be installed in parallel.
 
 * Tue Jun 26 2007 Patrick Hartling <patrick@infiscape.com> 0.7.7-2
 - Added flagpoll as a requirement for cppdom-devel
