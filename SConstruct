@@ -167,7 +167,7 @@ if not SConsAddons.Util.hasHelpFlag():
    sub_dirs = ['cppdom']
    if common_env['build_test'] == 'yes':
       sub_dirs.append('test')
-   
+
    # ---- FOR EACH VARIANT ----- #   
    for combo in variant_helper.iterate(locals(), base_bldr, common_env):            
       #baseEnv = env_bldr.applyToEnvironment(common_env.Copy(), variant=combo,options=opts)      
@@ -212,6 +212,12 @@ if not SConsAddons.Util.hasHelpFlag():
          arch = "i386"
       elif "x64" == combo["arch"]:
          arch = "x86_64"      
+      elif "ppc" == combo["arch"]:
+         arch = "ppc"
+      elif "ppc" == combo["arch"]:
+         arch = "ppc64"
+      elif "universal" == combo["arch"]:
+         arch = "universal"
 
       cppdom_cxxflags = ''
       cppdom_libs = "-l%s" % cppdom_shared_libname
