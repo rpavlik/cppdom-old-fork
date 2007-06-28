@@ -76,8 +76,6 @@ cd ..
 
 %install
 [ -z %{buildroot} ] || rm -rf %{buildroot}
-
-lib_subdir=`echo %{_libdir} | sed -e "s|%{_prefix}/\(.*\)|\1|"`
 CXXFLAGS="$RPM_OPT_FLAGS"
 LINKFLAGS="$RPM_OPT_FLAGS" 
 export CXXFLAGS
@@ -85,8 +83,6 @@ export LINKFLAGS
 scons prefix=%{buildroot}%{_prefix} var_arch=%{arch} var_type=optimized build_test=no install
 mkdir -p %{buildroot}%{_docdir}/cppdom-%{version}
 mv doc/html %{buildroot}%{_docdir}/cppdom-%{version}
-sed -i -e 's|%{buildroot}||g' %{buildroot}%{_libdir}/flagpoll/*.fpc
-sed -i -e 's|%{buildroot}||g' %{buildroot}%{_bindir}/cppdom-config
 # Remove all stupid scons temp files
 find %{buildroot}%{_prefix} -name .sconsign -exec rm {} \;
 for f in README AUTHORS ChangeLog COPYING ; do

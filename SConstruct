@@ -141,7 +141,9 @@ if not SConsAddons.Util.hasHelpFlag():
    base_inst_paths['lib'] = pj(base_inst_paths['base'], 'lib')
    base_inst_paths['flagpoll'] = pj(base_inst_paths['lib'], 'flagpoll')
    base_inst_paths['bin'] = pj(base_inst_paths['base'], 'bin')
+   base_inst_paths['flagpollPrefix'] = pj('${fp_file_cwd}' ,'..' ,'..')
    include_dir = pj(base_inst_paths['base'], 'include')
+   base_inst_paths['includePrefix'] = pj( base_inst_paths['flagpollPrefix'], 'include')
 
    if common_env['versioning']:
       version_suffix = "-%s_%s_%s" % CPPDOM_VERSION
@@ -150,6 +152,8 @@ if not SConsAddons.Util.hasHelpFlag():
       if not sys.platform.startswith('win'):
          include_dir = pj(base_inst_paths['base'], 'include', 
                           "cppdom-%s.%s.%s" % CPPDOM_VERSION)
+      base_inst_paths['includePrefix'] = pj(  base_inst_paths['includePrefix'], 
+                                              "cppdom-%s.%s.%s" % CPPDOM_VERSION )
    else:
       version_suffix = ''
 
@@ -170,10 +174,13 @@ if not SConsAddons.Util.hasHelpFlag():
       print "   Processing combo: ", ", ".join(['%s:%s'%(i[0],i[1]) for i in combo.iteritems()])
 
       inst_paths = copy.copy(base_inst_paths)
+      inst_paths['libPrefix'] = pj(inst_paths['flagpollPrefix'], 'lib')
       if GetPlatform() != "win32" and "debug" == combo["type"]:
-         inst_paths["lib"] = pj(inst_paths["lib"],"debug")      
+         inst_paths["lib"] = pj(inst_paths["lib"],"debug")
+         inst_paths['libPrefix'] = pj(inst_paths['libPrefix'],'debug')
       if "x64" == combo["arch"]:
          inst_paths['lib'] = inst_paths['lib'] + '64'
+         inst_paths['libPrefix'] = inst_paths['libPrefix'] + '64'
       
       cppdom_shared_libname = 'cppdom' + shared_lib_suffix + version_suffix
       cppdom_static_libname = 'cppdom' + static_lib_suffix + version_suffix
@@ -224,14 +231,14 @@ if not SConsAddons.Util.hasHelpFlag():
       # Build up substitution map
       submap = {
          '@provides@'                  : provides,
-         '@prefix@'                    : inst_paths['base'],
+         '@prefix@'                    : inst_paths['flagpollPrefix'],
          '@exec_prefix@'               : '${prefix}',
          '@cppdom_cxxflags@'           : cppdom_cxxflags,
-         '@includedir@'                : inst_paths['include'],
+         '@includedir@'                : inst_paths['includePrefix'],
          '@cppdom_extra_cxxflags@'     : '',
          '@cppdom_extra_include_dirs@' : '',
          '@cppdom_libs@'               : cppdom_libs,
-         '@libdir@'                    : inst_paths['lib'],
+         '@libdir@'                    : inst_paths['libPrefix'],
          '@arch@'                      : arch,
          '@version@'                   : cppdom_version_str
       }
