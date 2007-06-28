@@ -30,16 +30,25 @@ type 'scons' to build cppdom shared lib.
 type 'scons install' to install on the system
 type 'scons install prefix=$HOME/software' to install in your account
 
+Mac OS X
+========
+
+On Mac OS X, the build may auto-detect that it can build multiple
+architectures (not necessarily universal binaries), but this case is not
+currently handled well. SCons will complain that there are multiple ways to
+build the same target and exit with an error. To work around this, specify
+the desired architecture explicitly (pass var_arch=ppc, var_arch=ia32, or
+var_arch=ppc64 on the scons command line) or build a universal binary (see
+below).
+
 Universal Binaries
 ==================
 
 To build the CppDOM libraries as univeral binaries (Mac OS X only), use the
 following command:
 
-   scons darwin_universal=yes var_arch=universal var_type=optimized
+   scons darwin_universal=yes var_arch=universal var_type=optimized \
+         darwin_sdk=/Developer/SDKs/MacOSX10.4u.sdk
 
-This will default to using the Mac OS X 10.4 universal SDK in
-/Developer/SDKs/MacOSX10.4.u.sdk. To override this, add the following
-option to the above command line:
-
-   darwin_sdk=/path/to/platform/sdk
+An alternate platform SDK can be used by using the appropriate value with
+the darwin_sdk command line arcument.
