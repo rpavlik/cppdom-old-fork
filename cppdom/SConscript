@@ -45,6 +45,11 @@ if "shared" in combo["libtype"]:
                    'mt.exe -manifest ${TARGET}.manifest -outputresource:$TARGET;2']
    cppdom_shared_lib_env = cppdom_lib_env.Copy()
    cppdom_shared_lib_env.AppendUnique(CPPDEFINES = ["CPPDOM_EXPORTS"])
+   if GetPlatform() == 'darwin':
+      cppdom_shared_lib_env.Append(
+         LINKFLAGS = ['-install_name', 'lib%s.dylib' % cppdom_shared_libname]
+      )
+
    cppdom_lib = cppdom_shared_lib_env.SharedLibrary(cppdom_shared_libname, sources,
                                                     SHLINKCOM = shlinkcom)
    cppdom_shared_lib_env.Install(inst_paths['lib'], cppdom_lib)
