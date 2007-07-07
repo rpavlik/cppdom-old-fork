@@ -1,7 +1,7 @@
 # Spec file for cppdom.
 %define name    cppdom
-%define version 0.7.8
-%define release 2
+%define version 0.7.9
+%define release 1
 
 Name: %{name}
 Summary: A C++ based XML loader and writer with an internal DOM representation.
@@ -127,6 +127,9 @@ done
 %doc %{_docdir}/cppdom-%{version}/html
 
 %changelog
+* Fri Jul 06 2007 Patrick Hartling <patrick@infiscape.com> 0.7.9-1
+- Updated to version 0.7.9.
+
 * Wed Jun 27 2007 Patrick Hartling <patrick@infiscape.com> 0.7.8-2
 - Removed cppdom-config from the cppdom-devel package.
 
