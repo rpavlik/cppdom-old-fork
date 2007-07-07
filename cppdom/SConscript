@@ -47,7 +47,10 @@ if "shared" in combo["libtype"]:
    cppdom_shared_lib_env.AppendUnique(CPPDEFINES = ["CPPDOM_EXPORTS"])
    if GetPlatform() == 'darwin':
       cppdom_shared_lib_env.Append(
-         LINKFLAGS = ['-install_name', 'lib%s.dylib' % cppdom_shared_libname]
+         LINKFLAGS = ['-install_name', 'lib%s.dylib' % cppdom_shared_libname,
+                      '-Wl,-compatibility_version,%i.%i' % \
+                         (CPPDOM_VERSION[0], CPPDOM_VERSION[1]),
+                      '-Wl,-current_version,%i.%i.%i' % CPPDOM_VERSION]
       )
 
    cppdom_lib = cppdom_shared_lib_env.SharedLibrary(cppdom_shared_libname, sources,
