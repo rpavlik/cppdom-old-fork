@@ -10,7 +10,7 @@ Version: @version@
 Description: A C++ based XML loader and writer with an internal DOM representation.
 URL: http://xml-cppdom.sf.net
 Requires:
-Libs: -L${libdir} ${libs}
-Cflags: -I${includedir}
+Libs: -L"${libdir}" ${libs}
+Cflags: -I"${includedir}"
 Arch: @arch@
 prefix: @prefix@
