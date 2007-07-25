@@ -293,14 +293,22 @@ namespace cppdom
 
                // comment follows
             case '!':
-               this->parseComment(context);
+               {
+                  // Consume the -- part of the comment opening string.
+                  ++mTokenizer;
 
-               // get next token
-               ++mTokenizer;
-               token1 = *mTokenizer;
+                  // needed to correctly handle <!---->
+                  Token temp_token(mTokenizer->getGeneric().substr(2));
+                  mTokenizer.putBack(temp_token);
+                  this->parseComment(context);
 
-               // parse again, until we encounter some useful data
-               again = true;
+                  // get next token
+                  ++mTokenizer;
+                  token1 = *mTokenizer;
+
+                  // parse again, until we encounter some useful data
+                  again = true;
+               }
                break;
 
             default:

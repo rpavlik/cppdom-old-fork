@@ -74,7 +74,11 @@ namespace cppdom
       /** parses an xml tag attribute list */
       bool parseAttributes(Attributes& attr);
 
-      /** parses a <!-- --> comment */
+      /**
+       * parses a <!-- --> comment
+       *
+       * @pre The <!-- part of the comment has already been consumed.
+       */
       void parseComment(ContextPtr& context);   
 
    protected:
