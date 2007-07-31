@@ -175,7 +175,7 @@ if not SConsAddons.Util.hasHelpFlag():
 
       inst_paths = copy.copy(base_inst_paths)
       inst_paths['libPrefix'] = pj(inst_paths['flagpollPrefix'], 'lib')
-      if GetPlatform() != "win32" and "debug" == combo["type"]:
+      if "debug" == combo["type"]:
          inst_paths["lib"] = pj(inst_paths["lib"],"debug")
          inst_paths['libPrefix'] = pj(inst_paths['libPrefix'],'debug')
       if "x64" == combo["arch"]:
@@ -227,7 +227,7 @@ if not SConsAddons.Util.hasHelpFlag():
          cppdom_libs     = ''
          cppdom_cxxflags = '/DCPPDOM_AUTO_LINK'
 
-         if "debug" in combo["type"] or "hybrid" in combo["type"]:
+         if "debug" in combo["type"] or "debugrt" in combo["type"]:
             cppdom_cxxflags += ' /DCPPDOM_DEBUG'
          if "shared" in combo["libtype"]:
             cppdom_cxxflags += ' /DCPPDOM_DYN_LINK'
@@ -251,7 +251,7 @@ if not SConsAddons.Util.hasHelpFlag():
 
       # Setup the builder for cppdom.fpc
       # XXX: This generates multiple cppdom*.fpc files instead of putting all
-      # the variation of debug/optimized/hybrid and static/shared into one
+      # the variation of debug/optimized/debugrt and static/shared into one
       # architecture-specific file!
       name_parts = ['cppdom',cppdom_version_str,arch]
       if combo["type"] != "optimized":
