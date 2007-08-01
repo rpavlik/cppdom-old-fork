@@ -88,12 +88,8 @@
 #           define CPPDOM_DEBUG
 #        endif
 
-#        if defined(CPPDOM_DEBUG)
-#           if defined(_DEBUG)
-#              define CPPDOM_LIB_RT_OPT "_d"
-#           else
-#              define CPPDOM_LIB_RT_OPT "_h"
-#           endif
+#        if defined(CPPDOM_DEBUG) && defined(_DEBUG)
+#           define CPPDOM_LIB_RT_OPT "_d"
 #        else
 #           define CPPDOM_LIB_RT_OPT ""
 #        endif
