@@ -145,6 +145,13 @@ if not SConsAddons.Util.hasHelpFlag():
    include_dir = pj(base_inst_paths['base'], 'include')
    base_inst_paths['includePrefix'] = pj( base_inst_paths['flagpollPrefix'], 'include')
 
+   if GetPlatform() == "win32":
+      base_inst_paths["include_path_flag"] = "/I"
+      base_inst_paths["lib_path_flag"]     = "/LIBPATH:"
+   else:
+      base_inst_paths["include_path_flag"] = "-I"
+      base_inst_paths["lib_path_flag"]     = "-L"
+
    if common_env['versioning']:
       version_suffix = "-%s_%s_%s" % CPPDOM_VERSION
 
@@ -181,7 +188,11 @@ if not SConsAddons.Util.hasHelpFlag():
       if "debug" == combo["type"]:
          inst_paths["lib"] = pj(inst_paths["lib"],"debug")
          inst_paths['libPrefix'] = pj(inst_paths['libPrefix'],'debug')
-      
+
+      if GetPlatform() == 'win32':
+         inst_paths["libPrefix"] = '"%s"' % inst_paths["libPrefix"]
+         inst_paths["includePrefix"] = '"%s"' % inst_paths["includePrefix"]
+
       cppdom_shared_libname = 'cppdom' + shared_lib_suffix + version_suffix
       cppdom_static_libname = 'cppdom' + static_lib_suffix + version_suffix
       
@@ -240,10 +251,12 @@ if not SConsAddons.Util.hasHelpFlag():
          '@prefix@'                    : inst_paths['flagpollPrefix'],
          '@exec_prefix@'               : '${prefix}',
          '@cppdom_cxxflags@'           : cppdom_cxxflags,
+         '@include_path_flag@'         : inst_paths['include_path_flag'],
          '@includedir@'                : inst_paths['includePrefix'],
          '@cppdom_extra_cxxflags@'     : '',
          '@cppdom_extra_include_dirs@' : '',
          '@cppdom_libs@'               : cppdom_libs,
+         '@lib_path_flag@'             : inst_paths['lib_path_flag'],
          '@libdir@'                    : inst_paths['libPrefix'],
          '@arch@'                      : arch,
          '@version@'                   : cppdom_version_str
