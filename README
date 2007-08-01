@@ -30,6 +30,45 @@ type 'scons' to build cppdom shared lib.
 type 'scons install' to install on the system
 type 'scons install prefix=$HOME/software' to install in your account
 
+Windows
+=======
+
+CppDOM can be compiled with Visual C++ 6.0 and newer. However, SCons tries to
+be smart and pick the version of Visual C++ that it thinks you should use
+(always--or almost always--the newest version). To override this, use the
+MSVS_VERSION command line option. For example, to force compilation with
+Visual C++ 7.0 (from Visual Studio .NET 2002), run the following:
+
+   scons MSVS_VERSION=7.0
+
+Let's say we want to use Visual C++ 8.0 (from Visual Studio 8) instead. In
+that case, run the following:
+
+   scons MSVS_VERSION=8.0
+
+If there is only one version of Visual Studio installed, SCons will find it,
+and using the MSVS_VERSION argument is unnecessary.
+
+64-bit Windows
+==============
+
+To build a 64-bit version of CppDOM on Windows, Visual Studio 2005 (also
+known as Visual Studio 8) must be used, and it must be run on a 64-bit
+Windows installation. The trick, however, is that the 32-bit version of
+Python must be used. Otherwise, SCons will not find the Visual Studio
+installation because it looks in the wrong place in the Registry and in
+"C:\Program Files\Microsoft Visual Studio 8" instead of in
+"C:\Program Files (x86)\Microsoft Visual Studio 8".
+
+So, to build both the 32-bit and the 64-bit versions of CppDOM, run the
+following:
+
+   scons MSVS_VERSION=8.0
+
+To build only the 64-bit version, run the following:
+
+   scons MSVS_VERSION=8.0 var_arch=x64
+
 Mac OS X
 ========
 
