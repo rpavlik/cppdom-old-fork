@@ -46,6 +46,8 @@ if "shared" in combo["libtype"]:
    cppdom_shared_lib_env = cppdom_lib_env.Copy()
    cppdom_shared_lib_env.AppendUnique(CPPDEFINES = ["CPPDOM_EXPORTS"])
    if GetPlatform() == 'darwin':
+      # TODO: The install name should probably include the installation
+      # prefix.
       cppdom_shared_lib_env.Append(
          LINKFLAGS = ['-install_name', 'lib%s.dylib' % cppdom_shared_libname,
                       '-Wl,-compatibility_version,%i.%i' % \
