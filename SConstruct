@@ -175,12 +175,12 @@ if not SConsAddons.Util.hasHelpFlag():
 
       inst_paths = copy.copy(base_inst_paths)
       inst_paths['libPrefix'] = pj(inst_paths['flagpollPrefix'], 'lib')
-      if "debug" == combo["type"]:
-         inst_paths["lib"] = pj(inst_paths["lib"],"debug")
-         inst_paths['libPrefix'] = pj(inst_paths['libPrefix'],'debug')
       if "x64" == combo["arch"]:
          inst_paths['lib'] = inst_paths['lib'] + '64'
          inst_paths['libPrefix'] = inst_paths['libPrefix'] + '64'
+      if "debug" == combo["type"]:
+         inst_paths["lib"] = pj(inst_paths["lib"],"debug")
+         inst_paths['libPrefix'] = pj(inst_paths['libPrefix'],'debug')
       
       cppdom_shared_libname = 'cppdom' + shared_lib_suffix + version_suffix
       cppdom_static_libname = 'cppdom' + static_lib_suffix + version_suffix
