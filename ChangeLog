@@ -1,5 +1,13 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
+2007-08-01 patrickh     Updated for SConsAddons changes. On Windows, the
+                        build formerly called "hybrid" is now the "debug"
+                        build. The DLL is installed in lib\debug. The build
+                        formerly called "debug" is now the "debugrt" build (to
+                        indicate that it is linked against the Visual C++ debug
+                        runtime). The library is still named with "_d".
+                        VERSION: 0.7.10
+2007-07-25 patrickh     Fixed empty comment processing bug.
 2007-07-06 patrickh     Fixed build issues on Mac OS X.
                         VERSION: 0.7.9
 2007-06-26 patrickh     Made many build fixes and improvements on Windows.

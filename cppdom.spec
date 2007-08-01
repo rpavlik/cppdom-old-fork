@@ -1,6 +1,6 @@
 # Spec file for cppdom.
 %define name    cppdom
-%define version 0.7.9
+%define version 0.7.10
 %define release 1
 
 Name: %{name}
@@ -127,6 +127,9 @@ done
 %doc %{_docdir}/cppdom-%{version}/html
 
 %changelog
+* Wed Aug 01 2007 Patrick Hartling <patrick@infiscape.com> 0.7.10-1
+- Updated to version 0.7.10.
+
 * Fri Jul 06 2007 Patrick Hartling <patrick@infiscape.com> 0.7.9-1
 - Updated to version 0.7.9.
 
