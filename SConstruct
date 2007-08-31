@@ -34,7 +34,7 @@ EnsureSConsVersion(0,96)
 SConsignFile('.sconsign.'+GetPlatform())
 
 # Figure out what version of CppDom we're using
-CPPDOM_VERSION = sca_utils.getVersionFromHeader('CPPDOM', 'cppdom/version.h')
+CPPDOM_VERSION = SConsAddons.Util.GetVersionFromHeader('CPPDOM', 'cppdom/version.h')
 cppdom_version_str = '%i.%i.%i' % CPPDOM_VERSION
 Export('CPPDOM_VERSION')
 print 'Building CppDom Version: %s' % cppdom_version_str
