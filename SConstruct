@@ -25,18 +25,6 @@ GetPlatform = SConsAddons.Util.GetPlatform
 Export('GetPlatform')
 pj = os.path.join
 
-# ------ HELPER METHODS -------- #
-def GetCppDomVersion():
-   """Gets the CppDom version from cppdom/version.h.
-      Returns version as tuple (major,minor,patch)
-   """
-   contents = open('cppdom/version.h', 'r').read()
-   major = re.compile('.*(#define *CPPDOM_VERSION_MAJOR *(\d+)).*', re.DOTALL).sub(r'\2', contents)
-   minor = re.compile('.*(#define *CPPDOM_VERSION_MINOR *(\d+)).*', re.DOTALL).sub(r'\2', contents)
-   patch = re.compile('.*(#define *CPPDOM_VERSION_PATCH *(\d+)).*', re.DOTALL).sub(r'\2', contents)
-   return (int(major), int(minor), int(patch))
-
-   
 #------------------------------------------------------------------------------
 # Main build setup
 #------------------------------------------------------------------------------
@@ -46,12 +34,12 @@ EnsureSConsVersion(0,96)
 SConsignFile('.sconsign.'+GetPlatform())
 
 # Figure out what version of CppDom we're using
-CPPDOM_VERSION = GetCppDomVersion()
+CPPDOM_VERSION = sca_utils.getVersionFromHeader('CPPDOM', 'cppdom/version.h')
 cppdom_version_str = '%i.%i.%i' % CPPDOM_VERSION
 Export('CPPDOM_VERSION')
 print 'Building CppDom Version: %s' % cppdom_version_str
 
-platform = SConsAddons.Util.GetPlatform()
+platform = GetPlatform()
 unspecified_prefix = "use-instlinks"
 buildDir = "build." + platform      
 option_filename = "config.cache." + platform
