@@ -53,9 +53,9 @@
  * <major><minor><patch>. Each part has exactly 3 digits.
  */
 // The major/minor/patch version (up to 3 digits each).
-#define CPPDOM_VERSION_MAJOR     0
-#define CPPDOM_VERSION_MINOR     7
-#define CPPDOM_VERSION_PATCH     10
+#define CPPDOM_VERSION_MAJOR     1
+#define CPPDOM_VERSION_MINOR     0
+#define CPPDOM_VERSION_PATCH     0
 
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
