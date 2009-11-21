@@ -43,6 +43,7 @@
 */
 
 // needed includes
+#include <cstdio>
 #include "cppdom.h"
 #include "xmltokenizer.h"
 
