@@ -1,6 +1,6 @@
 # Spec file for cppdom.
 %define name    cppdom
-%define version 1.1.0
+%define version 1.1.1
 %define release 1
 
 Name: %{name}
@@ -127,10 +127,13 @@ done
 %doc %{_docdir}/cppdom-%{version}/html
 
 %changelog
-* Mon Mar 02 2009 Patrick Hartling <patrick.hartling@priority5.com> 1.1.0-1
+* Sat Mar 06 2010 Patrick Hartling <patrick@priority5.com> 1.1.1-1
+- Updated to version 1.1.1.
+
+* Mon Mar 02 2009 Patrick Hartling <patrick@priority5.com> 1.1.0-1
 - Updated to version 1.1.0.
 
-* Mon Mar 02 2009 Patrick Hartling <patrick.hartling@priority5.com> 1.0.0-1
+* Mon Mar 02 2009 Patrick Hartling <patrick@priority5.com> 1.0.0-1
 - Updated to version 1.0.0.
 
 * Wed Aug 01 2007 Patrick Hartling <patrick@infiscape.com> 0.7.10-1
