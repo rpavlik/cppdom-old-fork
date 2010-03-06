@@ -1,5 +1,11 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
+2010-03-06 patrickh     Fixed conflicts with the operator<< overload for
+                        std::ostream and implicit constructio of
+                        cppdom::Attribute objects.
+                        Submitted by: Carsten Neumann
+                        VERSION: 1.1.1
+
 [Version 1.0.0 released - 3.2.2009]============================================
 
 2007-08-01 patrickh     Updated for SConsAddons changes. On Windows, the

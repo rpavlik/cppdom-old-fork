@@ -335,7 +335,7 @@ namespace cppdom
 
 #ifndef CPPDOM_NO_MEMBER_TEMPLATES
       template<class T>
-      Attribute(const T& val)
+      explicit Attribute(const T& val)
       {
          setValue<T>(val);
       }
@@ -547,6 +547,24 @@ namespace cppdom
        * @post Element.attr is set to value.  If it didn't exist before, now it does.
        */
       void setAttribute(const std::string& attr, const Attribute& value);
+
+      /**
+       * Sets new attribute value.
+       *
+       * @post Element.attr is set to value. If it did not exist before, now
+       *       it does.
+       *
+       * @param attr  Attribute name to set. There must not be ANY spaces in
+       *              this name.
+       * @param value Attribute value to set.
+       *
+       * @since 1.1.1
+       */
+      template<class T>
+      void setAttribute(const std::string& attr, const T& value)
+      {
+         setAttribute(attr, Attribute(value));
+      }
 
       /** Direct access to attribute map. */
       Attributes& attrib();
