@@ -187,11 +187,12 @@ public:
 };
 
 /**
-* XML grammar.
-* Based on: http://www.w3.org/TR/2004/REC-xml-20040204/
-*
-* type: BUILDER_T must implement the interface concept similar to XmlBuilder above.
-*/
+ * XML grammar.
+ * Based on: http://www.w3.org/TR/2004/REC-xml-20040204/
+ *
+ * @tparam BUILDER_T must implement the interface concept similar to
+ *         XmlBuilder above.
+ */
 template<typename BUILDER_T>
 struct XmlGrammar : public grammar<XmlGrammar<BUILDER_T> >
 {
@@ -301,7 +302,8 @@ struct XmlGrammar : public grammar<XmlGrammar<BUILDER_T> >
 };
 
 
-/** The actual parser class that we will use.
+/**
+ * The actual parser class that we will use.
  *
  * Provides a simple interface for using the builder and grammar.
  */

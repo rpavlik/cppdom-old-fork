@@ -115,27 +115,29 @@ namespace cppdom
 //! namespace of the cppdom project
 namespace cppdom
 {
-   // Declare a version string constant that can be used at run time.
+   /** Declare a version string constant that can be used at run time. */
    CPPDOM_EXPORT(const char*) getVersion();
 
-   // Helper methods
+   /** Helper methods. */
    template <class T> inline void ignore_unused_variable_warning(const T&) { }
 
-   // True if there are characters references: ex: &amp;
+   /** True if there are characters references: ex: &amp; */
    CPPDOM_EXPORT(bool) textContainsXmlEscaping(const std::string& data);
 
-   // True if there are chars needing escaping
+   /** True if there are chars needing escaping. */
    CPPDOM_EXPORT(bool) textNeedsXmlEscaping(const std::string& data, bool isCdata);
 
-    // Remove escaping from xml text
+   /** Removes escaping from XML text. */
    CPPDOM_EXPORT(std::string) removeXmlEscaping(const std::string& data, bool isCdata);
 
-   // Add escaping to xml text
+   /** Adds escaping to XML text. */
    CPPDOM_EXPORT(std::string) addXmlEscaping(const std::string& data, bool isCdata);
 
-   /** Method to split string base on seperator.
+   /**
+    * Method to split string base on seperator.
     *
-    * If separator does not exist in string, then just return that string in the output.
+    * If separator does not exist in string, then just return that string in
+    * the output.
     *
     * @example:
     *    std::string s = "apple, orange, cherry, peach, grapefruit, cantalope,watermelon";
@@ -159,7 +161,7 @@ namespace cppdom
       }
    }
 
-   //! xml parsing error codes enumeration
+   /** XML parsing error codes enumeration */
    enum ErrorCode
    {
       xml_unknown = 0,              /**< unspecified or unknown error */
@@ -175,7 +177,7 @@ namespace cppdom
       xml_attr_value_expected,      /**< expected value after an '=' in attribute */
       xml_save_invalid_nodetype,    /**< invalid nodetype encountered while saving */
 
-      xml_invalid_operation,        /**< Attempted to execute an xml operation that would cause invalid structure */
+      xml_invalid_operation,        /**< Attempted to execute an XML operation that would cause invalid structure */
       xml_invalid_argument,         /**< Attempted to pass an invalid argument */
    // added by kevin for 0.7 compatibility...
       xml_filename_invalid,
@@ -185,7 +187,8 @@ namespace cppdom
       xml_dummy                     /**< dummy error code */
    };
    
-   // typedefs
+   /** @name Typedefs */
+   //@{
    /** smart pointer to node */
    class Node;
    typedef cppdom_boost::shared_ptr<cppdom::Node> NodePtr;
@@ -197,34 +200,34 @@ namespace cppdom
    /** list of node smart pointer */
    typedef std::vector<NodePtr> NodeList;
    typedef NodeList::iterator NodeListIterator;
-
+   //@}
 
    // classes
 
    /**
-    * xml error class
-    * contains an ErrorCode and is thrown while parsing xml input
+    * XML error class.
+    * Contains an ErrorCode and is thrown while parsing XML input.
     */
    class CPPDOM_CLASS Error : public std::exception
    {
    public:
-      /** constructor */
+      /** Constructor. */
       Error(ErrorCode code, std::string localDesc, std::string location);
 
-      /** constructor that can take line num */
+      /** Constructor that can take line number. */
       Error(ErrorCode code, std::string localDesc, std::string file, unsigned line_num);
 
-      /** returns the error code */
+      /** Returns the error code. */
       ErrorCode getError() const;
 
       virtual ~Error() throw();
 
-      /** returns the string representation of the error code */
+      /** Returns the string representation of the error code. */
       std::string getStrError() const;
 
       std::string getString() const;
 
-      /** return additional error info */
+      /** Returns additional error info. */
       std::string getInfo() const;
 
       virtual const char* what() const throw();
@@ -237,29 +240,29 @@ namespace cppdom
 
 
    /**
-    * xml stream position
-    * represents the position in the xml input stream; usable if load()
-    *    throws an error on parsing xml content
+    * XML stream position.
+    * Represents the position in the XML input stream; usable if load()
+    * throws an error on parsing XML content.
     */
    class CPPDOM_CLASS Location
    {
    public:
-      /** Constructor */
+      /** Constructor. */
       Location();
 
-      /** returns current line */
+      /** Returns current line. */
       int getLine() const;
 
-      /** returns current position in a line */
+      /** Returns current position in a line. */
       int getPos() const;
 
-      /** advances a char */
+      /** Advances a char. */
       void step(int chars = 1);
 
-      /** indicates entering a new line */
+      /** Indicates entering a new line. */
       void newline();
 
-      /** reset location */
+      /** Resets location. */
       void reset();
 
    protected:
@@ -268,44 +271,47 @@ namespace cppdom
    };
 
 
-   // typedefs
-   /** smart pointer for Context */
+   /** @name Typedefs */
+   //@{
+   /** Smart pointer for Context */
    typedef cppdom_boost::shared_ptr<class Context> ContextPtr;
 
-   /** smart pointer to the event handler */
+   /** Smart pointer to the event handler */
    typedef cppdom_boost::shared_ptr<class EventHandler> EventHandlerPtr;
+   //@}
 
    /**
-    * xml parsing context class.
-    * the class is the parsing context for the parsed xml document.
-    * the class has a tagname lookup table and an entity map
+    * XML parsing context class.
+    * The class is the parsing context for the parsed XML document.
+    * The class has a tagname lookup table and an entity map.
     */
    class CPPDOM_CLASS Context
    {
    public:
-      /** ctor */
+      /** Constructor. */
       Context();
-      /** dtor */
+
+      /** Destructor. */
       virtual ~Context();
 
-      /** returns the tagname by the tagname handle */
+      /** Returns the tagname by the tagname handle. */
       std::string getTagname(TagNameHandle handle);
 
-      /** inserts a tag name and returns a tag name handle to the string */
+      /** Inserts a tag name and returns a tag name handle to the string. */
       TagNameHandle insertTagname(const std::string& tagname);
 
-      /** returns the current location in the xml stream */
+      /** Returns the current location in the XML stream. */
       Location& getLocation();
 
-      /** @name event handling methods */
+      /** @name Event Handling Methods */
       //@{
-      /** sets the event handler; enables handling events */
+      /** Sets the event handler; enables handling events. */
       void setEventHandler(EventHandlerPtr ehptr);
 
-      /** returns the currently used eventhandler (per reference) */
+      /** Returns the currently used eventhandler (per reference). */
       EventHandler& getEventHandler();
 
-      /** returns if a valid event handler is set */
+      /** Returns if a valid event handler is set. */
       bool hasEventHandler() const;
       //@}
 
@@ -322,7 +328,7 @@ namespace cppdom
 
    /**
     * XML attribute class.
-    * Just wraps a string (this is really just and attribute VALUE)
+    * Just wraps a string (this is really just and attribute VALUE).
     * This is just meant to be a "magic" class to provide some syntactic
     * sugar related to autoconversions and get<value>() usefullness.
     */
@@ -345,8 +351,9 @@ namespace cppdom
 
 #ifndef CPPDOM_NO_MEMBER_TEMPLATES
       /**
-       * Set mData to the string value of val
-       * @note Requires a stream operation of type T
+       * Set mData to the string value of val.
+       *
+       * @note Requires a stream operation of type T.
        */
       template<class T>
       void setValue(const T& val)
@@ -370,8 +377,8 @@ namespace cppdom
       // specializations, found below.
 #ifdef _MSC_VER
       /**
-       * Specialization of getValue<T> for std::string so that more than just the
-       * first word of the attribute string is returned.
+       * Specialization of getValue<T> for std::string so that more than just
+       * the first word of the attribute string is returned.
        */
       template<>
       std::string getValue<std::string>() const
@@ -381,7 +388,7 @@ namespace cppdom
 #endif // ! _MSC_VER
 #endif // ! CPPDOM_NO_MEMBER_TEMPLATES
 
-      /** Autoconversion to string (so old code should work) */
+      /** Autoconversion to string (so old code should work). */
       operator std::string() const;
 
       bool operator==(const Attribute& rhs)
@@ -446,18 +453,19 @@ namespace cppdom
    };
 
 
-   /** xml node.
-   * A node has the following properties
-   * name - The element name of the node
-   * type - The type of the node. see NodeType
-   * children - Child elements of the node
-   * cdata - the cdata content if of type cdata
-   *
-   */
+   /**
+    * XML node.
+    *
+    * A node has the following properties:
+    *   * name - The element name of the node.
+    *   * type - The type of the node. see NodeType.
+    *   * children - Child elements of the node.
+    *   * cdata - the cdata content if of type cdata.
+    */
    class CPPDOM_CLASS Node
    {
    public:
-         /** node type enumeration */
+      /** Node type enumeration */
       enum Type
       {
          xml_nt_node,      /**< normal node, can contain subnodes */
@@ -467,15 +475,16 @@ namespace cppdom
       };
 
       friend class Parser;
+
    protected:
       /** Default Constructor */
       Node();
 
    public:
-      /** constructor, takes xml context pointer */
+      /** Constructor, takes XML context pointer. */
       explicit Node(ContextPtr pctx);
 
-      /** Construct a node with a given name */
+      /** Construct a node with a given name. */
       explicit Node(std::string nodeName, ContextPtr ctx);
 
       Node(const Node& node);
@@ -492,11 +501,14 @@ namespace cppdom
       /** assign operator */
       Node& operator=(const Node& node);
 
-      /** Returns true if the nodes are equal
-      * @param ignoreAttribs - Attributes to ignore in the comparison
-      * @param ignoreElements - Elements to ignore in the comparison
-      */
-      bool isEqual(NodePtr otherNode, const std::vector<std::string>& ignoreAttribs,
+      /**
+       * Returns true if the nodes are equal.
+       *
+       * @param ignoreAttribs  Attributes to ignore in the comparison.
+       * @param ignoreElements Elements to ignore in the comparison.
+       */
+      bool isEqual(NodePtr otherNode,
+                   const std::vector<std::string>& ignoreAttribs,
                    const std::vector<std::string>& ignoreElements,
                    bool dbgit=false, const unsigned debugIndent=0);
 
@@ -506,14 +518,15 @@ namespace cppdom
          return isEqual(otherNode, empty_strings, empty_strings );
       }
 
-      /** Returns the local name of the node (the element name) */
+      /** Returns the local name of the node (the element name). */
       std::string getName();
-      /** set the node name */
+
+      /** Sets the node name. */
       void setName(const std::string& name);
 
       /** @name Type information */
       //@{
-      /** returns type of node */
+      /** Returns type of node. */
       Node::Type getType() const;
 
       bool isNode()
@@ -525,26 +538,32 @@ namespace cppdom
       bool isCData()
       { return getType() == xml_nt_cdata;}
 
-      /** sets new nodetype */
+      /** Sets new nodetype. */
       void setType(Node::Type type);
       //@}
 
       /** @name Attribute information */
       //@{
-      /** Check if the node has a given attribute */
+      /** Checks if the node has a given attribute. */
       bool hasAttribute(const std::string& name) const;
 
       /**
-       * Get the named attribute
-       * @returns empty string ("") if not found, else the value
+       * Gets the named attribute.
+       *
        * @post Object does not change.
+       *
+       * @return Empty string ("") if not found, else the value.
        */
       Attribute getAttribute(const std::string& name) const;
 
       /**
-       * sets new attribute value
-       * @param attr - Attribute name to set.  There must not be ANY spaces in this name
-       * @post Element.attr is set to value.  If it didn't exist before, now it does.
+       * Sets new attribute value.
+       *
+       * @post Element.attr is set to value. If it did not exist before, now
+       *       it does.
+       *
+       * @param attr Attribute name to set. There must not be ANY spaces in
+       *             this name.
        */
       void setAttribute(const std::string& attr, const Attribute& value);
 
@@ -572,12 +591,14 @@ namespace cppdom
       /** Direct access to attribute map. */
       const Attributes& attrib() const;
 
-      /** returns attribute map of the node
+      /**
+       * Returns attribute map of the node.
        * @deprecated
        */
       Attributes& getAttrMap();
 
-      /** returns attribute map of the node
+      /**
+       * Returns attribute map of the node.
        * @deprecated
        */
       const Attributes& getAttrMap() const;
@@ -586,17 +607,24 @@ namespace cppdom
 
       /** @name Children and parents */
       //@{
-      /** Returns true if the node has a child of the given name.
-       * @param name    Name can be a single element name or a chain of the form "tag/tag/tag"
+      /**
+       * Returns true if the node has a child of the given name.
+       *
+       * @param name Name can be a single element name or a chain of the form
+       *             "tag/tag/tag".
        */
       bool hasChild(const std::string& name);
 
-      /** Returns the first child of the given local name.
+      /**
+       * Returns the first child of the given local name.
        */
       NodePtr getChild(const std::string& name);
 
-      /** Return first child of the given name.
-       * @param name    Name can be a single element name or a chain of the form "tag/tag/tag"
+      /**
+       * Return first child of the given name.
+       *
+       * @param name Name can be a single element name or a chain of the form
+       *             "tag/tag/tag".
        */
       NodePtr getChildPath(const std::string& path);
 
@@ -604,27 +632,32 @@ namespace cppdom
       NodeList& getChildren();
 
       /**
-       * Returns a list of all children (one level deep) with local name of childName
-       * \note currently no path-like childname can be passed, like in e.g. msxml
-       * If has standard compose() functions, could impl this by calling getChildren(pred)
+       * Returns a list of all children (one level deep) with local name of
+       * childName.
+       *
+       * @note Currently no path-like childname can be passed, such as in
+       *       MSXML. If has standard compose() functions, could impl this by
+       *       calling getChildren(pred).
        */
       NodeList getChildren(const std::string& name);
 
       /**
        * Returns list of all children.
+       *
        * @see getChildren
-       * @note Needed because of predicate template matching char*
+       * @note Needed because of predicate template matching char*.
        */
       NodeList getChildren(const char* name);
 
-      /** Return a list of children that pass the given STL predicate */
+      /** Return a list of children that pass the given STL predicate. */
       template<class Predicate>
       NodeList getChildrenPred(Predicate pred)
       {
          NodeList result(0);
          NodeList::const_iterator iter;
 
-         // search for all occurances of nodename and insert them into the new list
+         // search for all occurances of nodename and insert them into the new
+         // list.
          for(iter = mNodeList.begin(); iter != mNodeList.end(); ++iter)
          {
             if (pred(*iter))
@@ -657,40 +690,47 @@ namespace cppdom
       /** @name CData methods */
       //@{
       /**
-       * returns cdata string
-       * @note: For node type "cdata", this returns the local cdata.
-       *        For other nodes, this attempts to find the first child cdata
-       *        node and returns its data.
+       * Returns CDATA string.
+       *
+       * @note For node type "cdata", this returns the local cdata.
+       *       For other nodes, this attempts to find the first child cdata
+       *       node and returns its data.
        */
       std::string getCdata();
 
       /**
-       * Returns the full cdata of the node or immediate children.
-      * @note: For node type "cdata", this returns the local cdata.
-      *        For other nodes, combines the cdata of all cdata children.
-      */
+       * Returns the full CDATA of the node or immediate children.
+       *
+       * @note For node type "cdata", this returns the local cdata.
+       *       For other nodes, combines the cdata of all cdata children.
+       */
       std::string getFullCdata();
 
-      /** Sets the node cdata.
-      * @post For cdata type nodes, this sets the contained cdata
-      *       For other types, this sets the cdata of the first cdata node.
-      *       If none exists, then one is created called "cdata".
-      */
+      /**
+       * Sets the node CDATA.
+       *
+       * @post For CDATA type nodes, this sets the contained cdata
+       *       For other types, this sets the cdata of the first cdata node.
+       *       If none exists, then one is created called "cdata".
+       */
       void setCdata(const std::string& cdata);
       //@}
 
 
-      /** @name load/save functions */
+      /** @name Load/Save Functions */
       //@{
-      /** loads xml node from input stream */
+      /** Loads XML node from input stream. */
       void load(std::istream& in, ContextPtr& context);
 
-      /** saves node to xml output stream
-      * @param indent - The amount to indent
-      * @doIndent - If true, then indent the output
-      * @doNewline - If true then use newlines in output
-      */
-      void save(std::ostream& out, int indent=0, bool doIndent=true, bool doNewline=true);
+      /** 
+       * Saves node to xml output stream.
+       *
+       * @param indent    The amount to indent.
+       * @param doIndent  If true, then indent the output.
+       * @param doNewline If true then use newlines in output.
+       */
+      void save(std::ostream& out, int indent = 0, bool doIndent = true,
+                bool doNewline = true);
       //@}
 
       /** Returns the context used for this node. */
@@ -711,15 +751,15 @@ namespace cppdom
    };
 
 
-   /** XML document root node.
+   /**
+    * XML document root node.
     *
-    * Structure of a cppdom document
+    * Structure of a cppdom document:
     *
     * Nested tree of nodes.  Each node has a type (Node::Type).
     * Root node is of type document.  Standard nodes are type node.
     * Under standard nodes there can be cdata nodes.  These nodes are nodes
     * for containing the raw text inside an element.
-    *
     */
    class CPPDOM_CLASS Document: public Node
    {
@@ -729,36 +769,43 @@ namespace cppdom
 
       ~Document();
 
-      /** constructor taking xml context pointer */
+      /** Constructor taking XML context pointer. */
       explicit Document(ContextPtr context);
 
-      /** constructor taking xml context pointer */
+      /** Constructor taking XML context pointer. */
       explicit Document(std::string docName, ContextPtr context);
 
-      /** returns a list of processing instruction nodes */
+      /** Returns a list of processing instruction nodes. */
       NodeList& getPiList();
 
-      /** returns a list of document type definition rules to check the xml file */
+      /**
+       * Returns a list of document type definition rules to check the XML
+       * file.
+       */
       NodeList& getDtdList();
 
-      /** loads xml Document (node) from input stream */
+      /** Loads XML Document (node) from input stream. */
       void load(std::istream& in, ContextPtr& context);
 
-      /** saves node to xml output stream
-      * @param doIndent - If true, then indent the output.
-      * @param doNewline - If true, then use newlines in the output.
-      */
+      /**
+       * Saves node to xml output stream.
+       *
+       * @param doIndent  If true, then indent the output.
+       * @param doNewline If true, then use newlines in the output.
+       */
       void save(std::ostream& out, bool doIndent=true, bool doNewline=true);
 
       /**
-       * \exception throws cppdom::Error when the file name is invalid.
+       * @throw cppdom::Error Thrown when the file name is invalid.
        */
       void loadFile(const std::string& filename) throw(Error);
       void loadFileChecked(const std::string& filename);
 
-      /** Save the document to the given filename.
-      * @todo Fix this method.  It doesn't work
-      */
+      /**
+       * Saves the document to the given filename.
+       *
+       * @todo Fix this method.  It doesn't work
+       */
       void saveFile(std::string filename);
 
 
@@ -770,37 +817,39 @@ namespace cppdom
       NodeList mDtdRules;
    };
 
-   /** Interface for xml parsing event handler */
+   /** Interface for XML parsing event handler. */
    class CPPDOM_CLASS EventHandler
    {
    public:
-      /** ctor */
+      /** Constructor. */
       EventHandler() {}
 
-      /** virtual dtor */
+      /** Destructor. */
       virtual ~EventHandler() {}
 
-      /** called when parsing of an xml document starts */
+      /** Called when parsing of an xml document starts. */
       virtual void startDocument() {}
 
-      /** called when ended parsing a document */
+      /** Called when ended parsing a document. */
       virtual void endDocument() {}
 
-      /** called when parsing a processing instruction */
+      /** Called when parsing a processing instruction. */
       virtual void processingInstruction(Node& pinode)
       {  cppdom::ignore_unused_variable_warning(pinode);}
 
-      /** called when start parsing a node */
+      /** Called when start parsing a node. */
       virtual void startNode(const std::string& nodename)
       { cppdom::ignore_unused_variable_warning(nodename); }
-      /** called when an attribute list was parsed */
+
+      /** Called when an attribute list was parsed. */
       virtual void parsedAttributes(Attributes& attr)
       { cppdom::ignore_unused_variable_warning(attr); }
-      /** called when parsing of a node was finished */
+
+      /** Called when parsing of a node was finished. */
       virtual void endNode(Node& node)
       { cppdom::ignore_unused_variable_warning(node);}
 
-      /** called when a cdata section ended */
+      /** Called when a cdata section ended. */
       virtual void gotCdata(const std::string& cdata)
       { cppdom::ignore_unused_variable_warning(cdata); }
    };
@@ -809,10 +858,13 @@ namespace cppdom
    // ----------------------------------- //
    /** @name Helper methods */
    //@{
-   /** Merges data from one node to another.
+   /**
+    * Merges data from one node to another.
+    *
+    * @post All elements and attributes in fromNode will exist in toNode.
+    *
     * @param fromNode   Node to read data from.
     * @param toNode     Node to merge data onto.
-    * @post All elements and attributes in fromNode will exist in toNode.
     */
    CPPDOM_EXPORT(void) merge(NodePtr fromNode, NodePtr toNode);
    //@}
