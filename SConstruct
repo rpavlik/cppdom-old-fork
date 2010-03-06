@@ -94,8 +94,6 @@ Targets:
 """%(opts.GenerateHelpText(common_env),)
 
 #help_text = opts.GenerateHelpText(common_env) + help_text
-Help(help_text)
-
 
 # --- MAIN BUILD STEPS ---- #
 # If we are running the build
@@ -271,3 +269,5 @@ if not SConsAddons.Util.hasHelpFlag():
 
    # Close up with aliases and defaults   
    Default('.')
+
+Help(help_text)
