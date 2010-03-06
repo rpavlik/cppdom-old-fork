@@ -1,0 +1,7 @@
+- Option handling must be improved
+
+There is a problem with the way options and build environments interact in scons-addons.  For example consider how an option should validate and set itself if we are using debug runtimes and compile flags vs. using optimized run-times.
+
+We do not have a good way to take this into account to know what the correct way to use this is.
+
+Release.
