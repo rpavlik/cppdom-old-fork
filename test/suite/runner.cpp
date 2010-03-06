@@ -51,6 +51,8 @@
 
 #include <Suites.h>
 
+#include <cstring>
+
 std::string getHostname(void);
 
 int main(int argc, char** argv)
@@ -150,7 +152,7 @@ std::string getHostname(void)
    if ( uname(&buffer) == 0 )
    {
       char* temp;
-      temp = strchr(buffer.nodename, '.');
+      temp = std::strchr(buffer.nodename, '.');
 
       // If the node name contains the full host, dots and all, truncate it
       // at the first dot.
