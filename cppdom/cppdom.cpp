@@ -1087,4 +1087,49 @@ namespace cppdom
       out.close();
    }
 
+   EventHandler::EventHandler()
+   {
+      /* Do nothing. */ ;
+   }
+
+   EventHandler::~EventHandler()
+   {
+      /* Do nothing. */ ;
+   }
+
+   void EventHandler::startDocument()
+   {
+      /* Do nothing. */ ;
+   }
+
+   void EventHandler::endDocument()
+   {
+      /* Do nothing. */ ;
+   }
+
+   void EventHandler::processingInstruction(Node&)
+   {
+      /* Do nothing. */ ;
+   }
+
+   void EventHandler::startNode(const std::string&)
+   {
+      /* Do nothing. */ ;
+   }
+
+   void EventHandler::parsedAttributes(Attributes&)
+   {
+      /* Do nothing. */ ;
+   }
+
+   void EventHandler::endNode(Node&)
+   {
+      /* Do nothing. */ ;
+   }
+
+   void EventHandler::gotCdata(const std::string&)
+   {
+      /* Do nothing. */ ;
+   }
+
 }

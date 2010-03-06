@@ -822,36 +822,31 @@ namespace cppdom
    {
    public:
       /** Constructor. */
-      EventHandler() {}
+      EventHandler();
 
       /** Destructor. */
-      virtual ~EventHandler() {}
+      virtual ~EventHandler();
 
       /** Called when parsing of an xml document starts. */
-      virtual void startDocument() {}
+      virtual void startDocument();
 
       /** Called when ended parsing a document. */
-      virtual void endDocument() {}
+      virtual void endDocument();
 
       /** Called when parsing a processing instruction. */
-      virtual void processingInstruction(Node& pinode)
-      {  cppdom::ignore_unused_variable_warning(pinode);}
+      virtual void processingInstruction(Node& pinode);
 
       /** Called when start parsing a node. */
-      virtual void startNode(const std::string& nodename)
-      { cppdom::ignore_unused_variable_warning(nodename); }
+      virtual void startNode(const std::string& nodename);
 
       /** Called when an attribute list was parsed. */
-      virtual void parsedAttributes(Attributes& attr)
-      { cppdom::ignore_unused_variable_warning(attr); }
+      virtual void parsedAttributes(Attributes& attr);
 
       /** Called when parsing of a node was finished. */
-      virtual void endNode(Node& node)
-      { cppdom::ignore_unused_variable_warning(node);}
+      virtual void endNode(Node& node);
 
       /** Called when a cdata section ended. */
-      virtual void gotCdata(const std::string& cdata)
-      { cppdom::ignore_unused_variable_warning(cdata); }
+      virtual void gotCdata(const std::string& cdata);
    };
 
 
