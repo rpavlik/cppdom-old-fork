@@ -284,11 +284,7 @@ namespace cppdom
          // a newline char?
          if (isNewLine(c) )
          {
-            if (mCdataMode && generic.length() != 0)
-            {
-               c = ' ';
-            }
-            else
+            if (!mCdataMode || generic.length() == 0)
             {
                continue;
             }
