@@ -1,5 +1,8 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
+2010-04-14 patrickh     Preserve newlines in CDATA.
+                        Submitted by: Carsten Neumann
+                        VERSION: 1.1.2
 2010-03-06 patrickh     Fixed conflicts with the operator<< overload for
                         std::ostream and implicit constructio of
                         cppdom::Attribute objects.
