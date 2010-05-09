@@ -56,10 +56,6 @@
 #include <boost/spirit/iterator/multi_pass.hpp>
 #include <iostream>
 
-
-namespace bs = boost::spirit;
-using namespace boost::spirit;
-
 namespace cppdom
 {
 
@@ -194,7 +190,7 @@ public:
  *         XmlBuilder above.
  */
 template<typename BUILDER_T>
-struct XmlGrammar : public grammar<XmlGrammar<BUILDER_T> >
+struct XmlGrammar : public boost::spirit::grammar<XmlGrammar<BUILDER_T> >
 {
    XmlGrammar(BUILDER_T* builder)
       : mBuilder(builder)
@@ -208,6 +204,9 @@ struct XmlGrammar : public grammar<XmlGrammar<BUILDER_T> >
    {
       definition(XmlGrammar const& self)
       {
+         namespace bs = boost::spirit;
+         using namespace boost::spirit;
+         
          document = prolog >> element >> *misc;       // Main document root
          ws = +space_p;                               // Whitespace, simplified from XML spec
 
@@ -274,7 +273,7 @@ struct XmlGrammar : public grammar<XmlGrammar<BUILDER_T> >
          BOOST_SPIRIT_DEBUG_RULE(xmldecl);
       }
 
-      rule<ScannerT> attribute,
+      boost::spirit::rule<ScannerT> attribute,
                      attrib_value,
                      cdata_sect,
                      cdata,
@@ -296,7 +295,7 @@ struct XmlGrammar : public grammar<XmlGrammar<BUILDER_T> >
                      xmldecl
                      ;
 
-      rule<ScannerT> const& start() const
+      boost::spirit::rule<ScannerT> const& start() const
       { return document; }
    };
 };
