@@ -73,10 +73,21 @@ namespace cppdom
 #define CPPDOM_USE_HASH_MAP 1
 
 // Use fastest map available
-#if defined(CPPDOM_USE_HASH_MAP) && defined(__GNUC__) && (__GNUC__ >= 3)
+#if defined(CPPDOM_USE_HASH_MAP)
 
-#include <ext/hash_map>
-#include <map>
+#  if defined(__GNUC__) && (__GNUC__ >= 4)
+#    include <tr1/unordered_map>
+#    include <map>
+
+namespace cppdom
+{
+   typedef std::tr1::unordered_map<TagNameHandle,std::string>   TagNameMap_t;
+   typedef std::tr1::unordered_map<std::string, TagNameHandle>  NameToTagMap_t;
+}
+
+#  elif defined(__GNUC__) && (__GNUC__ >= 3)
+#    include <ext/hash_map>
+#    include <map>
 
 namespace std
 { using namespace __gnu_cxx; }
@@ -92,16 +103,18 @@ namespace cppdom
    typedef std::hash_map<TagNameHandle,std::string>   TagNameMap_t;
    typedef std::hash_map<std::string, TagNameHandle, HashString>  NameToTagMap_t;
 }
+#  endif // #  elif defined(__GNUC__) && (__GNUC__ >= 3)
 
-#else
+#else // #if defined(CPPDOM_USE_HASH_MAP)
 
-#include <map>
+#  include <map>
+
 namespace cppdom
 {
    typedef std::map<TagNameHandle,std::string>   TagNameMap_t;
    typedef std::map<std::string, TagNameHandle>  NameToTagMap_t;
 }
-#endif
+#endif // #if defined(CPPDOM_USE_HASH_MAP)
 
 #include "config.h"
 #include "shared_ptr.h"   // the boost::shared_ptr class
