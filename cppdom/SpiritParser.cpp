@@ -41,6 +41,9 @@
 */
 #include <cppdom/SpiritParser.h>
 
+namespace bs = boost::spirit;
+using namespace boost::spirit;
+
 namespace cppdom
 {
 
