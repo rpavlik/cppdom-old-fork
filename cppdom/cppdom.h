@@ -75,8 +75,15 @@ namespace cppdom
 // Use fastest map available
 #if defined(CPPDOM_USE_HASH_MAP)
 
-#  if defined(__GNUC__) && (__GNUC__ >= 4)
-#    include <tr1/unordered_map>
+#  if defined(__GNUC__) && __GNUC__ >= 4 || \
+      defined(_MSC_VER) && _MSC_VER >= 1500
+
+#     if defined(__GNUC__)
+#        include <tr1/unordered_map>
+#     else
+#        include <unordered_map>
+#     endif
+
 #    include <map>
 
 namespace cppdom
