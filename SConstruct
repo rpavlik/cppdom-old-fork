@@ -49,6 +49,7 @@ if GetPlatform() == "win32":
       common_env = Environment(MSVS_VERSION = ARGUMENTS["MSVS_VERSION"])
    else:
       common_env = Environment()
+   common_env["MSVS"] = {"VERSION" : common_env["MSVS_VERSION"]}
    print "Using MSVS version", common_env["MSVS"]["VERSION"]
 else:
    common_env = Environment(ENV = os.environ)
