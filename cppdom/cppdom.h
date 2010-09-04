@@ -110,9 +110,12 @@ namespace cppdom
    typedef std::hash_map<TagNameHandle,std::string>   TagNameMap_t;
    typedef std::hash_map<std::string, TagNameHandle, HashString>  NameToTagMap_t;
 }
-#  endif // #  elif defined(__GNUC__) && (__GNUC__ >= 3)
+#  else
+#    undef CPPDOM_USE_HASH_MAP
+#  endif
+#endif
 
-#else // #if defined(CPPDOM_USE_HASH_MAP)
+#if ! defined(CPPDOM_USE_HASH_MAP)
 
 #  include <map>
 
