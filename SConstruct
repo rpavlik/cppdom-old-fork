@@ -8,7 +8,6 @@ except:
 import os, string, sys, re, glob, copy, types
 import os.path
 sys.path.insert(0, os.path.join('deps', 'scons-addons', 'src'))
-print "NOTE: The build is currently in development.  It needs the SVN trunk version of scons-addons"
 
 import SCons.Environment
 import SCons
@@ -49,6 +48,7 @@ if GetPlatform() == "win32":
       common_env = Environment(MSVS_VERSION = ARGUMENTS["MSVS_VERSION"])
    else:
       common_env = Environment()
+   common_env["MSVS"] = {"VERSION" : common_env["MSVS_VERSION"]}
    print "Using MSVS version", common_env["MSVS"]["VERSION"]
 else:
    common_env = Environment(ENV = os.environ)
