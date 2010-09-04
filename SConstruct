@@ -8,7 +8,6 @@ except:
 import os, string, sys, re, glob, copy, types
 import os.path
 sys.path.insert(0, os.path.join('deps', 'scons-addons', 'src'))
-print "NOTE: The build is currently in development.  It needs the SVN trunk version of scons-addons"
 
 import SCons.Environment
 import SCons
