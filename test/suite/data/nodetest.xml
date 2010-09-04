@@ -1,0 +1,27 @@
+<nodetest_root>
+    <Page pageFormat="landscape">
+        this is the first page's content
+        <EmptyPage is_really_empty="yes"/>
+    </Page>
+    <testnode>
+        text content1
+        <nestednode>nested text</nestednode>
+        text content2
+        <anothernode>More nested</anothernode>
+            text content3
+            text content4
+    </testnode>
+
+    <!-- a tree of children for testing. -->
+    <child_1>
+        <child_1_1></child_1_1>
+        <child_1_2></child_1_2>
+    </child_1>
+
+    <!-- a duplicate child to test with. -->
+    <dupe_child id="1"></dupe_child>
+    <dupe_child id="2"></dupe_child>
+    
+    <!-- Testing getting by path. -->
+    <gp><parent><child val="21"/></parent></gp>
+</nodetest_root>
