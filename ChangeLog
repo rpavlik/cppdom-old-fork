@@ -1,5 +1,10 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
+[Version 1.0.3 released - 9.4.2010]============================================
+
+2010-09-04 patrickh     Use std::tr1::unordered_map<T,H> when GCC or Visual C++
+                        provides it.
+
 [Version 1.0.2 released - 4.14.2010]===========================================
 
 2010-04-14 patrickh     Preserve newlines in CDATA.
