@@ -1,0 +1,39 @@
+#!python
+Import('*')
+
+import os
+pj = os.path.join
+
+test_env = build_env.Copy()
+test_env.Append(CPPPATH = [inst_paths['include'], '#test'],
+                LIBPATH = [inst_paths['lib'],],
+                LIBS = [cppdom_app_libname])
+
+# On Windows, we always use automatic linking.
+if GetPlatform() == "win32":
+   test_env.AppendUnique(CPPDEFINES = ["CPPDOM_AUTO_LINK"])
+
+   # Use dynamic linking if we are building against a DLL rather than a
+   # static library.
+   if "shared" in combo["libtype"]:
+      test_env.AppendUnique(CPPDEFINES = ["CPPDOM_DYN_LINK"])
+
+   # For a "hybrid" build (one that links against the release VC++ runtime
+   # and puts debug symbols in the compiled code) or a debug build, define
+   # CPPDOM_DEBUG.
+   if "hybrid" in combo["type"] or "debug" in combo["type"]:
+      test_env.AppendUnique(CPPDEFINES = ["CPPDOM_DEBUG"])
+
+tests = Split("""
+   maketree
+   nodetest
+   parsetest
+""")
+
+for t in tests:
+   test_prog = test_env.Program(t, t+'.cpp')
+
+subdirs = []
+if cppunit_options.isAvailable():
+   subdirs.append('suite')
+SConscript(dirs = subdirs)

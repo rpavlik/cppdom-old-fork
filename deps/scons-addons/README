@@ -1,0 +1,81 @@
+o------------------------------------------------------------------------------o
+|Scons-addons
+|
+o------------------------------------------------------------------------------o
+
+o------------------------------------------------------------------------------o
+| What is it?
+o------------------------------------------------------------------------------o
+
+This project is a collection of addons for the scons build system.  
+
+See: http://www.scons.org
+
+o------------------------------------------------------------------------------o
+| Why does this project exist?  Why not just put this all in SCons?
+o------------------------------------------------------------------------------o
+There are two answers for this question:
+
+First, this allows for a place to test new addon capabilities that *may* end up
+in scons in the long term for all I know.
+
+Second, SCons doesn't have to be a kitchen sink of everything under the sun.
+Many things can be written as addons to SCons that are distributed and used
+separately.  That is where this project comes in.
+
+o------------------------------------------------------------------------------o
+| Requirements
+o------------------------------------------------------------------------------o
+
+We generally require the latest released version of scons.  Some addons may require the CVS version though.
+
+o------------------------------------------------------------------------------o
+| Installation
+o------------------------------------------------------------------------------o
+
+To install system-wide:
+cd scons-addons/src
+cp -r SconsAddons /path/to/python/lib/site-packages/
+
+If you do not want scons-addons installed in a standard location for python files you 
+will need to set your PYTHONPATH variable to reflect where it is installed at.
+For example:
+
+(bash)
+export PYTHONPATH=/home/username/scons-addons/src
+
+(csh based shells)
+setenv PYTHONPATH /home/username/scons-addons/src
+
+o------------------------------------------------------------------------------o
+| Documentation
+o------------------------------------------------------------------------------o
+
+o------------------------------------------------------------------------------o
+| License: GPL
+o------------------------------------------------------------------------------o
+
+This file is part of scons-addons.
+
+Scons-addons is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+Scons-addons is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with scons-addons; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+o------------------------------------------------------------------------------o
+| Questions
+o------------------------------------------------------------------------------o
+
+  Please feel free to email comments, questions, suggestions, etc to
+
+        scons-addons-devel@realityforge.vrsource.org
