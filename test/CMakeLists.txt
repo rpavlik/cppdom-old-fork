@@ -1,3 +1,8 @@
+find_package(cppunit)
+if(CPPUNIT_FOUND)
+	add_subdirectory(suite)
+endif()
+
 if(BUILD_TESTING)
 	include_directories(.)
 
