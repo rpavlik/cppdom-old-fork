@@ -65,6 +65,7 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cppdom.fpc"
 ###
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(UseBackportedModules)
+include(CTest)
 
 find_package(Boost)
 
@@ -74,6 +75,8 @@ find_package(Boost)
 
 include_directories(.)
 add_subdirectory(cppdom)
+
+add_subdirectory(test)
 
 ###
 # Set packaging options (for CPack)
