@@ -23,12 +23,13 @@ set(CPACK_PACKAGE_VERSION
 
 # Define directories
 set(BIN_DIR bin)
-set(INCLUDE_DIR include)
 set(ARCH_DIR lib)
 if(WIN32)
 	set(LIB_DIR bin)
+	set(INCLUDE_DIR include)
 else()
 	set(LIB_DIR lib)
+	set(INCLUDE_DIR include/cppdom-${CPACK_PACKAGE_VERSION})
 endif()
 
 ###
