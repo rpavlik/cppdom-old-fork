@@ -45,6 +45,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <iterator>
 
 // needed includes
 #include <cppdom/cppdom.h>

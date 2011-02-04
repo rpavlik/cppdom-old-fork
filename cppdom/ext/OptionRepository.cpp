@@ -1,6 +1,7 @@
 #include <cppdom/ext/OptionRepository.h>
 
 #include <sstream>
+#include <iterator>
 #include <assert.h>
 
 namespace cppdom
