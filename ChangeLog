@@ -1,5 +1,7 @@
 DATE        AUTHOR      CHANGE
 ---------- -----------  -------------------------------------------------------
+2011-02-03 rpavlik      CMake-based build system.
+
 [Version 1.0.3 released - 9.4.2010]============================================
 
 2010-09-04 patrickh     Use std::tr1::unordered_map<T,H> when GCC or Visual C++

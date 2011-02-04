@@ -49,10 +49,11 @@ namespace cppdomtest
    void
    ErrorTest::testCreation()
    {
-      const cppdom::Error error(cppdom::xml_instream_error, "Blah", __FILE__, __LINE__);
+      std::string errFile = __FILE__;
+      const cppdom::Error error(cppdom::xml_instream_error, "Blah", errFile, __LINE__);
       CPPUNIT_ASSERT(error.getError() == cppdom::xml_instream_error);
-      CPPUNIT_ASSERT(error.getStrError() == "error in the infile stream");
-      CPPUNIT_ASSERT(error.getString() == "error in the infile stream: Blah");
-      CPPUNIT_ASSERT(error.getInfo() == "test/suite/TestCases/ErrorTest.cpp:52");
+      CPPUNIT_ASSERT_EQUAL(std::string("error in the infile stream"), error.getStrError());
+      CPPUNIT_ASSERT_EQUAL(std::string("error in the infile stream: Blah"), error.getString());
+      CPPUNIT_ASSERT_EQUAL(errFile + std::string(":53"), error.getInfo());
    }
 }
